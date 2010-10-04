@@ -16,7 +16,7 @@ class SoapKernel extends ContainerAware implements HttpKernelInterface
         return null;
     }
 
-    public function handle(Request:: $request = null, $type = self::MASTER_REQUEST, $raw = false)
+    public function handle(Request $request = null, $type = self::MASTER_REQUEST, $raw = false)
     {
         $this->container->getSymfonyHttpKernelService()->handle($request, $type, $raw);
     }
