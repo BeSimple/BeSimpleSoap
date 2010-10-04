@@ -3,4 +3,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
 
+	<parameters>
+		<parameter key="request.class">Bundle\WebServiceBundle\SoapRequest</parameter>
+	</parameters>
+	
+	<services>
+		<service id="webservice_http_kernel" class="Bundle\WebServiceBundle\SoapKernel">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+		</service>
+        <service id="symfony_http_kernel" class="%http_kernel.class%">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="controller_resolver" />
+        </service>
+	</services>
 </container>
