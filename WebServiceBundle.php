@@ -13,8 +13,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class WebServiceBundle extends Bundle
 {
-    public function registerExtensions(ContainerBuilder $container)
-    {
-        parent::registerExtensions($container);
-    }
 }
