@@ -8,14 +8,18 @@
 	</parameters>
 	
 	<services>
-		<service id="webservice_http_kernel" class="Bundle\WebServiceBundle\SoapKernel">
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-		</service>
+		<!-- redefine FrameworkBundle 'http_kernel' service with different id -->
         <service id="symfony_http_kernel" class="%http_kernel.class%">
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="controller_resolver" />
         </service>
+        
+		<service id="webservice_soap_server" class="\SoapServer">
+			<argument type="string" key="%webservice.config.wsdl%" />
+		</service>
+		<service id="webservice_http_kernel" class="Bundle\WebServiceBundle\SoapKernel">
+            <argument type="service" id="webservice_soap_server" />
+            <argument type="service" id="symfony_http_kernel" />
+		</service>
 	</services>
 </container>
