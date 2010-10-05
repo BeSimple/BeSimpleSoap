@@ -10,9 +10,12 @@
 
 namespace Bundle\WebServiceBundle\Tests;
 
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Bundle\WebServiceBundle\SoapKernel;
+use Bundle\WebServiceBundle\Soap\SoapRequest;
+use Bundle\WebServiceBundle\Soap\SoapResponse;
 
 /**
  * UnitTest for \Bundle\WebServiceBundle\SoapKernel.
@@ -21,19 +24,34 @@ use Bundle\WebServiceBundle\SoapKernel;
  */
 class SoapKernelTest extends \PHPUnit_Framework_TestCase
 {
+    private static $soapRequestContent = '<?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://localhost/"><soapenv:Header/><soapenv:Body><ns1:math_multiply><a>10</a><b>20</b></ns1:math_multiply></soapenv:Body></soapenv:Envelope>';
+    private static $soapResponseContent = '<?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://localhost/"><soapenv:Header/><soapenv:Body><ns1:math_multiply><result>200</result></ns1:math_multiply></soapenv:Body></soapenv:Envelope>';
+
     private $soapKernel;
 
     public function setUp()
     {
-        $soapServer = new \SoapServer();
+        $soapServer = new \SoapServer(__DIR__ . '/fixtures/api.wsdl');
+        $httpKernel = $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface');
+        $httpKernel->expects($this->any())
+                   ->method('handle')
+                   ->will($this->returnValue(new SoapResponse(200)));
 
-        $this->soapKernel = new SoapKernel($soapServer, null);
+        $this->soapKernel = new SoapKernel($soapServer, $httpKernel);
+    }
+
+    public function testHandle()
+    {
+        $response = $this->soapKernel->handle(new SoapRequest(self::$soapRequestContent));
+
+        $this->assertEquals(200, $response->getReturnValue());
+        $this->assertEquals(self::$soapResponseContent, $response->getContent());
     }
 
 	/**
      * @expectedException InvalidArgumentException
      */
-    public function testInvalidRequest()
+    public function testHandleWithInvalidRequest()
     {
         $this->soapKernel->handle(new Request());
     }

@@ -18,7 +18,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Bundle\WebServiceBundle\Soap\SoapRequest;
 use Bundle\WebServiceBundle\Soap\SoapResponse;
 
-use Bundle\WebServiceBundle\Util\OutputBuffer;
 use Bundle\WebServiceBundle\Util\String;
 
 /**
@@ -68,12 +67,11 @@ class SoapKernel implements HttpKernelInterface
     {
         $this->soapRequest = $this->checkRequest($request);
 
-        $this->soapResponse->setContent(OutputBuffer::get(
-            function() use($this)
-            {
-                $this->soapServer->handle($this->soapRequest->getRawContent());
-            }
-        ));
+        ob_start();
+        $this->soapServer->handle($this->soapRequest->getRawContent());
+
+        $soapResponseContent = ob_get_clean();
+        $this->soapResponse->setContent($soapResponseContent);
 
         return $this->soapResponse;
     }
@@ -121,7 +119,7 @@ class SoapKernel implements HttpKernelInterface
 
         if(!is_a($request, __NAMESPACE__ . '\\Soap\\SoapRequest'))
         {
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         }
 
         return $request;
@@ -138,9 +136,9 @@ class SoapKernel implements HttpKernelInterface
      */
     protected function checkResponse(Response $response)
     {
-        if($response == null || !is_a($request, __NAMESPACE__ . '\\Soap\\SoapResponse'))
+        if($response == null || !is_a($response, __NAMESPACE__ . '\\Soap\\SoapResponse'))
         {
-            throw new InvalidArgumentException();
+            throw new \InvalidArgumentException();
         }
 
         return $response;
