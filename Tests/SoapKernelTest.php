@@ -25,7 +25,7 @@ use Bundle\WebServiceBundle\Soap\SoapResponse;
 class SoapKernelTest extends \PHPUnit_Framework_TestCase
 {
     private static $soapRequestContent = '<?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://localhost/"><soapenv:Header/><soapenv:Body><ns1:math_multiply><a>10</a><b>20</b></ns1:math_multiply></soapenv:Body></soapenv:Envelope>';
-    private static $soapResponseContent = '<?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://localhost/"><soapenv:Header/><soapenv:Body><ns1:math_multiply><result>200</result></ns1:math_multiply></soapenv:Body></soapenv:Envelope>';
+    private static $soapResponseContent = '<?xml version="1.0" encoding="UTF-8"?><SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://localhost/"><SOAP-ENV:Body><ns1:math_multiplyResponse><result>200</result></ns1:math_multiplyResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>';
 
     private $soapKernel;
 
@@ -45,7 +45,7 @@ class SoapKernelTest extends \PHPUnit_Framework_TestCase
         $response = $this->soapKernel->handle(new SoapRequest(self::$soapRequestContent));
 
         $this->assertEquals(200, $response->getReturnValue());
-        $this->assertEquals(self::$soapResponseContent, $response->getContent());
+        $this->assertXmlStringEqualsXmlString(self::$soapResponseContent, $response->getContent());
     }
 
 	/**
