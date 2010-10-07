@@ -5,6 +5,10 @@
 
 	<parameters>
 		<parameter key="request.class">Bundle\WebServiceBundle\Soap\SoapRequest</parameter>
+		
+		<parameter key="webservice.definition.class">Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition</parameter>
+		<parameter key="webservice.definition.loader.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\XmlFileLoader</parameter>
+		<parameter key="webservice.definition.dumper.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\Wsdl11DocumentLiteralFileDumper</parameter>
 	</parameters>
 	
 	<services>
@@ -14,12 +18,21 @@
             <argument type="service" id="controller_resolver" />
         </service>
         
-		<service id="webservice_soap_server" class="SoapServer">
-			<argument type="string">%webservice.config.wsdl%</argument>
-		</service>
-		<service id="webservice_http_kernel" class="Bundle\WebServiceBundle\SoapKernel">
-            <argument type="service" id="webservice_soap_server" />
+		<service id="webservice.kernel" class="Bundle\WebServiceBundle\SoapKernel">
+            <argument type="service" id="webservice.definition" />
+            <argument type="service" id="webservice.definition.loader" />
+            <argument type="service" id="webservice.definition.dumper" />
+            
             <argument type="service" id="symfony_http_kernel" />
+		</service>
+		<service id="webservice.definition" class="%webservice.definition.class%" shared="true">
+			<argument type="string">%webservice.definition.name%</argument>
+		</service>
+		<service id="webservice.definition.loader" class="%webservice.definition.loader.class%">
+			<argument type="string">%webservice.definition.resource%</argument>
+		</service>
+		<service id="webservice.definition.dumper" class="%webservice.definition.dumper.class%">
+			<argument type="string"></argument>
 		</service>
 	</services>
 </container>

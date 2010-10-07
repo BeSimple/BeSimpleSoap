@@ -11,6 +11,10 @@
 namespace Bundle\WebServiceBundle\Tests;
 
 
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceMethod;
+
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Bundle\WebServiceBundle\SoapKernel;
@@ -31,13 +35,18 @@ class SoapKernelTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $soapServer = new \SoapServer(__DIR__ . '/fixtures/api.wsdl');
+        $serviceDefinition = new ServiceDefinition('api');
+        $serviceDefinition->getMethods()->add(new ServiceMethod('math_multiply', 'MathController::multiply'));
+
+        $serviceDefinitionLoader = null;
+        $serviceDefinitionDumper = new StaticFileDumper(__DIR__ . '/fixtures/api.wsdl');
+
         $httpKernel = $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface');
         $httpKernel->expects($this->any())
                    ->method('handle')
                    ->will($this->returnValue(new SoapResponse(200)));
 
-        $this->soapKernel = new SoapKernel($soapServer, $httpKernel);
+        $this->soapKernel = new SoapKernel($serviceDefinition, $serviceDefinitionLoader, $serviceDefinitionDumper, $httpKernel);
     }
 
     public function testHandle()
@@ -48,11 +57,10 @@ class SoapKernelTest extends \PHPUnit_Framework_TestCase
         $this->assertXmlStringEqualsXmlString(self::$soapResponseContent, $response->getContent());
     }
 
-	/**
-     * @expectedException InvalidArgumentException
-     */
     public function testHandleWithInvalidRequest()
     {
+        $this->setExpectedException('InvalidArgumentException');
+
         $this->soapKernel->handle(new Request());
     }
 }

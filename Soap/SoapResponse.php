@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\Soap;
 
+use Bundle\WebServiceBundle\Util\Collection;
+
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -19,26 +21,29 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SoapResponse extends Response
 {
+    /**
+     * @var \Bundle\WebServiceBundle\Util\Collection
+     */
     protected $soapHeaders;
 
     protected $soapReturnValue;
 
-    public function __construct($returnValue)
+    public function __construct($returnValue = null)
     {
         parent::__construct();
 
-        $this->soapHeaders = array();
-        $this->soapReturnValue = $returnValue;
-    }
-
-    public function addSoapHeader(\SoapHeader $header)
-    {
-        $this->soapHeaders[] = $header;
+        $this->soapHeaders = new Collection('getName');
+        $this->setReturnValue($returnValue);
     }
 
     public function getSoapHeaders()
     {
         return $this->soapHeaders;
+    }
+
+    public function setReturnValue($value)
+    {
+        $this->soapReturnValue = $value;
     }
 
     public function getReturnValue()

@@ -28,10 +28,26 @@ class WebServiceExtension extends Extension
             $loader = new XmlFileLoader($configuration, __DIR__ . '/../Resources/config');
             $loader->load('services.xml');
 
-            $configuration->setAlias('http_kernel', 'webservice_http_kernel');
+            $configuration->setAlias('http_kernel', 'webservice.kernel');
         }
 
-        $configuration->setParameter('webservice.config.wsdl', $config['wsdl']);
+        if(!isset($config['definition']))
+        {
+            throw new \InvalidArgumentException();
+        }
+
+        $this->registerServiceDefinitionConfig($config['definition'], $configuration);
+    }
+
+    protected function registerServiceDefinitionConfig(array $config, ContainerBuilder $configuration)
+    {
+        if(!isset($config['name']))
+        {
+            throw new \InvalidArgumentException();
+        }
+
+        $configuration->setParameter('webservice.definition.name', $config['name']);
+        $configuration->setParameter('webservice.definition.resource', isset($config['resource']) ? $config['resource'] : null);
     }
 
     public function getXsdValidationBasePath()

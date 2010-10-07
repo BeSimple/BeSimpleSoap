@@ -10,6 +10,12 @@
 
 namespace Bundle\WebServiceBundle;
 
+use Bundle\WebServiceBundle\Soap\SoapHeader;
+
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceHeader;
+
+use Bundle\WebServiceBundle\ServiceDefinition\Dumper\DumperInterface;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,6 +23,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Bundle\WebServiceBundle\Soap\SoapRequest;
 use Bundle\WebServiceBundle\Soap\SoapResponse;
+
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+use Bundle\WebServiceBundle\ServiceDefinition\Loader\LoaderInterface;
 
 use Bundle\WebServiceBundle\Util\String;
 
@@ -46,13 +55,24 @@ class SoapKernel implements HttpKernelInterface
     protected $soapResponse;
 
     /**
+     * @var \Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition
+     */
+    protected $serviceDefinition;
+
+    /**
      * @var \Symfony\Component\HttpKernel\HttpKernelInterface
      */
     protected $kernel;
 
-    public function __construct(\SoapServer $server, HttpKernelInterface $kernel)
+    public function __construct(ServiceDefinition $definition, LoaderInterface $loader, DumperInterface $dumper, HttpKernelInterface $kernel)
     {
-        $this->soapServer = $server;
+        $this->serviceDefinition = $definition;
+        $loader->loadServiceDefinition($this->serviceDefinition);
+
+        // assume $dumper creates WSDL 1.1 file
+        $wsdl = $dumper->dumpServiceDefinition($this->serviceDefinition);
+
+        $this->soapServer = new \SoapServer($wsdl);
         $this->soapServer->setObject($this);
 
         $this->kernel = $kernel;
@@ -76,26 +96,43 @@ class SoapKernel implements HttpKernelInterface
         return $this->soapResponse;
     }
 
+    /**
+     * This method gets called once for every SOAP header the \SoapServer received
+     * and afterwards once for the called SOAP operation.
+     *
+     * @param string $method The SOAP header or SOAP operation name
+     * @param array $arguments
+     *
+     * @return mixed
+     */
     public function __call($method, $arguments)
     {
-        if($this->isSoapHeaderCallback($method))
+        if($this->serviceDefinition->getHeaders()->has($method))
         {
-            // $this->soapRequest->addSoapHeader(null);
-        }
-        else
-        {
-            // TODO: set _controller attribute of request
-            $this->soapRequest->attributes->set('_controller', $method);
+            // collect request soap headers
+            $headerDefinition = $this->serviceDefinition->getHeaders()->get($method);
+            $this->soapRequest->getSoapHeaders()->add($this->createSoapHeader($headerDefinition, $arguments[0]));
 
+            return;
+        }
+
+        if($this->serviceDefinition->getMethods()->has($method))
+        {
+            $methodDefinition = $this->serviceDefinition->getMethods()->get($method);
+            $this->soapRequest->attributes->set('_controller', $methodDefinition->getController());
+
+            // delegate to standard http kernel
             $response = $this->kernel->handle($this->soapRequest, self::MASTER_REQUEST, true);
 
             $this->soapResponse = $this->checkResponse($response);
 
+            // add response soap headers to soap server
             foreach($this->soapResponse->getSoapHeaders() as $header)
             {
-                $this->soapServer->addSoapHeader($header);
+                $this->soapServer->addSoapHeader($header->toNativeSoapHeader());
             }
 
+            // return operation return value to soap server
             return $this->soapResponse->getReturnValue();
         }
     }
@@ -144,8 +181,13 @@ class SoapKernel implements HttpKernelInterface
         return $response;
     }
 
-    protected function isSoapHeaderCallback($method)
+    protected function createSoapHeader(ServiceHeader $headerDefinition, $data)
     {
-        return false; //String::endsWith($method, 'Header');
+        if(!preg_match('/^\{(.+)\}(.+)$/', $headerDefinition->getType()->getXmlType(), $matches))
+        {
+            throw new \InvalidArgumentException();
+        }
+
+        return new SoapHeader($matches[1], $matches[2], $data);
     }
 }

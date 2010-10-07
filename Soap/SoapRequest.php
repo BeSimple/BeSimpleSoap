@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\Soap;
 
+use Bundle\WebServiceBundle\Util\Collection;
+
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -30,9 +32,9 @@ class SoapRequest extends Request
     protected $soapAction;
 
     /**
-     * @var unknown
+     * @var \Bundle\WebServiceBundle\Util\Collection
      */
-    protected $soapHeader;
+    protected $soapHeaders;
 
     /**
      * @var unknown
@@ -44,6 +46,8 @@ class SoapRequest extends Request
         parent::__construct($query, null, $attributes, $cookies, null, $server);
 
         $this->rawContent = $rawContent != null ? $rawContent : $this->loadRawContent();
+
+        $this->soapHeaders = new Collection('getName');
     }
 
     /**
@@ -54,6 +58,11 @@ class SoapRequest extends Request
     public function getRawContent()
     {
         return $this->rawContent;
+    }
+
+    public function getSoapHeaders()
+    {
+        return $this->soapHeaders;
     }
 
     /**
