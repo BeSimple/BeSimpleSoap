@@ -145,15 +145,15 @@ class SoapRequest extends Request
         $mimeMessage = Message::createFromMessage($content, $contentTypeHeader['boundary']);
         $mimeParts = $mimeMessage->getParts();
 
-        $soapMimePartId = $contentTypeHeader['start'];
-        $soapMimePartType = $this->splitContentTypeHeader($contentTypeHeader['start-info']);
+        $soapMimePartId = trim($contentTypeHeader['start'], '<>');
+        $soapMimePartType = $contentTypeHeader['start-info'];
 
         $rootPart = array_shift($mimeParts);
         $rootPartType = $this->splitContentTypeHeader($rootPart->type);
 
         // TODO: add more checks to achieve full compatibility to MTOM spec
         // http://www.w3.org/TR/soap12-mtom/
-        if($rootPart->id != $soapMimePartId || $rootPartType['_type'] != 'application/xop+xml' || $rootPartType['type'] != $soapMimePartType['type'])
+        if($rootPart->id != $soapMimePartId || $rootPartType['_type'] != 'application/xop+xml' || $rootPartType['type'] != $soapMimePartType)
         {
             throw new \InvalidArgumentException();
         }
@@ -161,7 +161,7 @@ class SoapRequest extends Request
         foreach($mimeParts as $mimePart)
         {
             $this->soapAttachments->add(new SoapAttachment(
-                trim($mimePart->id, '<>'),
+                $mimePart->id,
                 $mimePart->type,
                 // handle content decoding / prevent encoding
                 $mimePart->getContent()
