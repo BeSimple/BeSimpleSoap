@@ -78,7 +78,7 @@ class SoapKernel implements HttpKernelInterface
         $this->soapRequest = $this->checkRequest($request);
 
         ob_start();
-        $this->soapServer->handle($this->soapRequest->getRawContent());
+        $this->soapServer->handle($this->soapRequest->getSoapMessage());
 
         $soapResponseContent = ob_get_clean();
         $this->soapResponse->setContent($soapResponseContent);
