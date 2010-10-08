@@ -2,12 +2,12 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition;
 
-class ServiceHeader
+class Header
 {
     private $name;
     private $type;
 
-    public function __construct($name = null, ServiceType $type = null)
+    public function __construct($name = null, Type $type = null)
     {
         $this->setName($name);
         $this->setType($type);

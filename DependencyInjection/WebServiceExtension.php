@@ -31,12 +31,19 @@ class WebServiceExtension extends Extension
             $configuration->setAlias('http_kernel', 'webservice.kernel');
         }
 
-        if(!isset($config['definition']))
+        if(isset($config['definition']))
+        {
+            $this->registerServiceDefinitionConfig($config['definition'], $configuration);
+        }
+        else
         {
             throw new \InvalidArgumentException();
         }
 
-        $this->registerServiceDefinitionConfig($config['definition'], $configuration);
+        if(isset($config['binding']))
+        {
+            $this->registerServiceBindingConfig($config['binding'], $configuration);
+        }
     }
 
     protected function registerServiceDefinitionConfig(array $config, ContainerBuilder $configuration)
@@ -48,6 +55,30 @@ class WebServiceExtension extends Extension
 
         $configuration->setParameter('webservice.definition.name', $config['name']);
         $configuration->setParameter('webservice.definition.resource', isset($config['resource']) ? $config['resource'] : null);
+    }
+
+    protected function registerServiceBindingConfig(array $config, ContainerBuilder $configuration)
+    {
+        $style = isset($config['style']) ? $config['style'] : 'document-literal-wrapped';
+
+        if(!in_array($style, array('document-literal-wrapped', 'rpc-literal')))
+        {
+            throw new \InvalidArgumentException();
+        }
+
+        $binderNamespace = 'Bundle\\WebServiceBundle\\ServiceBinding\\';
+
+        switch ($style)
+        {
+            case 'document-literal-wrapped':
+                $configuration->setParameter('webservice.binder.request.class', $binderNamespace . 'DocumentLiteralWrappedRequestMessageBinder');
+                $configuration->setParameter('webservice.binder.response.class', $binderNamespace . 'DocumentLiteralWrappedResponseMessageBinder');
+                break;
+            case 'rpc-literal':
+                $configuration->setParameter('webservice.binder.request.class', $binderNamespace . 'RpcLiteralRequestMessageBinder');
+                $configuration->setParameter('webservice.binder.response.class', $binderNamespace . 'RpcLiteralResponseMessageBinder');
+                break;
+        }
     }
 
     public function getXsdValidationBasePath()

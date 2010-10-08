@@ -2,15 +2,19 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition;
 
-class ServiceMethod
+use Bundle\WebServiceBundle\Util\Collection;
+
+class Method
 {
     private $name;
     private $controller;
+    private $arguments;
 
-    public function __construct($name = null, $controller = null)
+    public function __construct($name = null, $controller = null, array $arguments = array())
     {
         $this->setName($name);
         $this->setController($controller);
+        $this->setArguments($arguments);
     }
 
     public function getName()
@@ -31,5 +35,16 @@ class ServiceMethod
     public function setController($controller)
     {
         $this->controller = $controller;
+    }
+
+    public function getArguments()
+    {
+        return $this->arguments;
+    }
+
+    public function setArguments($arguments)
+    {
+        $this->arguments = new Collection('getName');
+        $this->arguments->addAll($arguments);
     }
 }

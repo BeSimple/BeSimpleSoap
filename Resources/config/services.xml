@@ -6,9 +6,12 @@
 	<parameters>
 		<parameter key="request.class">Bundle\WebServiceBundle\Soap\SoapRequest</parameter>
 		
+		<parameter key="webservice.binder.request.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
+		<parameter key="webservice.binder.response.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
+		
 		<parameter key="webservice.definition.class">Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition</parameter>
 		<parameter key="webservice.definition.loader.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\XmlFileLoader</parameter>
-		<parameter key="webservice.definition.dumper.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\Wsdl11DocumentLiteralFileDumper</parameter>
+		<parameter key="webservice.definition.dumper.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\Wsdl11DocumentLiteralWrappedFileDumper</parameter>
 	</parameters>
 	
 	<services>
@@ -19,12 +22,22 @@
         </service>
         
 		<service id="webservice.kernel" class="Bundle\WebServiceBundle\SoapKernel">
-            <argument type="service" id="webservice.definition" />
-            <argument type="service" id="webservice.definition.loader" />
-            <argument type="service" id="webservice.definition.dumper" />
-            
+            <argument type="service" id="webservice.binder" />
             <argument type="service" id="symfony_http_kernel" />
 		</service>
+		
+		<service id="webservice.binder" class="Bundle\WebServiceBundle\ServiceBinding\ServiceBinder">
+			<argument type="service" id="webservice.definition" />
+			<argument type="service" id="webservice.definition.loader" />
+			<argument type="service" id="webservice.definition.dumper" />
+			
+			<argument type="service" id="webservice.binder.request" />
+			<argument type="service" id="webservice.binder.response" />
+		</service>
+		
+		<service id="webservice.binder.request" class="%webservice.binder.request.class%" />
+		<service id="webservice.binder.response" class="%webservice.binder.response.class%" />
+		
 		<service id="webservice.definition" class="%webservice.definition.class%" shared="true">
 			<argument type="string">%webservice.definition.name%</argument>
 		</service>

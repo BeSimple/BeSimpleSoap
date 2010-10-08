@@ -26,6 +26,9 @@ class SoapResponse extends Response
      */
     protected $soapHeaders;
 
+    /**
+     * @var mixed
+     */
     protected $soapReturnValue;
 
     public function __construct($returnValue = null)

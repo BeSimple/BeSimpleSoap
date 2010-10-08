@@ -46,7 +46,6 @@ class SoapRequest extends Request
         parent::__construct($query, null, $attributes, $cookies, null, $server);
 
         $this->rawContent = $rawContent != null ? $rawContent : $this->loadRawContent();
-
         $this->soapHeaders = new Collection('getName');
     }
 

@@ -2,13 +2,11 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceType;
-
 use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceMethod;
-
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceHeader;
+use Bundle\WebServiceBundle\ServiceDefinition\Header;
+use Bundle\WebServiceBundle\ServiceDefinition\Method;
+use Bundle\WebServiceBundle\ServiceDefinition\Argument;
+use Bundle\WebServiceBundle\ServiceDefinition\Type;
 
 class XmlFileLoader extends FileLoader
 {
@@ -35,11 +33,11 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\ServiceHeader
+     * @return \Bundle\WebServiceBundle\ServiceDefinition\Header
      */
     protected function parseHeader(\SimpleXMLElement $node)
     {
-        $header = new ServiceHeader((string)$node['name'], $this->parseType($node->type));
+        $header = new Header((string)$node['name'], $this->parseType($node->type));
 
         return $header;
     }
@@ -47,11 +45,16 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\ServiceMethod
+     * @return \Bundle\WebServiceBundle\ServiceDefinition\Method
      */
     protected function parseMethod(\SimpleXMLElement $node)
     {
-        $method = new ServiceMethod((string)$node['name'], (string)$node['controller']);
+        $method = new Method((string)$node['name'], (string)$node['controller']);
+
+        foreach($node->argument as $argument)
+        {
+            $method->getArguments()->add($this->parseArgument($argument));
+        }
 
         return $method;
     }
@@ -59,7 +62,19 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\ServiceType
+     * @return \Bundle\WebServiceBundle\ServiceDefinition\Argument
+     */
+    protected function parseArgument(\SimpleXMLElement $node)
+    {
+        $argument = new Argument((string)$node['name'], $this->parseType($node->type));
+
+        return $argument;
+    }
+
+    /**
+     * @param \SimpleXMLElement $node
+     *
+     * @return \Bundle\WebServiceBundle\ServiceDefinition\Type
      */
     protected function parseType(\SimpleXMLElement $node)
     {
@@ -67,7 +82,7 @@ class XmlFileLoader extends FileLoader
         $qname = explode(':', $node['xml-type'], 2);
         $xmlType = sprintf('{%s}%s', $namespaces[$qname[0]], $qname[1]);
 
-        $type = new ServiceType((string)$node['php-type'], $xmlType, (string)$node['converter']);
+        $type = new Type((string)$node['php-type'], $xmlType, (string)$node['converter']);
 
         return $type;
     }

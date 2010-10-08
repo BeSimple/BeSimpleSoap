@@ -2,7 +2,7 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition;
 
-class ServiceType
+class Type
 {
     private $phpType;
     private $xmlType;

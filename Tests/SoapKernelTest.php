@@ -10,16 +10,19 @@
 
 namespace Bundle\WebServiceBundle\Tests;
 
-
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceMethod;
-
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-
 use Symfony\Component\HttpFoundation\Request;
 
 use Bundle\WebServiceBundle\SoapKernel;
 use Bundle\WebServiceBundle\Soap\SoapRequest;
 use Bundle\WebServiceBundle\Soap\SoapResponse;
+
+use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
+use Bundle\WebServiceBundle\ServiceBinding\RpcLiteralResponseMessageBinder;
+use Bundle\WebServiceBundle\ServiceBinding\RpcLiteralRequestMessageBinder;
+
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+use Bundle\WebServiceBundle\ServiceDefinition\Method;
+use Bundle\WebServiceBundle\ServiceDefinition\Loader\XmlFileLoader;
 
 /**
  * UnitTest for \Bundle\WebServiceBundle\SoapKernel.
@@ -36,17 +39,19 @@ class SoapKernelTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $serviceDefinition = new ServiceDefinition('api');
-        $serviceDefinition->getMethods()->add(new ServiceMethod('math_multiply', 'MathController::multiply'));
-
-        $serviceDefinitionLoader = null;
+        $serviceDefinitionLoader = new XmlFileLoader(__DIR__ . '/fixtures/api-servicedefinition.xml');
         $serviceDefinitionDumper = new StaticFileDumper(__DIR__ . '/fixtures/api.wsdl');
+        $requestMessageBinder = new RpcLiteralRequestMessageBinder();
+        $responseMessageBinder = new RpcLiteralResponseMessageBinder();
+
+        $serviceBinder = new ServiceBinder($serviceDefinition, $serviceDefinitionLoader, $serviceDefinitionDumper, $requestMessageBinder, $responseMessageBinder);
 
         $httpKernel = $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface');
         $httpKernel->expects($this->any())
                    ->method('handle')
                    ->will($this->returnValue(new SoapResponse(200)));
 
-        $this->soapKernel = new SoapKernel($serviceDefinition, $serviceDefinitionLoader, $serviceDefinitionDumper, $httpKernel);
+        $this->soapKernel = new SoapKernel($serviceBinder, $httpKernel);
     }
 
     public function testHandle()
