@@ -10,6 +10,7 @@
 
 namespace Bundle\WebServiceBundle;
 
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,6 +21,8 @@ use Bundle\WebServiceBundle\Soap\SoapResponse;
 use Bundle\WebServiceBundle\Soap\SoapHeader;
 
 use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
+
+use Bundle\WebServiceBundle\Converter\ConverterRepository;
 
 use Bundle\WebServiceBundle\Util\String;
 
@@ -58,11 +61,18 @@ class SoapKernel implements HttpKernelInterface
      */
     protected $kernel;
 
-    public function __construct(ServiceBinder $serviceBinder, HttpKernelInterface $kernel)
+    public function __construct(ServiceBinder $serviceBinder, ConverterRepository $converterRepository, HttpKernelInterface $kernel)
     {
         $this->serviceBinder = $serviceBinder;
 
-        $this->soapServer = new \SoapServer($this->serviceBinder->getSerializedServiceDefinition());
+        $this->soapServer = new \SoapServer(
+            $this->serviceBinder->getSerializedServiceDefinition(),
+            array(
+                'classmap' => $this->serviceBinder->getSoapServerClassmap(),
+            	'typemap'  => $converterRepository->toSoapServerTypemap($this),
+                'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
+            )
+        );
         $this->soapServer->setObject($this);
 
         $this->kernel = $kernel;
@@ -73,7 +83,12 @@ class SoapKernel implements HttpKernelInterface
         return $this->soapRequest;
     }
 
-    public function handle(Request $request = null, $type = self::MASTER_REQUEST, $raw = false)
+    public function getResponse()
+    {
+        return $this->soapResponse;
+    }
+
+    public function handle(Request $request = null, $type = self::MASTER_REQUEST, $catch = true)
     {
         $this->soapRequest = $this->checkRequest($request);
 

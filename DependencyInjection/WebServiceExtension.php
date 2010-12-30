@@ -23,7 +23,7 @@ class WebServiceExtension extends Extension
 {
     public function configLoad(array $config, ContainerBuilder $configuration)
     {
-        if(!$configuration->hasDefinition('webservice_http_kernel'))
+        if(!$configuration->hasDefinition('webservice.kernel'))
         {
             $loader = new XmlFileLoader($configuration, __DIR__ . '/../Resources/config');
             $loader->load('services.xml');
@@ -55,6 +55,7 @@ class WebServiceExtension extends Extension
 
         $configuration->setParameter('webservice.definition.name', $config['name']);
         $configuration->setParameter('webservice.definition.resource', isset($config['resource']) ? $config['resource'] : null);
+        $configuration->setParameter('webservice.definition.wsdl', isset($config['wsdl']) ? $config['wsdl'] : null);
     }
 
     protected function registerServiceBindingConfig(array $config, ContainerBuilder $configuration)

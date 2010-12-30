@@ -11,7 +11,7 @@
 		
 		<parameter key="webservice.definition.class">Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition</parameter>
 		<parameter key="webservice.definition.loader.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\XmlFileLoader</parameter>
-		<parameter key="webservice.definition.dumper.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\Wsdl11DocumentLiteralWrappedFileDumper</parameter>
+		<parameter key="webservice.definition.dumper.class">Bundle\WebServiceBundle\Tests\StaticFileDumper</parameter>
 	</parameters>
 	
 	<services>
@@ -23,6 +23,7 @@
         
 		<service id="webservice.kernel" class="Bundle\WebServiceBundle\SoapKernel">
             <argument type="service" id="webservice.binder" />
+            <argument type="service" id="webservice.converter.repository" />
             <argument type="service" id="symfony_http_kernel" />
 		</service>
 		
@@ -38,6 +39,12 @@
 		<service id="webservice.binder.request" class="%webservice.binder.request.class%" />
 		<service id="webservice.binder.response" class="%webservice.binder.response.class%" />
 		
+		<service id="webservice.converter.repository" class="Bundle\WebServiceBundle\Converter\ConverterRepository">
+			<call method="registerTypeConverterServices">
+				<argument type="service" id="service_container" />
+			</call>
+		</service>
+		
 		<service id="webservice.definition" class="%webservice.definition.class%" shared="true">
 			<argument type="string">%webservice.definition.name%</argument>
 		</service>
@@ -45,7 +52,7 @@
 			<argument type="string">%webservice.definition.resource%</argument>
 		</service>
 		<service id="webservice.definition.dumper" class="%webservice.definition.dumper.class%">
-			<argument type="string"></argument>
+			<argument type="string">%webservice.definition.wsdl%</argument>
 		</service>
 	</services>
 </container>

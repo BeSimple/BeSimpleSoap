@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\Tests;
 
+use Bundle\WebServiceBundle\Converter\ConverterRepository;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Bundle\WebServiceBundle\SoapKernel;
@@ -46,12 +48,14 @@ class SoapKernelTest extends \PHPUnit_Framework_TestCase
 
         $serviceBinder = new ServiceBinder($serviceDefinition, $serviceDefinitionLoader, $serviceDefinitionDumper, $requestMessageBinder, $responseMessageBinder);
 
+        $converterRepository = new ConverterRepository();
+
         $httpKernel = $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface');
         $httpKernel->expects($this->any())
                    ->method('handle')
                    ->will($this->returnValue(new SoapResponse(200)));
 
-        $this->soapKernel = new SoapKernel($serviceBinder, $httpKernel);
+        $this->soapKernel = new SoapKernel($serviceBinder, $converterRepository, $httpKernel);
     }
 
     public function testHandle()

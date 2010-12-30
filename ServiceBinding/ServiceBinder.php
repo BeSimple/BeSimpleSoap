@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\ServiceBinding;
 
+use Bundle\WebServiceBundle\ServiceDefinition\Type;
+
 use Bundle\WebServiceBundle\Soap\SoapHeader;
 
 use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
@@ -62,6 +64,39 @@ class ServiceBinder
         return $this->definitionDumper->dumpServiceDefinition($this->definition);
     }
 
+    public function getSoapServerClassmap()
+    {
+        $result = array();
+
+        foreach($this->definition->getHeaders() as $header)
+        {
+            $this->addSoapServerClassmapEntry($result, $header->getType());
+        }
+
+        foreach($this->definition->getMethods() as $method)
+        {
+            foreach($method->getArguments() as $arg)
+            {
+                $this->addSoapServerClassmapEntry($result, $arg->getType());
+            }
+        }
+
+        return $result;
+    }
+
+    private function addSoapServerClassmapEntry(&$classmap, Type $type)
+    {
+        list($namespace, $xmlType) = $this->parsePackedQName($type->getXmlType());
+        $phpType = $type->getPhpType();
+
+        if(isset($classmap[$xmlType]) && $classmap[$xmlType] != $phpType)
+        {
+            // log warning
+        }
+
+        $classmap[$xmlType] = $phpType;
+    }
+
     public function isServiceHeader($name)
     {
         return $this->definition->getHeaders()->has($name);
@@ -99,11 +134,18 @@ class ServiceBinder
 
     protected function createSoapHeader(Header $headerDefinition, $data)
     {
-        if(!preg_match('/^\{(.+)\}(.+)$/', $headerDefinition->getType()->getXmlType(), $matches))
+        list($namespace, $name) = $this->parsePackedQName($headerDefinition->getType()->getXmlType());
+
+        return new SoapHeader($namespace, $name, $data);
+    }
+
+    private function parsePackedQName($qname)
+    {
+        if(!preg_match('/^\{(.+)\}(.+)$/', $qname, $matches))
         {
             throw new \InvalidArgumentException();
         }
 
-        return new SoapHeader($matches[1], $matches[2], $data);
+        return array($matches[1], $matches[2]);
     }
 }
