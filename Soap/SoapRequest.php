@@ -137,7 +137,7 @@ class SoapRequest extends Request
 
     protected function initializeMtomSoapMessage(array $contentTypeHeader, $content)
     {
-        if(!isset($contentTypeHeader['start']) || !isset($contentTypeHeader['boundary']))
+        if(!isset($contentTypeHeader['start']) || !isset($contentTypeHeader['start-info']) || !isset($contentTypeHeader['boundary']))
         {
             throw new \InvalidArgumentException();
         }
