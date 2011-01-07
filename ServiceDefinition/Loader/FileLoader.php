@@ -10,19 +10,16 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
+use Bundle\WebServiceBundle\Util\Assert;
+
 abstract class FileLoader implements LoaderInterface
 {
     protected $file;
 
     public function __construct($file)
     {
-        if (!file_exists($file)) {
-            throw new \InvalidArgumentException(sprintf('The service definition file %s does not exist', $file));
-        }
-
-        if (!is_readable($file)) {
-            throw new \InvalidArgumentException(sprintf('The service definition file %s is not readable', $file));
-        }
+        Assert::thatArgument('file', file_exists($file), 'The service definition file %s does not exist');
+        Assert::thatArgument('file', is_readable($file), 'The service definition file %s is not readable');
 
         $this->file = $file;
     }
