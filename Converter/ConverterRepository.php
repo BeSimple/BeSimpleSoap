@@ -38,7 +38,7 @@ class ConverterRepository
         foreach($this->typeConverters as $typeConverter)
         {
             $result[] = array(
-        		'type_name' => $typeConverter->getTypeName(),
+                'type_name' => $typeConverter->getTypeName(),
                 'type_ns' => $typeConverter->getTypeNamespace(),
                 'from_xml' => function($input) use ($kernel, $typeConverter) {
                     return $typeConverter->convertXmlToPhp($kernel->getRequest(), $input);
