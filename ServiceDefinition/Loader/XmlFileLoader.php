@@ -64,6 +64,8 @@ class XmlFileLoader extends FileLoader
             $method->getArguments()->add($this->parseArgument($argument));
         }
 
+        $method->setReturn($this->parseType($node->return->type));
+
         return $method;
     }
 

@@ -17,12 +17,14 @@ class Method
     private $name;
     private $controller;
     private $arguments;
+    private $return;
 
-    public function __construct($name = null, $controller = null, array $arguments = array())
+    public function __construct($name = null, $controller = null, array $arguments = array(), $return = null)
     {
         $this->setName($name);
         $this->setController($controller);
         $this->setArguments($arguments);
+        $this->setReturn($return);
     }
 
     public function getName()
@@ -54,5 +56,15 @@ class Method
     {
         $this->arguments = new Collection('getName');
         $this->arguments->addAll($arguments);
+    }
+
+    public function getReturn()
+    {
+        return $this->return;
+    }
+
+    public function setReturn($return)
+    {
+        $this->return = $return;
     }
 }
