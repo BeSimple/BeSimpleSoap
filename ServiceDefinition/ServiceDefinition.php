@@ -20,6 +20,11 @@ class ServiceDefinition
     private $name;
 
     /**
+     * @var string
+     */
+    private $namespace;
+
+    /**
      * @var \Bundle\WebServiceBundle\Util\Collection
      */
     private $methods;
@@ -29,9 +34,10 @@ class ServiceDefinition
      */
     private $headers;
 
-    public function __construct($name = null, array $methods = array(), array $headers = array())
+    public function __construct($name = null, $namespace = null, array $methods = array(), array $headers = array())
     {
         $this->setName($name);
+        $this->setNamespace($namespace);
         $this->setMethods($methods);
         $this->setHeaders($headers);
     }
@@ -50,6 +56,22 @@ class ServiceDefinition
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @param string $namespace
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
     }
 
     /**

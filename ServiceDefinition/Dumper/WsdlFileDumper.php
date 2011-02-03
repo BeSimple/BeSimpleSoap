@@ -24,28 +24,21 @@ use Zend\Soap\Wsdl;
  */
 class WsdlFileDumper extends FileDumper
 {
-    private $namespace;
-
-    public function __construct($file, $namespace)
-    {
-        parent::__construct($file);
-
-        Assert::thatArgumentNotNull('namespace', $namespace);
-
-        $this->namespace = $namespace;
-    }
+    private $definition;
 
     public function dumpServiceDefinition(ServiceDefinition $definition)
     {
         Assert::thatArgumentNotNull('definition', $definition);
 
-        $wsdl = new Wsdl($definition->getName(), $this->namespace);
+        $this->definition = $definition;
 
-        $port = $wsdl->addPortType($this->getPortTypeName($definition));
-        $binding = $wsdl->addBinding($this->getBindingName($definition), $this->getPortTypeName($definition));
+        $wsdl = new Wsdl($definition->getName(), $definition->getNamespace());
+
+        $port = $wsdl->addPortType($this->getPortTypeName());
+        $binding = $wsdl->addBinding($this->getBindingName(), $this->getPortTypeName());
 
         $wsdl->addSoapBinding($binding, 'document');
-        $wsdl->addService($this->getServiceName($definition), $this->getPortTypeName($definition), $this->getBindingName($definition), 'http://localhost/service/');
+        $wsdl->addService($this->getServiceName(), $this->getPortTypeName(), $this->getBindingName(), '');
 
         foreach($definition->getMethods() as $method)
         {
@@ -68,13 +61,13 @@ class WsdlFileDumper extends FileDumper
             $bindingInput = array(
                 'parts' => implode(' ', array_keys($requestParts)),
                 'use' => 'literal',
-                'namespace' => $this->namespace,
+                'namespace' => $definition->getNamespace(),
                 'encodingStyle' => 'http://schemas.xmlsoap.org/soap/encoding/',
             );
             $bindingOutput = array(
                 'parts' => implode(' ', array_keys($responseParts)),
                 'use' => 'literal',
-                'namespace' => $this->namespace,
+                'namespace' => $definition->getNamespace(),
                 'encodingStyle' => 'http://schemas.xmlsoap.org/soap/encoding/',
             );
 
@@ -83,21 +76,25 @@ class WsdlFileDumper extends FileDumper
         }
 
         $wsdl->dump($this->file);
+
+        $this->definition = null;
+
+        return $this->file;
     }
 
-    protected function getPortTypeName(ServiceDefinition $definition)
+    protected function getPortTypeName()
     {
-        return $definition->getName() . 'PortType';
+        return $this->definition->getName() . 'PortType';
     }
 
-    protected function getBindingName(ServiceDefinition $definition)
+    protected function getBindingName()
     {
-        return $definition->getName() . 'Binding';
+        return $this->definition->getName() . 'Binding';
     }
 
-    protected function getServiceName(ServiceDefinition $definition)
+    protected function getServiceName()
     {
-        return $definition->getName() . 'Service';
+        return $this->definition->getName() . 'Service';
     }
 
     protected function getRequestMessageName(Method $method)
@@ -112,6 +109,6 @@ class WsdlFileDumper extends FileDumper
 
     protected function getSoapOperationName(Method $method)
     {
-        return $this->namespace . $method->getName();
+        return $this->definition->getNamespace() . $method->getName();
     }
 }

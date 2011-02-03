@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\DependencyInjection;
 
+use Bundle\WebServiceBundle\Util\Assert;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -48,12 +50,11 @@ class WebServiceExtension extends Extension
 
     protected function registerServiceDefinitionConfig(array $config, ContainerBuilder $configuration)
     {
-        if(!isset($config['name']))
-        {
-            throw new \InvalidArgumentException();
-        }
+        Assert::thatArgument('config.name', isset($config['name']));
+        Assert::thatArgument('config.namespace', isset($config['namespace']));
 
         $configuration->setParameter('webservice.definition.name', $config['name']);
+        $configuration->setParameter('webservice.definition.namespace', $config['namespace']);
         $configuration->setParameter('webservice.definition.resource', isset($config['resource']) ? $config['resource'] : null);
         $configuration->setParameter('webservice.definition.wsdl', isset($config['wsdl']) ? $config['wsdl'] : null);
     }
