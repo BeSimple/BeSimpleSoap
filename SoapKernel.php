@@ -11,6 +11,8 @@
 namespace Bundle\WebServiceBundle;
 
 
+use Bundle\WebServiceBundle\Soap\SoapServerFactory;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,21 +63,13 @@ class SoapKernel implements HttpKernelInterface
      */
     protected $kernel;
 
-    public function __construct(ServiceBinder $serviceBinder, ConverterRepository $converterRepository, HttpKernelInterface $kernel)
+    public function __construct(ServiceBinder $serviceBinder, SoapServerFactory $soapServerFactory, HttpKernelInterface $kernel)
     {
         $this->serviceBinder = $serviceBinder;
-
-        $this->soapServer = new \SoapServer(
-            $this->serviceBinder->getSerializedServiceDefinition(),
-            array(
-                'classmap' => $this->serviceBinder->getSoapServerClassmap(),
-            	'typemap'  => $converterRepository->toSoapServerTypemap($this),
-                'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
-            )
-        );
+        $this->soapServer = $soapServerFactory->create($this->soapRequest, $this->soapResponse);
         $this->soapServer->setObject($this);
-
         $this->kernel = $kernel;
+
     }
 
     public function getRequest()

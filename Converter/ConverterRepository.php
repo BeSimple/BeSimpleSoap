@@ -31,25 +31,9 @@ class ConverterRepository
         $this->typeConverters[] = $converter;
     }
 
-    public function toSoapServerTypemap(SoapKernel $kernel)
+    public function getTypeConverters()
     {
-        $result = array();
-
-        foreach($this->typeConverters as $typeConverter)
-        {
-            $result[] = array(
-                'type_name' => $typeConverter->getTypeName(),
-                'type_ns' => $typeConverter->getTypeNamespace(),
-                'from_xml' => function($input) use ($kernel, $typeConverter) {
-                    return $typeConverter->convertXmlToPhp($kernel->getRequest(), $input);
-                },
-                'to_xml' => function($input) use ($kernel, $typeConverter) {
-                    return $typeConverter->convertPhpToXml($kernel->getResponse(), $input);
-                }
-            );
-        }
-
-        return $result;
+        return $this->typeConverters;
     }
 
     public function registerTypeConverterServices(ContainerInterface $container)

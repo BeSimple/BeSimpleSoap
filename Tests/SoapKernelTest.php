@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\Tests;
 
+use Bundle\WebServiceBundle\Soap\SoapServerFactory;
+
 use Bundle\WebServiceBundle\Converter\ConverterRepository;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -42,20 +44,20 @@ class SoapKernelTest extends \PHPUnit_Framework_TestCase
     {
         $serviceDefinition = new ServiceDefinition('api');
         $serviceDefinitionLoader = new XmlFileLoader(__DIR__ . '/fixtures/api-servicedefinition.xml');
+        $serviceDefinitionLoader->loadServiceDefinition($serviceDefinition);
         $serviceDefinitionDumper = new StaticFileDumper(__DIR__ . '/fixtures/api.wsdl');
         $requestMessageBinder = new RpcLiteralRequestMessageBinder();
         $responseMessageBinder = new RpcLiteralResponseMessageBinder();
 
-        $serviceBinder = new ServiceBinder($serviceDefinition, $serviceDefinitionLoader, $serviceDefinitionDumper, $requestMessageBinder, $responseMessageBinder);
-
+        $serviceBinder = new ServiceBinder($serviceDefinition, $requestMessageBinder, $responseMessageBinder);
         $converterRepository = new ConverterRepository();
-
+        $soapServerFactory = new SoapServerFactory($serviceDefinition, $converterRepository, $serviceDefinitionDumper);
         $httpKernel = $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface');
         $httpKernel->expects($this->any())
                    ->method('handle')
                    ->will($this->returnValue(new SoapResponse(200)));
 
-        $this->soapKernel = new SoapKernel($serviceBinder, $converterRepository, $httpKernel);
+        $this->soapKernel = new SoapKernel($serviceBinder, $soapServerFactory, $httpKernel);
     }
 
     public function testHandle()

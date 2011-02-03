@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\ServiceBinding;
 
+use Bundle\WebServiceBundle\Util\QName;
+
 use Bundle\WebServiceBundle\ServiceDefinition\Type;
 
 use Bundle\WebServiceBundle\Soap\SoapHeader;
@@ -43,58 +45,14 @@ class ServiceBinder
 
     public function __construct(
         ServiceDefinition $definition,
-        LoaderInterface $loader,
-        DumperInterface $dumper,
         MessageBinderInterface $requestMessageBinder,
         MessageBinderInterface $responseMessageBinder
     )
     {
-        $loader->loadServiceDefinition($definition);
-
         $this->definition = $definition;
-        $this->definitionDumper = $dumper;
 
         $this->requestMessageBinder = $requestMessageBinder;
         $this->responseMessageBinder = $responseMessageBinder;
-    }
-
-    public function getSerializedServiceDefinition()
-    {
-        // TODO: add caching
-        return $this->definitionDumper->dumpServiceDefinition($this->definition);
-    }
-
-    public function getSoapServerClassmap()
-    {
-        $result = array();
-
-        foreach($this->definition->getHeaders() as $header)
-        {
-            $this->addSoapServerClassmapEntry($result, $header->getType());
-        }
-
-        foreach($this->definition->getMethods() as $method)
-        {
-            foreach($method->getArguments() as $arg)
-            {
-                $this->addSoapServerClassmapEntry($result, $arg->getType());
-            }
-        }
-
-        return $result;
-    }
-
-    private function addSoapServerClassmapEntry(&$classmap, Type $type)
-    {
-        list($namespace, $xmlType) = $this->parsePackedQName($type->getXmlType());
-        $phpType = $type->getPhpType();
-
-        if(isset($classmap[$xmlType]) && $classmap[$xmlType] != $phpType)
-        {
-            // log warning
-        }
-
-        $classmap[$xmlType] = $phpType;
     }
 
     public function isServiceHeader($name)
@@ -134,18 +92,8 @@ class ServiceBinder
 
     protected function createSoapHeader(Header $headerDefinition, $data)
     {
-        list($namespace, $name) = $this->parsePackedQName($headerDefinition->getType()->getXmlType());
+        $qname = QName::fromPackedQName($headerDefinition->getType()->getXmlType());
 
-        return new SoapHeader($namespace, $name, $data);
-    }
-
-    private function parsePackedQName($qname)
-    {
-        if(!preg_match('/^\{(.+)\}(.+)$/', $qname, $matches))
-        {
-            throw new \InvalidArgumentException();
-        }
-
-        return array($matches[1], $matches[2]);
+        return new SoapHeader($qname->getNamespace(), $qname->getName(), $data);
     }
 }
