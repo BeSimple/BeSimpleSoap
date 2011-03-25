@@ -29,14 +29,11 @@ use Bundle\WebServiceBundle\Converter\ConverterRepository;
 use Bundle\WebServiceBundle\Util\String;
 
 /**
- * SoapKernel converts a SoapRequest to a SoapResponse. It uses PHP's SoapServer for SOAP message
- * handling. The logic for every service method is implemented in a Symfony controller. The controller
- * to use for a specific service method is defined in the ServiceDefinition. The controller is invoked
- * by Symfony's HttpKernel implementation.
+ * 
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class SoapKernel implements HttpKernelInterface
+class SoapWebServiceController extends ContainerAware
 {
     /**
      * @var \SoapServer
@@ -54,6 +51,11 @@ class SoapKernel implements HttpKernelInterface
     protected $soapResponse;
 
     /**
+     * @var \Bundle\WebServiceBundle\ServiceConfigurationFactory
+     */
+    protected $serviceConfigurationFactory;
+
+    /**
      * @var \Bundle\WebServiceBundle\ServiceBinding\ServiceBinder
      */
     protected $serviceBinder;
@@ -63,13 +65,10 @@ class SoapKernel implements HttpKernelInterface
      */
     protected $kernel;
 
-    public function __construct(ServiceBinder $serviceBinder, SoapServerFactory $soapServerFactory, HttpKernelInterface $kernel)
+    public function __construct(ServiceConfigurationFactory $serviceConfigurationFactory, HttpKernelInterface $kernel)
     {
-        $this->serviceBinder = $serviceBinder;
-        $this->soapServer = $soapServerFactory->create($this->soapRequest, $this->soapResponse);
-        $this->soapServer->setObject($this);
+        $this->serviceConfigurationFactory = $serviceConfigurationFactory;
         $this->kernel = $kernel;
-
     }
 
     public function getRequest()
@@ -82,17 +81,43 @@ class SoapKernel implements HttpKernelInterface
         return $this->soapResponse;
     }
 
-    public function handle(Request $request = null, $type = self::MASTER_REQUEST, $catch = true)
+    public function handle($webservice)
     {
-        $this->soapRequest = $this->checkRequest($request);
+        $serviceConfiguration = $this->serviceConfigurationFactory->create($webservice);
+
+        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
+
+        $this->serviceBinder = $serviceConfiguration->createServiceBinder();
+        
+        $this->soapServer = $serviceConfiguration->createServer($this->soapRequest, $this->soapResponse);
+        $this->soapServer->setObject($this);
 
         ob_start();
-        $this->soapServer->handle($this->soapRequest->getSoapMessage());
-
+        {
+            $this->soapServer->handle($this->soapRequest->getSoapMessage());
+        }
         $soapResponseContent = ob_get_clean();
+        
         $this->soapResponse->setContent($soapResponseContent);
 
         return $this->soapResponse;
+    }
+
+    public function definition($webservice)
+    {
+        $serviceConfiguration = $this->serviceConfigurationFactory->create($webservice);
+        $request = $this->container->get('request');        
+        
+        if($request->query->has('WSDL'))
+        {
+            // dump wsdl file
+            // return 
+        }
+        else
+        {
+            // dump pretty definition
+            // return $this->container->get('templating')->renderView('');
+        }
     }
 
     /**
@@ -122,8 +147,8 @@ class SoapKernel implements HttpKernelInterface
                 $this->serviceBinder->processServiceMethodArguments($method, $arguments)
             );
 
-            // delegate to standard http kernel
-            $response = $this->kernel->handle($this->soapRequest, self::MASTER_REQUEST, true);
+            // forward to controller
+            $response = $this->kernel->handle($this->soapRequest, self::SUB_REQUEST, false);
 
             $this->soapResponse = $this->checkResponse($response);
 
@@ -142,32 +167,7 @@ class SoapKernel implements HttpKernelInterface
     }
 
     /**
-     * Checks the given Request, that it is a SoapRequest. If the request is null a new
-     * SoapRequest is created.
-     *
-     * @param Request $request A request to check
-     *
-     * @return SoapRequest A valid SoapRequest
-     *
-     * @throws InvalidArgumentException if the given Request is not a SoapRequest
-     */
-    protected function checkRequest(Request $request)
-    {
-        if($request == null)
-        {
-            $request = new SoapRequest();
-        }
-
-        if(!is_a($request, __NAMESPACE__ . '\\Soap\\SoapRequest'))
-        {
-            throw new \InvalidArgumentException();
-        }
-
-        return $request;
-    }
-
-    /**
-     * Checks the given Response, that it is a SoapResponse.
+     * Checks that the given Response is a SoapResponse.
      *
      * @param Response $response A response to check
      *
@@ -177,7 +177,7 @@ class SoapKernel implements HttpKernelInterface
      */
     protected function checkResponse(Response $response)
     {
-        if($response == null || !is_a($response, __NAMESPACE__ . '\\Soap\\SoapResponse'))
+        if($response == null || $response instanceof SoapResponse)
         {
             throw new \InvalidArgumentException();
         }

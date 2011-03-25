@@ -24,11 +24,11 @@ use Zend\Mime\Message;
  */
 class SoapRequest extends Request
 {
-    /**
-     * @var string
-     */
-    protected $rawContent;
-
+    public static function createFromHttpRequest(Request $request)
+    {
+        return new static($request->query->all(), $request->request->all(), $request->attributes->all(), $request->cookies->all(), $request->files->all(), $request->server->all(), $request->content);
+    }
+    
     /**
      * @var string
      */
@@ -49,24 +49,15 @@ class SoapRequest extends Request
      */
     protected $soapAttachments;
 
-    public function __construct($rawContent = null, array $query = null, array $attributes = null, array $cookies = null, array $server = null)
+    public function initialize(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
     {
-        parent::__construct($query, null, $attributes, $cookies, null, $server);
+        parent::initialize($query, $request, $attributes, $cookies, $files, $server, $content);
 
-        $this->rawContent = $rawContent != null ? $rawContent : $this->loadRawContent();
         $this->soapMessage = null;
         $this->soapHeaders = new Collection('getName');
         $this->soapAttachments = new Collection('getId');
-    }
 
-    /**
-     * Gets raw data send to the server.
-     *
-     * @return string
-     */
-    public function getRawContent()
-    {
-        return $this->rawContent;
+        $this->setRequestFormat('soap');
     }
 
     /**
@@ -94,16 +85,6 @@ class SoapRequest extends Request
         return $this->soapAttachments;
     }
 
-    /**
-     * Loads the plain HTTP POST data.
-     *
-     * @return string
-     */
-    protected function loadRawContent()
-    {
-        return isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : file_get_contents('php://input');
-    }
-
     protected function initializeSoapMessage()
     {
         if($this->server->has('CONTENT_TYPE'))
@@ -115,7 +96,7 @@ class SoapRequest extends Request
                 case 'multipart/related':
                     if($type['type'] == 'application/xop+xml')
                     {
-                        return $this->initializeMtomSoapMessage($type, $this->rawContent);
+                        return $this->initializeMtomSoapMessage($type, $this->getContent());
                     }
                     else
                     {
@@ -132,7 +113,7 @@ class SoapRequest extends Request
         }
 
         // fallback
-        return $this->rawContent;
+        return $this->getContent();
     }
 
     protected function initializeMtomSoapMessage(array $contentTypeHeader, $content)
