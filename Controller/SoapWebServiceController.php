@@ -51,11 +51,6 @@ class SoapWebServiceController extends ContainerAware
     protected $soapResponse;
 
     /**
-     * @var \Bundle\WebServiceBundle\ServiceConfigurationFactory
-     */
-    protected $serviceConfigurationFactory;
-
-    /**
      * @var \Bundle\WebServiceBundle\ServiceBinding\ServiceBinder
      */
     protected $serviceBinder;
@@ -65,9 +60,9 @@ class SoapWebServiceController extends ContainerAware
      */
     protected $kernel;
 
-    public function __construct(ServiceConfigurationFactory $serviceConfigurationFactory, HttpKernelInterface $kernel)
+    public function __construct(ContainerInterface $container, HttpKernelInterface $kernel)
     {
-        $this->serviceConfigurationFactory = $serviceConfigurationFactory;
+        $this->setContainer($container);
         $this->kernel = $kernel;
     }
 
