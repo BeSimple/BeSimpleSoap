@@ -4,21 +4,51 @@ WebServiceBundle
 The WebServiceBundle is a Symfony2 bundle to build WSDL and SOAP based web services.
 It is based on the [ckWebServicePlugin] [1] for symfony.
 
-Installation
+Requirements
 ------------
 
-Put WebServiceBundle in your `src/Bundle` dir. Enable PHP's `SOAP` extension.
+ * Install and enable PHP's `SOAP` extension
+ * Download and add `Zend\Soap` library to `app/autoload.php`
 
-Create a new front controller script (like `index.php`) for your web service endpoint, e.g. `webservice.php`.
-Change the environment passed to the kernel constructor, e.g. to `soap`, in this new front controller script. 
+QuickStart
+----------
 
-Configure the WebServiceBundle in the configuration file for this new environment (e.g. `config_soap.yml`):
+ *  Put WebServiceBundle in your `src/Bundle` dir
+ *  Enable WebServiceBundle in your `app/AppKernel.php`
+ 
+ *  Include the WebServiceBundle's routing configuration in `app/config/routing.yml` (you can choose the prefix arbitrarily)
+   
+        _ws:
+            resource: "@WebServiceBundle/Resources/config/routing/webservicecontroller.xml"
+            prefix:   /ws
+          
+ *  Configure your first web service in `app/config/config.yml`
+        
+        web_service:
+            services:
+                demoapi:
+                    name:          DemoApi
+                    namespace:     http://mysymfonyapp.com/ws/DemoApi/1.0/                  
+                    binding:       rpc-literal
+                    resource:      "@AcmeDemoBundle/Controller/DemoController.php"
+                    resource_type: annotation
 
-    webservice.config:
-        definition:
-            name: MyWebService
-        binding:
-            style: rpc-literal
+ *  Annotate your controller methods
+ 
+        // src/Acme/DemoBundle/Controller/DemoController.php
+        /**
+         * @ws:Method('hello')
+         * @ws:Param('name', type = 'string')
+         */
+        public function helloAction($name)
+        {
+            return new SoapResponse(sprintf('Hello %s!', $name));
+        }
+
+ *  Open your web service endpoint
+
+     *   `http://localhost/app_dev.php/ws/DemoApi` - HTML documentation
+     *   `http://localhost/app_dev.php/ws/DemoApi?WSDL` - WSDL file
 
 Test
 ----
