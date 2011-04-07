@@ -4,6 +4,8 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
 	<parameters>
+	    <parameter key="webservice.file_locator.class">Symfony\Component\HttpKernel\Config\FileLocator</parameter>
+        
         <parameter key="webservice.cache_dir">%kernel.cache_dir%/webservice</parameter>
 	</parameters>
 	
@@ -14,11 +16,13 @@
 		</service>
 		
 		<service id="webservice.context" class="Bundle\WebServiceBundle\WebServiceContext" abstract="true">
+		     
 		    <argument type="service" id="webservice.definition.loader"/>
 		    <argument type="service" id="webservice.definition.dumper.wsdl"/>
             <argument type="service" id="webservice.converter.repository"/>
             <argument type="service" id="webservice.binder.request"/>
             <argument type="service" id="webservice.binder.response"/>
+            
             <argument type="collection">
                 <!-- 
                 <argument key="name">%webservice.name%</argument>
@@ -29,6 +33,7 @@
                  -->
                 <argument key="cache_dir">%webservice.cache_dir%</argument>
             </argument>
+             
 		</service>
 		
 		<service id="webservice.binder.request.rpcliteral" class="Bundle\WebServiceBundle\ServiceBinding\RpcLiteralRequestMessageBinder" />
@@ -41,12 +46,27 @@
 				<argument type="service" id="service_container" />
 			</call>
 		</service>
-		<!-- 
-		<service id="webservice.definition.loader" class="">
-			
-		</service>
-		 -->
-		<service id="webservice.definition.dumper.wsdl.rpcliteral" class="Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumpler">
+				
+        <service id="webservice.file_locator" class="%webservice.file_locator.class%" public="false">
+            <argument type="service" id="kernel" />
+        </service>
+		
+		<!-- TODO: replace with delegating loader -->
+        <service id="webservice.definition.loader" alias="webservice.definition.loader.annot_file" />
+        
+        <service id="webservice.definition.loader.annot_file" class="Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationFileLoader">
+            <tag name="webservice.definition.loader" />
+            <argument type="service" id="webservice.file_locator" />
+            <argument type="service" id="webservice.definition.loader.annot_class" />
+        </service>
+
+        <service id="webservice.definition.loader.annot_class" class="Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationClassLoader">
+            <tag name="webservice.definition.loader" />
+            <argument type="service" id="webservice.annotations.reader" />
+            <argument type="service" id="annotations.configuration_reader" />
+        </service>
+		
+		<service id="webservice.definition.dumper.wsdl.rpcliteral" class="Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumper">
 
 		</service>
 		<!-- 

@@ -10,6 +10,8 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
+use Symfony\Component\Config\Loader\FileLoader;
+
 use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
 use Bundle\WebServiceBundle\ServiceDefinition\Header;
 use Bundle\WebServiceBundle\ServiceDefinition\Method;
@@ -18,14 +20,20 @@ use Bundle\WebServiceBundle\ServiceDefinition\Type;
 
 class XmlFileLoader extends FileLoader
 {
-    public function loadServiceDefinition(ServiceDefinition $definition)
+    public function supports($resource, $type = null)
     {
-        $xml = $this->parseFile($this->file);
+        return is_string($resource) && 'xml' === pathinfo($resource, PATHINFO_EXTENSION);
+    }
+    
+    public function load($file, $type = null)
+    {
+        $path = $this->locator->locate($file);
+        
+        $xml = $this->parseFile($path);
 
-        if($definition->getName() != $xml['name'])
-        {
-            throw new \InvalidArgumentException();
-        }
+        $definition = new ServiceDefinition();
+        $definition->setName((string) $xml['name']);
+        $definition->setNamespace((string) $xml['namespace']);
 
         foreach($xml->header as $header)
         {
@@ -36,6 +44,8 @@ class XmlFileLoader extends FileLoader
         {
             $definition->getMethods()->add($this->parseMethod($method));
         }
+        
+        return $definition;
     }
 
     /**
