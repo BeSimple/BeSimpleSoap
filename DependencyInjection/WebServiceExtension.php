@@ -16,6 +16,8 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -27,10 +29,14 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class WebServiceExtension extends Extension
 {
+    // maps config options to service suffix'
+    private $bindingConfigToServiceSuffixMap = array('rpc-literal' => '.rpcliteral', 'document-wrapped' => '.documentwrapped');
+    
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
+        $loader->load('annotations.xml');
         $loader->load('webservice.xml');
         
         $processor = new Processor();
@@ -46,7 +52,21 @@ class WebServiceExtension extends Extension
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)
     {
+        $bindingDependendArguments = array(1, 3, 4);
+        $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
+        unset($config['binding']);
         
+        $contextPrototype = $container->getDefinition('webservice.context');
+        $contextPrototypeArguments = $contextPrototype->getArguments();
+        
+        $contextId = 'webservice.context.' . $config['name'];
+        $context = $container->setDefinition($contextId, new DefinitionDecorator('webservice.context'));
+                
+        foreach($bindingDependendArguments as $idx)
+        {
+            $context->setArgument($idx, new Reference($contextPrototypeArguments[$idx] . $bindingSuffix));
+        }
+        $context->setArgument(5, array_merge($contextPrototypeArguments[5], $config));
     }
     
     public function getNamespace()
