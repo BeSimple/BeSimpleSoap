@@ -8,19 +8,20 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle;
-
-
-use Bundle\WebServiceBundle\Soap\SoapServerFactory;
+namespace Bundle\WebServiceBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAware;
+
 use Bundle\WebServiceBundle\Soap\SoapRequest;
 use Bundle\WebServiceBundle\Soap\SoapResponse;
 use Bundle\WebServiceBundle\Soap\SoapHeader;
+use Bundle\WebServiceBundle\Soap\SoapServerFactory;
 
 use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
 
@@ -78,13 +79,13 @@ class SoapWebServiceController extends ContainerAware
 
     public function handle($webservice)
     {
-        $serviceConfiguration = $this->serviceConfigurationFactory->create($webservice);
+        $webServiceContext = $this->container->get('webservice.context.' . $webservice);
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
 
-        $this->serviceBinder = $serviceConfiguration->createServiceBinder();
+        $this->serviceBinder = $webServiceContext->getServiceBinder();
         
-        $this->soapServer = $serviceConfiguration->createServer($this->soapRequest, $this->soapResponse);
+        $this->soapServer = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->soapResponse);
         $this->soapServer->setObject($this);
 
         ob_start();
@@ -99,14 +100,16 @@ class SoapWebServiceController extends ContainerAware
     }
 
     public function definition($webservice)
-    {
-        $serviceConfiguration = $this->serviceConfigurationFactory->create($webservice);
+    {   
+        $webServiceContext = $this->container->get('webservice.context.' . $webservice);
         $request = $this->container->get('request');        
         
         if($request->query->has('WSDL'))
         {
-            // dump wsdl file
-            // return 
+            $response = new Response(file_get_contents($webServiceContext->getWsdlFile()));
+            $response->headers->set('Content-Type', 'application/wsdl+xml');
+            
+            return $response;
         }
         else
         {
