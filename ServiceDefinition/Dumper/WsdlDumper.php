@@ -22,11 +22,11 @@ use Zend\Soap\Wsdl;
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class WsdlFileDumper extends FileDumper
+class WsdlDumper implements DumperInterface
 {
     private $definition;
-
-    public function dumpServiceDefinition(ServiceDefinition $definition)
+    
+    public function dumpServiceDefinition(ServiceDefinition $definition, array $options = array())
     {
         Assert::thatArgumentNotNull('definition', $definition);
 
@@ -75,13 +75,11 @@ class WsdlFileDumper extends FileDumper
             $wsdl->addSoapOperation($bindingOperation, $this->getSoapOperationName($method));
         }
 
-        $wsdl->dump($this->file);
-
         $this->definition = null;
 
-        return $this->file;
+        return $wsdl->toXml();
     }
-
+    
     protected function getPortTypeName()
     {
         return $this->definition->getName() . 'PortType';

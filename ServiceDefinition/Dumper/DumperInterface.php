@@ -14,5 +14,5 @@ use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
 
 interface DumperInterface
 {
-    function dumpServiceDefinition(ServiceDefinition $definition);
+    function dumpServiceDefinition(ServiceDefinition $definition, array $options = array());
 }
