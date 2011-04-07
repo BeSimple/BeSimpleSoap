@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<container xmlns="http://www.symfony-project.org/schema/dic/services"
+<container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
 	<parameters>
-		<parameter key="request.class">Bundle\WebServiceBundle\Soap\SoapRequest</parameter>
-		
-		<parameter key="webservice.binder.request.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
-		<parameter key="webservice.binder.response.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
-		
-		<parameter key="webservice.definition.class">Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition</parameter>
-		<parameter key="webservice.definition.loader.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\XmlFileLoader</parameter>
-		<parameter key="webservice.definition.dumper.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlFileDumper</parameter>
+        <parameter key="webservice.cache_dir">%kernel.cache_dir%/webservice</parameter>
 	</parameters>
 	
 	<services>        
-		<service id="webservice_controller" class="Bundle\WebServiceBundle\Controller\SoapWebServiceController">
-            <argument type="service" id="webservice.binder" />
-            <argument type="service" id="webservice.server.factory" />
+		<service id="webservice.controller" class="Bundle\WebServiceBundle\Controller\SoapWebServiceController">
+            <argument type="service" id="service_container" />
             <argument type="service" id="http_kernel" />
 		</service>
 		
-		<service id="webservice.binder" class="Bundle\WebServiceBundle\ServiceBinding\ServiceBinder">
-			<argument type="service" id="webservice.definition" />
-			
-			<argument type="service" id="webservice.binder.request" />
-			<argument type="service" id="webservice.binder.response" />
+		<service id="webservice.context" class="Bundle\WebServiceBundle\WebServiceContext" abstract="true">
+		    <argument type="service" id="webservice.definition.loader"/>
+		    <argument type="service" id="webservice.definition.dumper.wsdl"/>
+            <argument type="service" id="webservice.converter.repository"/>
+            <argument type="service" id="webservice.binder.request"/>
+            <argument type="service" id="webservice.binder.response"/>
+            <argument type="collection">
+                <!-- 
+                <argument key="name">%webservice.name%</argument>
+                <argument key="namespace">%webservice.namespace%</argument>
+                
+                <argument key="resource">%webservice.resource%</argument>
+                <argument key="resource_type">%webservice.resource_type%</argument>
+                 -->
+                <argument key="cache_dir">%webservice.cache_dir%</argument>
+            </argument>
 		</service>
 		
-		<service id="webservice.binder.request" class="%webservice.binder.request.class%" />
-		<service id="webservice.binder.response" class="%webservice.binder.response.class%" />
-		
-		<service id="webservice.server.factory" class="Bundle\WebServiceBundle\Soap\SoapServerFactory">
-            <argument type="service" id="webservice.definition" />
-            <argument type="service" id="webservice.converter.repository" />
-            <argument type="service" id="webservice.definition.dumper" />
-		</service>
+		<service id="webservice.binder.request.rpcliteral" class="Bundle\WebServiceBundle\ServiceBinding\RpcLiteralRequestMessageBinder" />
+		<service id="webservice.binder.response.rpcliteral" class="Bundle\WebServiceBundle\ServiceBinding\RpcLiteralResponseMessageBinder" />
+        <service id="webservice.binder.request.documentwrapped" class="Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder" />
+        <service id="webservice.binder.response.documentwrapped" class="Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder" />
 		
 		<service id="webservice.converter.repository" class="Bundle\WebServiceBundle\Converter\ConverterRepository">
 			<call method="registerTypeConverterServices">
 				<argument type="service" id="service_container" />
 			</call>
 		</service>
-		
-		<service id="webservice.definition" class="%webservice.definition.class%" shared="true">
-			<argument type="string">%webservice.definition.name%</argument>
-			<argument type="string">%webservice.definition.namespace%</argument>
-			<configurator service="webservice.definition.loader" method="loadServiceDefinition" />
+		<!-- 
+		<service id="webservice.definition.loader" class="">
+			
 		</service>
-		<service id="webservice.definition.loader" class="%webservice.definition.loader.class%">
-			<argument type="string">%webservice.definition.resource%</argument>
+		 -->
+		<service id="webservice.definition.dumper.wsdl.rpcliteral" class="Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumpler">
+
 		</service>
-		<service id="webservice.definition.dumper" class="%webservice.definition.dumper.class%">
-			<argument type="string">%webservice.definition.wsdl%</argument>
-		</service>
+		<!-- 
+        <service id="webservice.definition.dumper.wsdl.documentwrapped" class="">
+
+        </service>
+         -->
 	</services>
 </container>

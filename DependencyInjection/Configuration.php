@@ -28,10 +28,34 @@ class Configuration
     public function getConfigTree()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('webservice');
+        $rootNode = $treeBuilder->root('web_service');
 
         $rootNode
             ->children()
+                ->arrayNode('services')
+                    ->prototype('array')
+                    ->children()
+                        ->scalarNode('name')
+                            ->isRequired()
+                        ->end()
+                        ->scalarNode('namespace')
+                            ->isRequired()
+                        ->end()
+                        ->scalarNode('resource')
+                            ->defaultValue('*')
+                        ->end()
+                        ->scalarNode('resource_type')
+                            ->defaultValue('annotation')
+                        ->end()
+                        ->scalarNode('binding')
+                            ->defaultValue('document-wrapped')
+                            ->validate()
+                                ->ifNotInArray(array('rpc-literal', 'document-wrapped'))
+                                ->thenInvalid("Service binding style has to be either 'rpc-literal' or 'document-wrapped'")
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 

@@ -12,9 +12,13 @@ namespace Bundle\WebServiceBundle\DependencyInjection;
 
 use Bundle\WebServiceBundle\Util\Assert;
 
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\Processor;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * WebServiceExtension.
@@ -23,78 +27,35 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
  */
 class WebServiceExtension extends Extension
 {
-    public function configLoad(array $config, ContainerBuilder $configuration)
+    public function load(array $configs, ContainerBuilder $container)
     {
-        if(!$configuration->hasDefinition('webservice.kernel'))
-        {
-            $loader = new XmlFileLoader($configuration, __DIR__ . '/../Resources/config');
-            $loader->load('services.xml');
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-            $configuration->setAlias('http_kernel', 'webservice.kernel');
-        }
+        $loader->load('webservice.xml');
+        
+        $processor = new Processor();
+        $configuration = new Configuration();
 
-        if(isset($config['definition']))
+        $config = $processor->process($configuration->getConfigTree(), $configs);
+        
+        foreach($config['services'] as $serviceContextConfig)
         {
-            $this->registerServiceDefinitionConfig($config['definition'], $configuration);
-        }
-        else
-        {
-            throw new \InvalidArgumentException();
-        }
-
-        if(isset($config['binding']))
-        {
-            $this->registerServiceBindingConfig($config['binding'], $configuration);
+            $this->createWebServiceContext($serviceContextConfig, $container);
         }
     }
 
-    protected function registerServiceDefinitionConfig(array $config, ContainerBuilder $configuration)
+    private function createWebServiceContext(array $config, ContainerBuilder $container)
     {
-        Assert::thatArgument('config.name', isset($config['name']));
-        Assert::thatArgument('config.namespace', isset($config['namespace']));
-
-        $configuration->setParameter('webservice.definition.name', $config['name']);
-        $configuration->setParameter('webservice.definition.namespace', $config['namespace']);
-        $configuration->setParameter('webservice.definition.resource', isset($config['resource']) ? $config['resource'] : null);
-        $configuration->setParameter('webservice.definition.wsdl', isset($config['wsdl']) ? $config['wsdl'] : null);
+        
     }
-
-    protected function registerServiceBindingConfig(array $config, ContainerBuilder $configuration)
-    {
-        $style = isset($config['style']) ? $config['style'] : 'document-literal-wrapped';
-
-        if(!in_array($style, array('document-literal-wrapped', 'rpc-literal')))
-        {
-            throw new \InvalidArgumentException();
-        }
-
-        $binderNamespace = 'Bundle\\WebServiceBundle\\ServiceBinding\\';
-
-        switch ($style)
-        {
-            case 'document-literal-wrapped':
-                $configuration->setParameter('webservice.binder.request.class', $binderNamespace . 'DocumentLiteralWrappedRequestMessageBinder');
-                $configuration->setParameter('webservice.binder.response.class', $binderNamespace . 'DocumentLiteralWrappedResponseMessageBinder');
-                break;
-            case 'rpc-literal':
-                $configuration->setParameter('webservice.binder.request.class', $binderNamespace . 'RpcLiteralRequestMessageBinder');
-                $configuration->setParameter('webservice.binder.response.class', $binderNamespace . 'RpcLiteralResponseMessageBinder');
-                break;
-        }
-    }
-
-    public function getXsdValidationBasePath()
-    {
-        return null;
-    }
-
+    
     public function getNamespace()
     {
         return null;
     }
 
-    public function getAlias()
+    public function getXsdValidationBasePath()
     {
-        return 'webservice';
+        return null;
     }
 }
