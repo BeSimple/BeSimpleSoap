@@ -30,21 +30,19 @@ class SoapServerFactory
 {
     private $definition;
     private $converters;
-    private $dumper;
+    private $wsdlFile;
 
-    public function __construct(ServiceDefinition $definition, ConverterRepository $converters, FileDumper $dumper)
+    public function __construct(ServiceDefinition $definition, $wsdlFile, ConverterRepository $converters)
     {
         $this->definition = $definition;
+        $this->wsdlFile = $wsdlFile;
         $this->converters = $converters;
-        $this->dumper = $dumper;
     }
 
     public function create(&$request, &$response)
     {
-        $file = $this->dumper->dumpServiceDefinition($this->definition);
-
         $server = new \SoapServer(
-            $file,
+            $this->wsdlFile,
             array(
                 'classmap' => $this->createSoapServerClassmap(),
             	'typemap'  => $this->createSoapServerTypemap($request, $response),
