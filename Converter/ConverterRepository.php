@@ -38,9 +38,11 @@ class ConverterRepository
 
     public function registerTypeConverterServices(ContainerInterface $container)
     {
+        /*
         foreach($container->findTaggedServiceIds('webservice.converter') as $id => $attributes)
         {
             $this->addTypeConverter($container->get($id));
         }
+         */
     }
 }
