@@ -10,21 +10,21 @@
 
 namespace Bundle\WebServiceBundle;
 
+
+use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Config\Loader\LoaderInterface;
+
+use Bundle\WebServiceBundle\Converter\ConverterRepository;
+use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
+use Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface;
+use Bundle\WebServiceBundle\ServiceDefinition\Dumper\DumperInterface;
+use Bundle\WebServiceBundle\Soap\SoapServerFactory;
+
 /**
  * WebServiceContext.
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-use Bundle\WebServiceBundle\ServiceDefinition\Dumper\DumperInterface;
-
-use Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface;
-
-use Bundle\WebServiceBundle\Converter\ConverterRepository;
-
-use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
-
-use Bundle\WebServiceBundle\Soap\SoapServerFactory;
-
 class WebServiceContext
 {
     private $converterRepository;
@@ -56,15 +56,36 @@ class WebServiceContext
     {
         if($this->serviceDefinition === null)
         {
+            if(!$this->serviceDefinitionLoader->supports($this->options['resource'], $this->options['resource_type']))
+            {
+                throw new \LogicException();
+            }
             
+            $this->serviceDefinition = $this->serviceDefinitionLoader->load($this->options['resource'], $this->options['resource_type']);
+            $this->serviceDefinition->setName($this->options['name']);
+            $this->serviceDefinition->setNamespace($this->options['namespace']);
         }
         
-        ;
+        return $this->serviceDefinition;
     }
     
-    public function getWsdlFile() 
+    public function getWsdlFile($endpoint = null)
     {
-        ;
+        $id = $endpoint !== null ? '.' . md5($endpoint) : '';
+        $file = sprintf('%s/%s.wsdl', $this->options['cache_dir'], $this->options['name'] . $id);
+        $cache = new ConfigCache($file, true);
+        
+        if(!$cache->isFresh())
+        {
+            $cache->write($this->wsdlFileDumper->dumpServiceDefinition($this->getServiceDefinition(), array('endpoint' => $endpoint)));
+        }
+        
+        return $file;
+    }
+    
+    public function getWsdlFileContent($endpoint = null)
+    {
+        return file_get_contents($this->getWsdlFile($endpoint));
     }
     
     public function getServiceBinder() 

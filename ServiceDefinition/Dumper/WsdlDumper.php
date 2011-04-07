@@ -30,15 +30,17 @@ class WsdlDumper implements DumperInterface
     {
         Assert::thatArgumentNotNull('definition', $definition);
 
+        $options = array_merge(array('endpoint' => ''), $options);
+        
         $this->definition = $definition;
 
         $wsdl = new Wsdl($definition->getName(), $definition->getNamespace());
 
         $port = $wsdl->addPortType($this->getPortTypeName());
         $binding = $wsdl->addBinding($this->getBindingName(), $this->getPortTypeName());
-
-        $wsdl->addSoapBinding($binding, 'document');
-        $wsdl->addService($this->getServiceName(), $this->getPortTypeName(), $this->getBindingName(), '');
+        
+        $wsdl->addSoapBinding($binding, 'rpc');
+        $wsdl->addService($this->getServiceName(), $this->getPortTypeName(), $this->getBindingName(), $options['endpoint']);
 
         foreach($definition->getMethods() as $method)
         {
@@ -77,6 +79,8 @@ class WsdlDumper implements DumperInterface
 
         $this->definition = null;
 
+        $wsdl->toDomDocument()->formatOutput = true;
+        
         return $wsdl->toXml();
     }
     

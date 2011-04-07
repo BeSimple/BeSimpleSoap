@@ -77,7 +77,7 @@ class SoapWebServiceController extends ContainerAware
         return $this->soapResponse;
     }
 
-    public function handle($webservice)
+    public function call($webservice)
     {
         $webServiceContext = $this->container->get('webservice.context.' . $webservice);
 
@@ -106,16 +106,19 @@ class SoapWebServiceController extends ContainerAware
         
         if($request->query->has('WSDL'))
         {
-            $response = new Response(file_get_contents($webServiceContext->getWsdlFile()));
-            $response->headers->set('Content-Type', 'application/wsdl+xml');
+            $endpoint = $this->container->get('router')->generate('_webservice_call', array('webservice' => $webservice), true);
             
-            return $response;
+            $response = new Response($webServiceContext->getWsdlFileContent($endpoint));
+            $response->headers->set('Content-Type', 'text/plain');
         }
         else
         {
+            $response = new Response('woho');
             // dump pretty definition
             // return $this->container->get('templating')->renderView('');
         }
+        
+        return $response;
     }
 
     /**
