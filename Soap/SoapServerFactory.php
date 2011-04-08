@@ -96,6 +96,9 @@ class SoapServerFactory
 
     private function addSoapServerClassmapEntry(&$classmap, Type $type)
     {
+        // TODO: fix this hack
+        if($type->getXmlType() === null) return;
+        
         $xmlType = QName::fromPackedQName($type->getXmlType())->getName();
         $phpType = $type->getPhpType();
 

@@ -109,13 +109,13 @@ class SoapWebServiceController extends ContainerAware
             $endpoint = $this->container->get('router')->generate('_webservice_call', array('webservice' => $webservice), true);
             
             $response = new Response($webServiceContext->getWsdlFileContent($endpoint));
-            $response->headers->set('Content-Type', 'text/plain');
+            $response->headers->set('Content-Type', 'application/wsdl+xml');
         }
         else
         {
-            $response = new Response('woho');
-            // dump pretty definition
-            // return $this->container->get('templating')->renderView('');
+            // TODO: replace with better represantation
+            $response = new Response($webServiceContext->getWsdlFileContent());
+            $response->headers->set('Content-Type', 'text/xml');
         }
         
         return $response;
@@ -149,7 +149,7 @@ class SoapWebServiceController extends ContainerAware
             );
 
             // forward to controller
-            $response = $this->kernel->handle($this->soapRequest, self::SUB_REQUEST, false);
+            $response = $this->kernel->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
 
             $this->soapResponse = $this->checkResponse($response);
 
@@ -178,7 +178,7 @@ class SoapWebServiceController extends ContainerAware
      */
     protected function checkResponse(Response $response)
     {
-        if($response == null || $response instanceof SoapResponse)
+        if($response == null || !$response instanceof SoapResponse)
         {
             throw new \InvalidArgumentException();
         }
