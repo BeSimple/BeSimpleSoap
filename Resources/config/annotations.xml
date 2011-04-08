@@ -5,8 +5,8 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="webservice.annotations.reader.class">Doctrine\Common\Annotations\AnnotationReader</parameter>
-        <parameter key="webservice.annotations.parser.class">Doctrine\Common\Annotations\Parser</parameter>
+        <parameter key="webservice.annotations.reader.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationReader</parameter>
+        <parameter key="webservice.annotations.parser.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationParser</parameter>
     </parameters>
 
     <services>

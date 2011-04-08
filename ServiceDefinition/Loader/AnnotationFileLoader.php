@@ -1,13 +1,13 @@
 <?php
-
 /*
- * This file is part of the Symfony package.
+ * This file is part of the WebServiceBundle.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
+ * (c) Christian Kerl <christian-kerl@web.de>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
+
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
@@ -21,7 +21,9 @@ use Symfony\Component\Config\FileLocator;
  * AnnotationFileLoader loads ServiceDefinition from annotations set
  * on a PHP class and its methods.
  *
- * @author Fabien Potencier <fabien@symfony.com>
+ * Based on \Symfony\Component\Routing\Loader\AnnotationFileLoader
+ *
+ * @author Christian Kerl <christian-kerl@web.de>
  */
 class AnnotationFileLoader extends FileLoader
 {
@@ -50,20 +52,21 @@ class AnnotationFileLoader extends FileLoader
      * @param string $file A PHP file path
      * @param string $type The resource type
      *
-     * @return RouteCollection A RouteCollection instance
+     * @return ServiceDefinition A ServiceDefinition instance
      *
-     * @throws \InvalidArgumentException When the file does not exist or its routes cannot be parsed
+     * @throws \InvalidArgumentException When the file does not exist
      */
     public function load($file, $type = null)
     {
         $path = $this->locator->locate($file);
 
-        $definiton = new ServiceDefinition();
+        $definition = new ServiceDefinition();
+        
         if ($class = $this->findClass($path)) {
-            
+            $definition = $this->loader->load($class, $type);
         }
-
-        return $definiton;
+        
+        return $definition;
     }
 
     /**

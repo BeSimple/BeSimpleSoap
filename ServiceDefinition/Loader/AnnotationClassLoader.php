@@ -1,59 +1,41 @@
 <?php
-
 /*
- * This file is part of the Symfony package.
+ * This file is part of the WebServiceBundle.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
+ * (c) Christian Kerl <christian-kerl@web.de>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
+
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Symfony\Component\Config\Resource\FileResource;
+
+
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+use Bundle\WebServiceBundle\ServiceDefinition\Method;
+use Bundle\WebServiceBundle\ServiceDefinition\Argument;
+use Bundle\WebServiceBundle\ServiceDefinition\Type;
+
+use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Method as MethodAnnotation;
+
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolver;
 
 /**
- * AnnotationClassLoader loads routing information from a PHP class and its methods.
+ * AnnotationClassLoader loads ServiceDefinition from a PHP class and its methods.
  *
- * You need to define an implementation for the getRouteDefaults() method. Most of the
- * time, this method should define some PHP callable to be called for the route
- * (a controller in MVC speak).
+ * Based on \Symfony\Component\Routing\Loader\AnnotationClassLoader
  *
- * The @Route annotation can be set on the class (for global parameters),
- * and on each method.
- *
- * The @Route annotation main value is the route pattern. The annotation also
- * recognizes three parameters: requirements, options, and name. The name parameter
- * is mandatory. Here is an example of how you should be able to use it:
- *
- *     /**
- *      * @Route("/Blog")
- *      * /
- *     class Blog
- *     {
- *         /**
- *          * @Route("/", name="blog_index")
- *          * /
- *         public function index()
- *         {
- *         }
- *
- *         /**
- *          * @Route("/{id}", name="blog_post", requirements = {"id" = "\d+"})
- *          * /
- *         public function show()
- *         {
- *         }
- *     }
- *
- * @author Fabien Potencier <fabien@symfony.com>
+ * @author Christian Kerl <christian-kerl@web.de>
  */
 class AnnotationClassLoader implements LoaderInterface
 {
+    private $wsMethodAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Method';
+    private $wsParamAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Param';
+    private $wsResultAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Result';
+    
     protected $reader;
     
     /**
@@ -67,33 +49,72 @@ class AnnotationClassLoader implements LoaderInterface
     }
 
     /**
-     * Loads from annotations from a class.
+     * Loads a ServiceDefinition from annotations from a class.
      *
      * @param string $class A class name
      * @param string $type  The resource type
      *
-     * @return RouteCollection A RouteCollection instance
+     * @return ServiceDefinition A ServiceDefinition instance
      *
      * @throws \InvalidArgumentException When route can't be parsed
      */
     public function load($class, $type = null)
     {
-        if (!class_exists($class)) {
+        if (!class_exists($class)) 
+        {
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
         $class = new \ReflectionClass($class);
 
-        $collection = new RouteCollection();
-        $collection->addResource(new FileResource($class->getFileName()));
-
-        foreach ($class->getMethods() as $method) {
+        $definition = new ServiceDefinition();
+        
+        foreach ($class->getMethods() as $method) 
+        {
+            $wsMethodAnnot = $this->reader->getMethodAnnotation($method, $this->wsMethodAnnotationClass);
             
+            if($wsMethodAnnot !== null)
+            {
+                $wsParamAnnots = $this->reader->getMethodAnnotations($method, $this->wsParamAnnotationClass);
+                $wsResultAnnot = $this->reader->getMethodAnnotation($method, $this->wsResultAnnotationClass);
+                
+                $serviceMethod = new Method();
+                $serviceMethod->setName($wsMethodAnnot->getName($method->getName()));
+                $serviceMethod->setController($this->getController($method, $wsMethodAnnot));
+                
+                foreach($wsParamAnnots as $wsParamAnnot)
+                {
+                    $serviceArgument = new Argument();
+                    $serviceArgument->setName($wsParamAnnot->getName());
+                    $serviceArgument->setType(new Type($wsParamAnnot->getPhpType(), $wsParamAnnot->getXmlType()));
+                    
+                    $serviceMethod->getArguments()->add($serviceArgument);
+                }
+                
+                if($wsResultAnnot !== null)
+                {
+                    $serviceMethod->setReturn(new Type($wsResultAnnot->getPhpType(), $wsResultAnnot->getXmlType()));
+                }
+                
+                $definition->getMethods()->add($serviceMethod);
+            }
         }
 
-        return $collection;
+        return $definition;
     }
 
+    private function getController(\ReflectionMethod $method, MethodAnnotation $annotation)
+    {
+        if($annotation->getService() !== null)
+        {
+            return $annotation->getService() . ':' . $method->name;
+        }
+        else
+        {
+            return $method->class . '::' . $method->name;
+        }
+    }
+    
     /**
      * Returns true if this class supports the given resource.
      *

@@ -37,8 +37,9 @@ QuickStart
  
         // src/Acme/DemoBundle/Controller/DemoController.php
         /**
-         * @ws:Method('hello')
-         * @ws:Param('name', type = 'string')
+         * @ws:Method("Hello")
+         * @ws:Param("name", type = "string")
+         * @ws:Result(type = "string")
          */
         public function helloAction($name)
         {
