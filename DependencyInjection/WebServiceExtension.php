@@ -52,7 +52,7 @@ class WebServiceExtension extends Extension
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)
     {
-        $bindingDependendArguments = array(1, 3, 4);
+        $bindingDependentArguments = array(1, 3, 4);
         $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
         unset($config['binding']);
         
@@ -62,7 +62,7 @@ class WebServiceExtension extends Extension
         $contextId = 'webservice.context.' . $config['name'];
         $context = $container->setDefinition($contextId, new DefinitionDecorator('webservice.context'));
                 
-        foreach($bindingDependendArguments as $idx)
+        foreach($bindingDependentArguments as $idx)
         {
             $context->setArgument($idx, new Reference($contextPrototypeArguments[$idx] . $bindingSuffix));
         }
