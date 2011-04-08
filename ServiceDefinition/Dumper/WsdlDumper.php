@@ -37,10 +37,10 @@ class WsdlDumper implements DumperInterface
         $wsdl = new Wsdl($definition->getName(), $definition->getNamespace());
 
         $port = $wsdl->addPortType($this->getPortTypeName());
-        $binding = $wsdl->addBinding($this->getBindingName(), $this->getPortTypeName());
+        $binding = $wsdl->addBinding($this->getBindingName(), 'tns:' . $this->getPortTypeName());
         
         $wsdl->addSoapBinding($binding, 'rpc');
-        $wsdl->addService($this->getServiceName(), $this->getPortTypeName(), $this->getBindingName(), $options['endpoint']);
+        $wsdl->addService($this->getServiceName(), $this->getPortName(), 'tns:' . $this->getBindingName(), $options['endpoint']);
 
         foreach($definition->getMethods() as $method)
         {
@@ -52,12 +52,15 @@ class WsdlDumper implements DumperInterface
                 $requestParts[$argument->getName()] = $wsdl->getType($argument->getType()->getPhpType());
             }
 
-            $responseParts['return'] = $wsdl->getType($method->getReturn()->getPhpType());
+            if($method->getReturn() !== null)
+            {
+                $responseParts['return'] = $wsdl->getType($method->getReturn()->getPhpType());
+            }
 
             $wsdl->addMessage($this->getRequestMessageName($method), $requestParts);
             $wsdl->addMessage($this->getResponseMessageName($method), $responseParts);
 
-            $portOperation = $wsdl->addPortOperation($port, $method->getName(), $this->getRequestMessageName($method), $this->getResponseMessageName($method));
+            $portOperation = $wsdl->addPortOperation($port, $method->getName(), 'tns:' . $this->getRequestMessageName($method), 'tns:' . $this->getResponseMessageName($method));
             $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
 
             $bindingInput = array(
@@ -82,6 +85,11 @@ class WsdlDumper implements DumperInterface
         $wsdl->toDomDocument()->formatOutput = true;
         
         return $wsdl->toXml();
+    }
+
+    protected function getPortName()
+    {
+        return $this->definition->getName() . 'Port';
     }
     
     protected function getPortTypeName()
