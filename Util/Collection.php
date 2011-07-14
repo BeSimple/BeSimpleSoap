@@ -27,8 +27,7 @@ class Collection implements \IteratorAggregate, \Countable
 
     public function addAll($elements)
     {
-        foreach ($elements as $element)
-        {
+        foreach ($elements as $element) {
             $this->add($element);
         }
     }

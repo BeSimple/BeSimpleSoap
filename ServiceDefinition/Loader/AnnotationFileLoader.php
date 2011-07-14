@@ -61,11 +61,11 @@ class AnnotationFileLoader extends FileLoader
         $path = $this->locator->locate($file);
 
         $definition = new ServiceDefinition();
-        
+
         if ($class = $this->findClass($path)) {
             $definition = $this->loader->load($class, $type);
         }
-        
+
         return $definition;
     }
 
@@ -87,7 +87,7 @@ class AnnotationFileLoader extends FileLoader
      *
      * @param string $file A PHP file path
      *
-     * @return string|false Full class name if found, false otherwise 
+     * @return string|false Full class name if found, false otherwise
      */
     protected function findClass($file)
     {

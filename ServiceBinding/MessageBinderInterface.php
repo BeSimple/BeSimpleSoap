@@ -15,8 +15,6 @@ use Bundle\WebServiceBundle\ServiceDefinition\Method;
 interface MessageBinderInterface
 {
     /**
-     *
-     *
      * @param Method $messageDefinition
      * @param mixed $message
      *

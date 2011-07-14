@@ -11,7 +11,7 @@
 namespace Bundle\WebServiceBundle\ServiceDefinition\Annotation;
 
 class Result extends TypedElement
-{    
+{
     public function __construct($values)
     {
         parent::__construct($values);

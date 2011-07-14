@@ -31,21 +31,20 @@ class WebServiceExtension extends Extension
 {
     // maps config options to service suffix'
     private $bindingConfigToServiceSuffixMap = array('rpc-literal' => '.rpcliteral', 'document-wrapped' => '.documentwrapped');
-    
+
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('annotations.xml');
         $loader->load('webservice.xml');
-        
+
         $processor = new Processor();
         $configuration = new Configuration();
 
         $config = $processor->process($configuration->getConfigTree(), $configs);
-        
-        foreach($config['services'] as $serviceContextConfig)
-        {
+
+        foreach($config['services'] as $serviceContextConfig) {
             $this->createWebServiceContext($serviceContextConfig, $container);
         }
     }
@@ -55,20 +54,19 @@ class WebServiceExtension extends Extension
         $bindingDependentArguments = array(1, 3, 4);
         $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
         unset($config['binding']);
-        
+
         $contextPrototype = $container->getDefinition('webservice.context');
         $contextPrototypeArguments = $contextPrototype->getArguments();
-        
+
         $contextId = 'webservice.context.' . $config['name'];
         $context = $container->setDefinition($contextId, new DefinitionDecorator('webservice.context'));
-                
-        foreach($bindingDependentArguments as $idx)
-        {
+
+        foreach($bindingDependentArguments as $idx) {
             $context->setArgument($idx, new Reference($contextPrototypeArguments[$idx] . $bindingSuffix));
         }
         $context->setArgument(5, array_merge($contextPrototypeArguments[5], $config));
     }
-    
+
     public function getNamespace()
     {
         return null;

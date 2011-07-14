@@ -21,8 +21,7 @@ class Assert
 
     public static function thatArgument($name, $condition, $message = self::ARGUMENT_INVALID)
     {
-        if(!$condition)
-        {
+        if(!$condition) {
             throw new \InvalidArgumentException(sprintf($message, $name));
         }
     }

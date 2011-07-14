@@ -13,14 +13,14 @@ namespace Bundle\WebServiceBundle\ServiceDefinition\Annotation;
 class Param extends TypedElement
 {
     private $name;
-    
+
     public function __construct($values)
     {
         parent::__construct($values);
-        
+
         $this->name = $values['value'];
     }
-    
+
     public function getName()
     {
         return $this->name;

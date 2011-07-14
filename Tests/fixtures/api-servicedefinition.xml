@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <webservice name="api" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns="http://christiankerl.github.com/WebServiceBundle/servicedefinition/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://christiankerl.github.com/WebServiceBundle/servicedefinition/1.0/ ./../../ServiceDefinition/Loader/schema/servicedefinition-1.0.xsd ">
   <method name="math_multiply" controller="">
-  	<argument name="a">
-  		<type xml-type="xs:double" php-type="float"/>
-  	</argument>
-  	<argument name="b">
-  		<type xml-type="xs:double" php-type="float"/>
-  	</argument>
-  	<return>
-  		<type xml-type="xs:double" php-type="float"/>
-  	</return>
+      <argument name="a">
+          <type xml-type="xs:double" php-type="float"/>
+      </argument>
+      <argument name="b">
+          <type xml-type="xs:double" php-type="float"/>
+      </argument>
+      <return>
+          <type xml-type="xs:double" php-type="float"/>
+      </return>
   </method>
 </webservice>

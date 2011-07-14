@@ -25,35 +25,32 @@ use Zend\Soap\Wsdl;
 class WsdlDumper implements DumperInterface
 {
     private $definition;
-    
+
     public function dumpServiceDefinition(ServiceDefinition $definition, array $options = array())
     {
         Assert::thatArgumentNotNull('definition', $definition);
 
         $options = array_merge(array('endpoint' => ''), $options);
-        
+
         $this->definition = $definition;
 
         $wsdl = new Wsdl($definition->getName(), $definition->getNamespace());
 
         $port = $wsdl->addPortType($this->getPortTypeName());
         $binding = $wsdl->addBinding($this->getBindingName(), 'tns:' . $this->getPortTypeName());
-        
+
         $wsdl->addSoapBinding($binding, 'rpc');
         $wsdl->addService($this->getServiceName(), $this->getPortName(), 'tns:' . $this->getBindingName(), $options['endpoint']);
 
-        foreach($definition->getMethods() as $method)
-        {
+        foreach($definition->getMethods() as $method) {
             $requestParts = array();
             $responseParts = array();
 
-            foreach($method->getArguments() as $argument)
-            {
+            foreach($method->getArguments() as $argument) {
                 $requestParts[$argument->getName()] = $wsdl->getType($argument->getType()->getPhpType());
             }
 
-            if($method->getReturn() !== null)
-            {
+            if($method->getReturn() !== null) {
                 $responseParts['return'] = $wsdl->getType($method->getReturn()->getPhpType());
             }
 
@@ -83,7 +80,7 @@ class WsdlDumper implements DumperInterface
         $this->definition = null;
 
         $wsdl->toDomDocument()->formatOutput = true;
-        
+
         return $wsdl->toXml();
     }
 
@@ -91,7 +88,7 @@ class WsdlDumper implements DumperInterface
     {
         return $this->definition->getName() . 'Port';
     }
-    
+
     protected function getPortTypeName()
     {
         return $this->definition->getName() . 'PortType';

@@ -22,19 +22,18 @@ class AnnotationReader extends BaseAnnotationReader
     public function getMethodAnnotation(\ReflectionMethod $method, $type)
     {
         $annotation = parent::getMethodAnnotation($method, $type);
-        
-        if($annotation !== null && count($annotation) > 1)
-        {
+
+        if($annotation !== null && count($annotation) > 1) {
             throw new \LogicException(sprintf("There is more than one annotation of type '%s'!", $type));
         }
-        
+
         return $annotation !== null ? $annotation[0] : null;
     }
-    
+
     public function getMethodAnnotations(\ReflectionMethod $method, $type = null)
     {
         $annotations = parent::getMethodAnnotations($method);
-        
+
         return $type !== null && isset($annotations[$type]) ? $annotations[$type] : $annotations;
     }
 }

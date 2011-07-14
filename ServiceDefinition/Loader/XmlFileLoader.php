@@ -24,27 +24,25 @@ class XmlFileLoader extends FileLoader
     {
         return is_string($resource) && 'xml' === pathinfo($resource, PATHINFO_EXTENSION);
     }
-    
+
     public function load($file, $type = null)
     {
         $path = $this->locator->locate($file);
-        
+
         $xml = $this->parseFile($path);
 
         $definition = new ServiceDefinition();
         $definition->setName((string) $xml['name']);
         $definition->setNamespace((string) $xml['namespace']);
 
-        foreach($xml->header as $header)
-        {
+        foreach($xml->header as $header) {
             $definition->getHeaders()->add($this->parseHeader($header));
         }
 
-        foreach($xml->method as $method)
-        {
+        foreach($xml->method as $method) {
             $definition->getMethods()->add($this->parseMethod($method));
         }
-        
+
         return $definition;
     }
 
@@ -69,8 +67,7 @@ class XmlFileLoader extends FileLoader
     {
         $method = new Method((string)$node['name'], (string)$node['controller']);
 
-        foreach($node->argument as $argument)
-        {
+        foreach($node->argument as $argument) {
             $method->getArguments()->add($this->parseArgument($argument));
         }
 

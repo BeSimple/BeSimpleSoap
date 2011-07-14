@@ -57,8 +57,7 @@ class SoapServerFactory
     {
         $result = array();
 
-        foreach($this->converters->getTypeConverters() as $typeConverter)
-        {
+        foreach($this->converters->getTypeConverters() as $typeConverter) {
             $result[] = array(
                 'type_name' => $typeConverter->getTypeName(),
                 'type_ns' => $typeConverter->getTypeNamespace(),
@@ -78,15 +77,12 @@ class SoapServerFactory
     {
         $result = array();
 
-        foreach($this->definition->getHeaders() as $header)
-        {
+        foreach($this->definition->getHeaders() as $header) {
             $this->addSoapServerClassmapEntry($result, $header->getType());
         }
 
-        foreach($this->definition->getMethods() as $method)
-        {
-            foreach($method->getArguments() as $arg)
-            {
+        foreach($this->definition->getMethods() as $method) {
+            foreach($method->getArguments() as $arg) {
                 $this->addSoapServerClassmapEntry($result, $arg->getType());
             }
         }
@@ -98,12 +94,11 @@ class SoapServerFactory
     {
         // TODO: fix this hack
         if($type->getXmlType() === null) return;
-        
+
         $xmlType = QName::fromPackedQName($type->getXmlType())->getName();
         $phpType = $type->getPhpType();
 
-        if(isset($classmap[$xmlType]) && $classmap[$xmlType] != $phpType)
-        {
+        if(isset($classmap[$xmlType]) && $classmap[$xmlType] != $phpType) {
             // log warning
         }
 

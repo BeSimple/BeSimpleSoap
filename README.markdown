@@ -15,15 +15,15 @@ QuickStart
 
  *  Put WebServiceBundle in your `src/Bundle` dir
  *  Enable WebServiceBundle in your `app/AppKernel.php`
- 
+
  *  Include the WebServiceBundle's routing configuration in `app/config/routing.yml` (you can choose the prefix arbitrarily)
-   
+
         _ws:
             resource: "@WebServiceBundle/Resources/config/routing/webservicecontroller.xml"
             prefix:   /ws
-          
+
  *  Configure your first web service in `app/config/config.yml`
-        
+
         web_service:
             services:
                 demoapi:

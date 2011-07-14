@@ -42,8 +42,7 @@ class XopIncludeTypeConverter implements TypeConverterInterface
 
         $ref = $include->getAttribute('href');
 
-        if(String::startsWith($ref, 'cid:'))
-        {
+        if(String::startsWith($ref, 'cid:')) {
             $cid = urldecode(substr($ref, 4));
 
             return $request->getSoapAttachments()->get($cid)->getContent();

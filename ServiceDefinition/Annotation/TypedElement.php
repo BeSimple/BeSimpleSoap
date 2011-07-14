@@ -14,7 +14,7 @@ abstract class TypedElement
 {
     private $phpType;
     private $xmlType;
-    
+
     public function __construct($values)
     {
         foreach(array('type', 'phpType') as $key)
@@ -24,15 +24,15 @@ abstract class TypedElement
                 $this->phpType =  $values[$key];
             }
         }
-        
+
         $this->xmlType = isset($values['xmlType']) ? $values['xmlType'] : null;
     }
-    
+
     public function getPhpType()
     {
         return $this->phpType;
     }
-    
+
     public function getXmlType()
     {
         return $this->xmlType;

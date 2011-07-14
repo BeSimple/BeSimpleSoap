@@ -35,9 +35,9 @@ class AnnotationClassLoader implements LoaderInterface
     private $wsMethodAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Method';
     private $wsParamAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Param';
     private $wsResultAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Result';
-    
+
     protected $reader;
-    
+
     /**
      * Constructor.
      *
@@ -60,42 +60,37 @@ class AnnotationClassLoader implements LoaderInterface
      */
     public function load($class, $type = null)
     {
-        if (!class_exists($class)) 
-        {
+        if (!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
         $class = new \ReflectionClass($class);
 
         $definition = new ServiceDefinition();
-        
-        foreach ($class->getMethods() as $method) 
-        {
+
+        foreach ($class->getMethods() as $method) {
             $wsMethodAnnot = $this->reader->getMethodAnnotation($method, $this->wsMethodAnnotationClass);
-            
-            if($wsMethodAnnot !== null)
-            {
+
+            if($wsMethodAnnot !== null) {
                 $wsParamAnnots = $this->reader->getMethodAnnotations($method, $this->wsParamAnnotationClass);
                 $wsResultAnnot = $this->reader->getMethodAnnotation($method, $this->wsResultAnnotationClass);
-                
+
                 $serviceMethod = new Method();
                 $serviceMethod->setName($wsMethodAnnot->getName($method->getName()));
                 $serviceMethod->setController($this->getController($method, $wsMethodAnnot));
-                
-                foreach($wsParamAnnots as $wsParamAnnot)
-                {
+
+                foreach($wsParamAnnots as $wsParamAnnot) {
                     $serviceArgument = new Argument();
                     $serviceArgument->setName($wsParamAnnot->getName());
                     $serviceArgument->setType(new Type($wsParamAnnot->getPhpType(), $wsParamAnnot->getXmlType()));
-                    
+
                     $serviceMethod->getArguments()->add($serviceArgument);
                 }
-                
-                if($wsResultAnnot !== null)
-                {
+
+                if($wsResultAnnot !== null) {
                     $serviceMethod->setReturn(new Type($wsResultAnnot->getPhpType(), $wsResultAnnot->getXmlType()));
                 }
-                
+
                 $definition->getMethods()->add($serviceMethod);
             }
         }
@@ -105,16 +100,13 @@ class AnnotationClassLoader implements LoaderInterface
 
     private function getController(\ReflectionMethod $method, MethodAnnotation $annotation)
     {
-        if($annotation->getService() !== null)
-        {
+        if($annotation->getService() !== null) {
             return $annotation->getService() . ':' . $method->name;
-        }
-        else
-        {
+        } else {
             return $method->class . '::' . $method->name;
         }
     }
-    
+
     /**
      * Returns true if this class supports the given resource.
      *

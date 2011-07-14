@@ -30,7 +30,7 @@ use Bundle\WebServiceBundle\Converter\ConverterRepository;
 use Bundle\WebServiceBundle\Util\String;
 
 /**
- * 
+ *
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
@@ -84,7 +84,7 @@ class SoapWebServiceController extends ContainerAware
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
 
         $this->serviceBinder = $webServiceContext->getServiceBinder();
-        
+
         $this->soapServer = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->soapResponse);
         $this->soapServer->setObject($this);
 
@@ -93,31 +93,28 @@ class SoapWebServiceController extends ContainerAware
             $this->soapServer->handle($this->soapRequest->getSoapMessage());
         }
         $soapResponseContent = ob_get_clean();
-        
+
         $this->soapResponse->setContent($soapResponseContent);
 
         return $this->soapResponse;
     }
 
     public function definition($webservice)
-    {   
+    {
         $webServiceContext = $this->container->get('webservice.context.' . $webservice);
-        $request = $this->container->get('request');        
-        
-        if($request->query->has('WSDL'))
-        {
+        $request = $this->container->get('request');
+
+        if($request->query->has('WSDL')) {
             $endpoint = $this->container->get('router')->generate('_webservice_call', array('webservice' => $webservice), true);
-            
+
             $response = new Response($webServiceContext->getWsdlFileContent($endpoint));
             $response->headers->set('Content-Type', 'application/wsdl+xml');
-        }
-        else
-        {
+        } else {
             // TODO: replace with better represantation
             $response = new Response($webServiceContext->getWsdlFileContent());
             $response->headers->set('Content-Type', 'text/xml');
         }
-        
+
         return $response;
     }
 
@@ -132,8 +129,7 @@ class SoapWebServiceController extends ContainerAware
      */
     public function __call($method, $arguments)
     {
-        if($this->serviceBinder->isServiceHeader($method))
-        {
+        if($this->serviceBinder->isServiceHeader($method)) {
             // collect request soap headers
             $this->soapRequest->getSoapHeaders()->add(
                 $this->serviceBinder->processServiceHeader($method, $arguments[0])
@@ -142,8 +138,7 @@ class SoapWebServiceController extends ContainerAware
             return;
         }
 
-        if($this->serviceBinder->isServiceMethod($method))
-        {
+        if($this->serviceBinder->isServiceMethod($method)) {
             $this->soapRequest->attributes->add(
                 $this->serviceBinder->processServiceMethodArguments($method, $arguments)
             );
@@ -154,8 +149,7 @@ class SoapWebServiceController extends ContainerAware
             $this->soapResponse = $this->checkResponse($response);
 
             // add response soap headers to soap server
-            foreach($this->soapResponse->getSoapHeaders() as $header)
-            {
+            foreach($this->soapResponse->getSoapHeaders() as $header) {
                 $this->soapServer->addSoapHeader($header->toNativeSoapHeader());
             }
 
@@ -178,8 +172,7 @@ class SoapWebServiceController extends ContainerAware
      */
     protected function checkResponse(Response $response)
     {
-        if($response == null || !$response instanceof SoapResponse)
-        {
+        if($response == null || !$response instanceof SoapResponse) {
             throw new \InvalidArgumentException();
         }
 

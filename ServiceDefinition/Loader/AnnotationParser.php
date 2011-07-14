@@ -15,7 +15,7 @@ use Doctrine\Common\Annotations\Parser;
 
 /**
  * AnnotationParser allows multiple annotations of the same class to be present.
- * 
+ *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class AnnotationParser extends Parser
