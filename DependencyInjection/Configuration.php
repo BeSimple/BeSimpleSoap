@@ -33,11 +33,9 @@ class Configuration
         $rootNode
             ->children()
                 ->arrayNode('services')
+                    ->useAttributeAsKey('name')
                     ->prototype('array')
                     ->children()
-                        ->scalarNode('name')
-                            ->isRequired()
-                        ->end()
                         ->scalarNode('namespace')
                             ->isRequired()
                         ->end()

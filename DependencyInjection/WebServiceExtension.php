@@ -44,12 +44,12 @@ class WebServiceExtension extends Extension
 
         $config = $processor->process($configuration->getConfigTree(), $configs);
 
-        foreach($config['services'] as $serviceContextConfig) {
-            $this->createWebServiceContext($serviceContextConfig, $container);
+        foreach($config['services'] as $name => $serviceConfig) {
+            $this->createWebServiceContext($name, $serviceConfig, $container);
         }
     }
 
-    private function createWebServiceContext(array $config, ContainerBuilder $container)
+    private function createWebServiceContext($name, array $config, ContainerBuilder $container)
     {
         $bindingDependentArguments = array(1, 3, 4);
         $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
@@ -58,7 +58,7 @@ class WebServiceExtension extends Extension
         $contextPrototype = $container->getDefinition('webservice.context');
         $contextPrototypeArguments = $contextPrototype->getArguments();
 
-        $contextId = 'webservice.context.'.$config['name'];
+        $contextId = 'webservice.context.'.$name;
         $context = $container->setDefinition($contextId, new DefinitionDecorator('webservice.context'));
 
         $arguments = array();

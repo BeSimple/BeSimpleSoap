@@ -26,8 +26,7 @@ QuickStart
 
         web_service:
             services:
-                demoapi:
-                    name:          DemoApi
+                DemoApi:
                     namespace:     http://mysymfonyapp.com/ws/DemoApi/1.0/                  
                     binding:       rpc-literal
                     resource:      "@AcmeDemoBundle/Controller/DemoController.php"
