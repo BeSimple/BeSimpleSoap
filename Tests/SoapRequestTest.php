@@ -23,7 +23,7 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
     {
         $content = $this->loadRequestContentFixture('mtom/simple.txt');
 
-        $request = new SoapRequest($content);
+        $request = new SoapRequest(array(), array(), array(), array(), array(), array(), $content);
         $request->server->set('CONTENT_TYPE', 'multipart/related; type="application/xop+xml";start="<http://tempuri.org/0>";boundary="uuid:0ca0e16e-feb1-426c-97d8-c4508ada5e82+id=7";start-info="application/soap+xml"');
 
         $message = $request->getSoapMessage();
