@@ -54,11 +54,14 @@
         <service id="webservice.definition.loader.annot_class" class="Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationClassLoader">
             <tag name="webservice.definition.loader" />
             <argument type="service" id="webservice.annotations.reader" />
-            <argument type="service" id="annotations.configuration_reader" />
+            <argument type="service" id="annotations.configuration_reader" on-invalid="null" />
         </service>
 
-        <service id="webservice.definition.dumper.wsdl.rpcliteral" class="Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumper">
+        <service id="webservice.definition.dumper.wsdl.rpcliteral" class="Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumper" />
 
-        </service>
+        <service id="webservice.definition.dumper.wsdl" alias="webservice.definition.dumper.wsdl.rpcliteral" />
+
+        <service id="webservice.binder.request" alias="webservice.binder.request.rpcliteral" />
+        <service id="webservice.binder.response" alias="webservice.binder.response.rpcliteral" />
     </services>
 </container>

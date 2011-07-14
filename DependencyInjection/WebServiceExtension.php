@@ -58,13 +58,16 @@ class WebServiceExtension extends Extension
         $contextPrototype = $container->getDefinition('webservice.context');
         $contextPrototypeArguments = $contextPrototype->getArguments();
 
-        $contextId = 'webservice.context.' . $config['name'];
+        $contextId = 'webservice.context.'.$config['name'];
         $context = $container->setDefinition($contextId, new DefinitionDecorator('webservice.context'));
 
+        $arguments = array();
         foreach($bindingDependentArguments as $idx) {
-            $context->setArgument($idx, new Reference($contextPrototypeArguments[$idx] . $bindingSuffix));
+            $arguments[] = new Reference($contextPrototypeArguments[$idx].$bindingSuffix);
         }
-        $context->setArgument(5, array_merge($contextPrototypeArguments[5], $config));
+        $arguments[5] = array_merge($contextPrototypeArguments[5], $config);
+
+        $context->setArguments($arguments);
     }
 
     public function getNamespace()
