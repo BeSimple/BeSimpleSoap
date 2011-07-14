@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\Tests;
+namespace Bundle\WebServiceBundle\Tests\Soap;
 
 use Bundle\WebServiceBundle\Soap\SoapRequest;
 
