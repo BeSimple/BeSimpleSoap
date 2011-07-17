@@ -66,6 +66,7 @@ class AnnotationClassLoader implements LoaderInterface
 
         $class      = new \ReflectionClass($class);
         $definition = new ServiceDefinition();
+
         foreach ($class->getMethods() as $method) {
             $serviceArguments = array();
             $serviceMethod    =
@@ -75,7 +76,7 @@ class AnnotationClassLoader implements LoaderInterface
                 if ($annotation instanceof ParamAnnotation) {
                     $serviceArguments[] = new Argument(
                         $annotation->getValue(),
-                        new Type($annotation->getPhpType(), $annotation->getXmlType())
+                        $this->getArgumentType($method, $annotation)
                     );
                 } elseif ($annotation instanceof MethodAnnotation) {
                     if ($serviceMethod) {
@@ -120,6 +121,30 @@ class AnnotationClassLoader implements LoaderInterface
         } else {
             return $method->class . '::' . $method->name;
         }
+    }
+
+    /**
+     * @param \ReflectionMethod $method
+     * @param ParamAnnotation   $annotation
+     *
+     * @return \Bundle\WebServiceBundle\ServiceDefinition\Type
+     */
+    private function getArgumentType(\ReflectionMethod $method, ParamAnnotation $annotation)
+    {
+        $phpType = $annotation->getPhpType();
+        $xmlType = $annotation->getXmlType();
+
+        if (null === $phpType) {
+            foreach ($method->getParameters() as $param) {
+                if ($param->name === $annotation->getName()) {
+                    $phpType = $param->getClass()->name;
+
+                    break;
+                }
+            }
+        }
+
+        return new Type($phpType, $xmlType);
     }
 
     /**
