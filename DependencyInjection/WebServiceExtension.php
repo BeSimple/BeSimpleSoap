@@ -10,16 +10,12 @@
 
 namespace Bundle\WebServiceBundle\DependencyInjection;
 
-use Bundle\WebServiceBundle\Util\Assert;
-
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
-
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -29,6 +25,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class WebServiceExtension extends Extension
 {
+    private $contextArguments;
+
     // maps config options to service suffix'
     private $bindingConfigToServiceSuffixMap = array('rpc-literal' => '.rpcliteral', 'document-wrapped' => '.documentwrapped');
 
@@ -36,47 +34,46 @@ class WebServiceExtension extends Extension
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        $loader->load('annotations.xml');
+        $loader->load('loaders.xml');
         $loader->load('webservice.xml');
 
-        $processor = new Processor();
+        $processor     = new Processor();
         $configuration = new Configuration();
 
         $config = $processor->process($configuration->getConfigTree(), $configs);
 
         foreach($config['services'] as $name => $serviceConfig) {
-            $this->createWebServiceContext($name, $serviceConfig, $container);
+            $serviceConfig['name'] = $name;
+            $this->createWebServiceContext($serviceConfig, $container);
         }
     }
 
-    private function createWebServiceContext($name, array $config, ContainerBuilder $container)
+    private function createWebServiceContext(array $config, ContainerBuilder $container)
     {
-        $bindingDependentArguments = array(1, 3, 4);
         $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
         unset($config['binding']);
 
-        $contextPrototype = $container->getDefinition('webservice.context');
-        $contextPrototypeArguments = $contextPrototype->getArguments();
+        if (null === $this->contextArguments) {
+            $this->contextArguments = $container
+                ->getDefinition('webservice.context')
+                ->getArguments()
+            ;
+        }
 
-        $contextId = 'webservice.context.'.$name;
-        $context = $container->setDefinition($contextId, new DefinitionDecorator('webservice.context'));
+        $contextId = 'webservice.context.'.$config['name'];
+        $context   = $container->setDefinition($contextId, $definition = new DefinitionDecorator('webservice.context'));
 
         $arguments = array();
-        foreach($bindingDependentArguments as $idx) {
-            $arguments[] = new Reference($contextPrototypeArguments[$idx].$bindingSuffix);
+        foreach($this->contextArguments as $i => $argument) {
+            if (in_array($i, array(1, 3, 4))) {
+                $argument = new Reference($argument->__toString().$bindingSuffix);
+            } elseif (5 === $i) {
+                $argument = array_merge($argument, $config);
+            } else {
+                $argument = new Reference($argument->__toString());
+            }
+
+            $definition->replaceArgument($i, $argument);
         }
-        $arguments[5] = array_merge($contextPrototypeArguments[5], $config);
-
-        $context->setArguments($arguments);
-    }
-
-    public function getNamespace()
-    {
-        return null;
-    }
-
-    public function getXsdValidationBasePath()
-    {
-        return null;
     }
 }

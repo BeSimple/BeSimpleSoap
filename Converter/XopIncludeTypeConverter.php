@@ -11,13 +11,10 @@
 namespace Bundle\WebServiceBundle\Converter;
 
 use Bundle\WebServiceBundle\Soap\SoapRequest;
-
 use Bundle\WebServiceBundle\Soap\SoapResponse;
-
 use Bundle\WebServiceBundle\Util\String;
 
 /**
- *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class XopIncludeTypeConverter implements TypeConverterInterface
@@ -42,7 +39,7 @@ class XopIncludeTypeConverter implements TypeConverterInterface
 
         $ref = $include->getAttribute('href');
 
-        if(String::startsWith($ref, 'cid:')) {
+        if (String::startsWith($ref, 'cid:')) {
             $cid = urldecode(substr($ref, 4));
 
             return $request->getSoapAttachments()->get($cid)->getContent();

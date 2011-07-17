@@ -10,28 +10,14 @@
 
 namespace Bundle\WebServiceBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAware;
-
 use Bundle\WebServiceBundle\Soap\SoapRequest;
 use Bundle\WebServiceBundle\Soap\SoapResponse;
-use Bundle\WebServiceBundle\Soap\SoapHeader;
-use Bundle\WebServiceBundle\Soap\SoapServerFactory;
 
-use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
-
-use Bundle\WebServiceBundle\Converter\ConverterRepository;
-
-use Bundle\WebServiceBundle\Util\String;
+use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- *
- *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapWebServiceController extends ContainerAware
@@ -57,54 +43,33 @@ class SoapWebServiceController extends ContainerAware
     protected $serviceBinder;
 
     /**
-     * @var \Symfony\Component\HttpKernel\HttpKernelInterface
+     * @return \Bundle\WebServiceBundle\Soap\SoapResponse
      */
-    protected $kernel;
-
-    public function __construct(ContainerInterface $container, HttpKernelInterface $kernel)
+    public function callAction($webservice)
     {
-        $this->setContainer($container);
-        $this->kernel = $kernel;
-    }
-
-    public function getRequest()
-    {
-        return $this->soapRequest;
-    }
-
-    public function getResponse()
-    {
-        return $this->soapResponse;
-    }
-
-    public function call($webservice)
-    {
-        $webServiceContext = $this->container->get('webservice.context.' . $webservice);
-
-        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
-
+        $webServiceContext   = $this->container->get('webservice.context.'.$webservice);
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
-        $this->soapServer = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->soapResponse);
+        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
+        $this->soapServer  = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->soapResponse);
         $this->soapServer->setObject($this);
 
         ob_start();
-        {
-            $this->soapServer->handle($this->soapRequest->getSoapMessage());
-        }
-        $soapResponseContent = ob_get_clean();
-
-        $this->soapResponse->setContent($soapResponseContent);
+        $this->soapServer->handle($this->soapRequest->getSoapMessage());
+        $this->soapResponse->setContent(ob_get_clean());
 
         return $this->soapResponse;
     }
 
-    public function definition($webservice)
+    /**
+     * @return Symfony\Component\HttpFoundation\Response
+     */
+    public function definitionAction($webservice)
     {
-        $webServiceContext = $this->container->get('webservice.context.' . $webservice);
-        $request = $this->container->get('request');
+        $webServiceContext = $this->container->get('webservice.context.'.$webservice);
+        $request           = $this->container->get('request');
 
-        if($request->query->has('WSDL')) {
+        if ($request->query->has('wsdl') || $request->query->has('WSDL')) {
             $endpoint = $this->container->get('router')->generate('_webservice_call', array('webservice' => $webservice), true);
 
             $response = new Response($webServiceContext->getWsdlFileContent($endpoint));
@@ -129,7 +94,7 @@ class SoapWebServiceController extends ContainerAware
      */
     public function __call($method, $arguments)
     {
-        if($this->serviceBinder->isServiceHeader($method)) {
+        if ($this->serviceBinder->isServiceHeader($method)) {
             // collect request soap headers
             $this->soapRequest->getSoapHeaders()->add(
                 $this->serviceBinder->processServiceHeader($method, $arguments[0])
@@ -138,18 +103,18 @@ class SoapWebServiceController extends ContainerAware
             return;
         }
 
-        if($this->serviceBinder->isServiceMethod($method)) {
+        if ($this->serviceBinder->isServiceMethod($method)) {
             $this->soapRequest->attributes->add(
                 $this->serviceBinder->processServiceMethodArguments($method, $arguments)
             );
 
             // forward to controller
-            $response = $this->kernel->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
+            $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
 
             $this->soapResponse = $this->checkResponse($response);
 
             // add response soap headers to soap server
-            foreach($this->soapResponse->getSoapHeaders() as $header) {
+            foreach ($this->soapResponse->getSoapHeaders() as $header) {
                 $this->soapServer->addSoapHeader($header->toNativeSoapHeader());
             }
 
@@ -172,10 +137,26 @@ class SoapWebServiceController extends ContainerAware
      */
     protected function checkResponse(Response $response)
     {
-        if($response == null || !$response instanceof SoapResponse) {
+        if (null === $response || !$response instanceof SoapResponse) {
             throw new \InvalidArgumentException();
         }
 
         return $response;
+    }
+
+    /**
+     * @return \Bundle\WebServiceBundle\Soap\SoapRequest
+     */
+    public function getRequest()
+    {
+        return $this->soapRequest;
+    }
+
+    /**
+     * @return \Bundle\WebServiceBundle\Soap\SoapResponse
+     */
+    public function getResponse()
+    {
+        return $this->soapResponse;
     }
 }

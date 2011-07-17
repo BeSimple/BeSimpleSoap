@@ -10,15 +10,14 @@
 
 namespace Bundle\WebServiceBundle;
 
+use Bundle\WebServiceBundle\Converter\ConverterRepository;
+use Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface;
+use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
+use Bundle\WebServiceBundle\ServiceDefinition\Dumper\DumperInterface;
+use Bundle\WebServiceBundle\Soap\SoapServerFactory;
 
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
-
-use Bundle\WebServiceBundle\Converter\ConverterRepository;
-use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
-use Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface;
-use Bundle\WebServiceBundle\ServiceDefinition\Dumper\DumperInterface;
-use Bundle\WebServiceBundle\Soap\SoapServerFactory;
 
 /**
  * WebServiceContext.
@@ -31,7 +30,6 @@ class WebServiceContext
     private $requestMessageBinder;
     private $responseMessageBinder;
 
-    private $serviceDefinitionLoader;
     private $wsdlFileDumper;
 
     private $options;
@@ -40,13 +38,13 @@ class WebServiceContext
     private $serviceBinder;
     private $serverFactory;
 
-    public function __construct(LoaderInterface $loader, DumperInterface $dumper, ConverterRepository $converterRepository, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder, array $options)
+    public function __construct(LoaderInterface $loader, DumperInterface $dumper, ConverterRepository $converterRepository, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder, array $options = array())
     {
-        $this->serviceDefinitionLoader = $loader;
+        $this->loader         = $loader;
         $this->wsdlFileDumper = $dumper;
 
-        $this->converterRepository = $converterRepository;
-        $this->requestMessageBinder = $requestMessageBinder;
+        $this->converterRepository   = $converterRepository;
+        $this->requestMessageBinder  = $requestMessageBinder;
         $this->responseMessageBinder = $responseMessageBinder;
 
         $this->options = $options;
@@ -54,12 +52,12 @@ class WebServiceContext
 
     public function getServiceDefinition()
     {
-        if($this->serviceDefinition === null) {
-            if(!$this->serviceDefinitionLoader->supports($this->options['resource'], $this->options['resource_type'])) {
-                throw new \LogicException();
+        if (null === $this->serviceDefinition) {
+            if (!$this->loader->supports($this->options['resource'], $this->options['resource_type'])) {
+                throw new \LogicException(sprintf('Cannot load "%s" (%s)', $this->options['resource'], $this->options['resource_type']));
             }
 
-            $this->serviceDefinition = $this->serviceDefinitionLoader->load($this->options['resource'], $this->options['resource_type']);
+            $this->serviceDefinition = $this->loader->load($this->options['resource'], $this->options['resource_type']);
             $this->serviceDefinition->setName($this->options['name']);
             $this->serviceDefinition->setNamespace($this->options['namespace']);
         }
@@ -69,8 +67,8 @@ class WebServiceContext
 
     public function getWsdlFile($endpoint = null)
     {
-        $id = $endpoint !== null ? '.' . md5($endpoint) : '';
-        $file = sprintf('%s/%s.wsdl', $this->options['cache_dir'], $this->options['name'] . $id);
+        $id    = null !== $endpoint ? '.'. md5($endpoint) : '';
+        $file  = sprintf('%s/%s.wsdl', $this->options['cache_dir'], $this->options['name'].$id);
         $cache = new ConfigCache($file, true);
 
         if(!$cache->isFresh()) {
@@ -87,7 +85,7 @@ class WebServiceContext
 
     public function getServiceBinder()
     {
-        if($this->serviceBinder === null) {
+        if (null === $this->serviceBinder) {
             $this->serviceBinder = new ServiceBinder($this->getServiceDefinition(), $this->requestMessageBinder, $this->responseMessageBinder);
         }
 
@@ -96,7 +94,7 @@ class WebServiceContext
 
     public function getServerFactory()
     {
-        if($this->serverFactory === null) {
+        if (null === $this->serverFactory) {
             $this->serverFactory = new SoapServerFactory($this->getServiceDefinition(), $this->getWsdlFile(), $this->converterRepository);
         }
 

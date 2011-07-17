@@ -11,11 +11,9 @@
 namespace Bundle\WebServiceBundle\Converter;
 
 use Bundle\WebServiceBundle\Soap\SoapRequest;
-
 use Bundle\WebServiceBundle\Soap\SoapResponse;
 
 /**
- *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 interface TypeConverterInterface

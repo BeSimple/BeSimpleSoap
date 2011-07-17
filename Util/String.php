@@ -17,14 +17,14 @@ namespace Bundle\WebServiceBundle\Util;
  */
 class String
 {
-     /**
-    * Checks if a string starts with a given string.
-    *
-    * @param  string $str    A string
-    * @param  string $substr A string to check against
-    *
-    * @return bool           True if str starts with substr
-    */
+    /**
+     * Checks if a string starts with a given string.
+     *
+     * @param  string $str    A string
+     * @param  string $substr A string to check against
+     *
+     * @return bool           True if str starts with substr
+     */
     public static function startsWith($str, $substr)
     {
         if(is_string($str) && is_string($substr) && strlen($str) >= strlen($substr)) {
@@ -33,17 +33,16 @@ class String
     }
 
     /**
-    * Checks if a string ends with a given string.
-    *
-    * @param  string $str    A string
-    * @param  string $substr A string to check against
-    *
-    * @return bool           True if str ends with substr
-    */
+     * Checks if a string ends with a given string.
+     *
+     * @param  string $str    A string
+     * @param  string $substr A string to check against
+     *
+     * @return bool           True if str ends with substr
+     */
     public static function endsWith($str, $substr)
     {
-        if(is_string($str) && is_string($substr) && strlen($str) >= strlen($substr))
-        {
+        if(is_string($str) && is_string($substr) && strlen($str) >= strlen($substr)) {
             return $substr == substr($str, strlen($str) - strlen($substr));
         }
     }

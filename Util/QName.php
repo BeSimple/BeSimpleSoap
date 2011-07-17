@@ -11,20 +11,19 @@
 namespace Bundle\WebServiceBundle\Util;
 
 /**
- *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class QName
 {
+    private $namespace;
+    private $name;
+
     public static function fromPackedQName($qname)
     {
         Assert::thatArgument('qname', preg_match('/^\{(.+)\}(.+)$/', $qname, $matches));
 
         return new self($matches[1], $matches[2]);
     }
-
-    private $namespace;
-    private $name;
 
     public function __construct($namespace, $name)
     {

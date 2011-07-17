@@ -18,8 +18,8 @@ class SoapAttachment
 
     public function __construct($id, $type, $content)
     {
-        $this->id = $id;
-        $this->type = $type;
+        $this->id      = $id;
+        $this->type    = $type;
         $this->content = $content;
     }
 

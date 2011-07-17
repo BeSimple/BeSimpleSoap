@@ -10,10 +10,36 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Annotation;
 
-class Result extends TypedElement
+/**
+ * @Annotation
+ */
+class Result extends Configuration implements TypedElementInterface
 {
-    public function __construct($values)
+    private $phpType;
+    private $xmlType;
+
+    public function getPhpType()
     {
-        parent::__construct($values);
+        return $this->phpType;
+    }
+
+    public function getXmlType()
+    {
+        return $this->xmlType;
+    }
+
+    public function setPhpType($phpType)
+    {
+        $this->phpType = $phpType;
+    }
+
+    public function setXmlType($xmlType)
+    {
+        $this->xmlType = $xmlType;
+    }
+
+    public function getAliasName()
+    {
+        return 'result';
     }
 }

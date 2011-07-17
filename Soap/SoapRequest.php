@@ -53,9 +53,9 @@ class SoapRequest extends Request
     {
         parent::initialize($query, $request, $attributes, $cookies, $files, $server, $content);
 
-        $this->soapMessage = null;
-        $this->soapHeaders = new Collection('getName');
-        $this->soapAttachments = new Collection('getId');
+        $this->soapMessage     = null;
+        $this->soapHeaders     = new Collection('getName', 'Bundle\WebServiceBundle\Soap\SoapHeader');
+        $this->soapAttachments = new Collection('getId', 'Bundle\WebServiceBundle\Soap\SoapAttachment');
 
         $this->setRequestFormat('soap');
     }
@@ -67,7 +67,7 @@ class SoapRequest extends Request
      */
     public function getSoapMessage()
     {
-        if($this->soapMessage === null) {
+        if(null === $this->soapMessage) {
             $this->soapMessage = $this->initializeSoapMessage();
         }
 

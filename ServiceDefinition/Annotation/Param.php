@@ -10,19 +10,47 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Annotation;
 
-class Param extends TypedElement
+/**
+ * @Annotation
+ */
+class Param extends Configuration implements TypedElementInterface
 {
-    private $name;
+    private $value;
+    private $phpType;
+    private $xmlType;
 
-    public function __construct($values)
+    public function getValue()
     {
-        parent::__construct($values);
-
-        $this->name = $values['value'];
+        return $this->value;
     }
 
-    public function getName()
+    public function getPhpType()
     {
-        return $this->name;
+        return $this->phpType;
+    }
+
+    public function getXmlType()
+    {
+        return $this->xmlType;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    public function setPhpType($phpType)
+    {
+        $this->phpType = $phpType;
+    }
+
+    public function setXmlType($xmlType)
+    {
+        $this->xmlType = $xmlType;
+    }
+
+    public function getAliasName()
+    {
+        return 'param';
     }
 }

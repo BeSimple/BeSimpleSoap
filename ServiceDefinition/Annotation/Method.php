@@ -10,24 +10,36 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Annotation;
 
-class Method
+/**
+ * @Annotation
+ */
+class Method extends Configuration
 {
-    private $name;
+    private $value;
     private $service;
 
-    public function __construct($values)
+    public function getValue()
     {
-        $this->name = isset($values['value']) ? $values['value'] : null;
-        $this->service = isset($values['service']) ? $values['service'] : null;
-    }
-
-    public function getName($default = null)
-    {
-        return $this->name !== null ? $this->name : $default;
+        return $this->value;
     }
 
     public function getService()
     {
         return $this->service;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    public function setService($service)
+    {
+        $this->service = $service;
+    }
+
+    public function getAliasName()
+    {
+        return 'method';
     }
 }

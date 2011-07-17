@@ -8,14 +8,13 @@
  * with this source code in the file LICENSE.
  */
 
-
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
 use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
 
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\FileLoader;
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * AnnotationFileLoader loads ServiceDefinition from annotations set
@@ -60,13 +59,11 @@ class AnnotationFileLoader extends FileLoader
     {
         $path = $this->locator->locate($file);
 
-        $definition = new ServiceDefinition();
-
         if ($class = $this->findClass($path)) {
-            $definition = $this->loader->load($class, $type);
+            return $definition = $this->loader->load($class, $type);
         }
 
-        return $definition;
+        return null;
     }
 
     /**
@@ -91,9 +88,9 @@ class AnnotationFileLoader extends FileLoader
      */
     protected function findClass($file)
     {
-        $class = false;
+        $class     = false;
         $namespace = false;
-        $tokens = token_get_all(file_get_contents($file));
+        $tokens    = token_get_all(file_get_contents($file));
         while ($token = array_shift($tokens)) {
             if (!is_array($token)) {
                 continue;

@@ -19,12 +19,15 @@ class Method
     private $arguments;
     private $return;
 
-    public function __construct($name = null, $controller = null, array $arguments = array(), $return = null)
+    public function __construct($name = null, $controller = null, array $arguments = array(), Type $return = null)
     {
         $this->setName($name);
         $this->setController($controller);
         $this->setArguments($arguments);
-        $this->setReturn($return);
+
+        if ($return) {
+            $this->setReturn($return);
+        }
     }
 
     public function getName()
@@ -52,9 +55,9 @@ class Method
         return $this->arguments;
     }
 
-    public function setArguments($arguments)
+    public function setArguments(array $arguments)
     {
-        $this->arguments = new Collection('getName');
+        $this->arguments = new Collection('getName', 'Bundle\WebServiceBundle\ServiceDefinition\Argument');
         $this->arguments->addAll($arguments);
     }
 
@@ -63,7 +66,7 @@ class Method
         return $this->return;
     }
 
-    public function setReturn($return)
+    public function setReturn(Type $return)
     {
         $this->return = $return;
     }

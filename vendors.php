@@ -1,20 +1,19 @@
 #!/usr/bin/env php
 <?php
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the WebServiceBundle.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
+ * (c) Christian Kerl <christian-kerl@web.de>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
  */
 
 /*
 
-CAUTION: This file installs the dependencies needed to run the I18nRoutingBundle test suite.
+CAUTION: This file installs the dependencies needed to run the WebServiceBundle test suite.
 
-https://github.com/BeSimple/I18nRoutingBundle
+https://github.com/BeSimple/BeSimpleSoapBundle
 
 */
 

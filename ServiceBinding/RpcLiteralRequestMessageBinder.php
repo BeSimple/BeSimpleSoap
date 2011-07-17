@@ -17,10 +17,12 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
     public function processMessage(Method $messageDefinition, $message)
     {
         $result = array();
-        $i = 0;
+        $i      = 0;
 
         foreach($messageDefinition->getArguments() as $argument) {
-            $result[$argument->getName()] = $message[$i];
+            if (isset($message[$i])) {
+                $result[$argument->getName()] = $message[$i];
+            }
 
             $i++;
         }

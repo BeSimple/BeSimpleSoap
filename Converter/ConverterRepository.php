@@ -10,21 +10,14 @@
 
 namespace Bundle\WebServiceBundle\Converter;
 
-/**
- *
- * @author Christian Kerl <christian-kerl@web.de>
- */
-use Bundle\WebServiceBundle\SoapKernel;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * @author Christian Kerl <christian-kerl@web.de>
+ */
 class ConverterRepository
 {
     private $typeConverters = array();
-
-    public function __construct()
-    {
-    }
 
     public function addTypeConverter(TypeConverterInterface $converter)
     {

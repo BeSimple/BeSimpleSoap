@@ -16,8 +16,8 @@ namespace Bundle\WebServiceBundle\Util;
  */
 class Assert
 {
-    const ARGUMENT_INVALID = "Argument '%s' is invalid!";
-    const ARGUMENT_NULL = "Argument '%s' can't be null!";
+    const ARGUMENT_INVALID = 'Argument "%s" is invalid.';
+    const ARGUMENT_NULL    = 'Argument "%s" can not be null.';
 
     public static function thatArgument($name, $condition, $message = self::ARGUMENT_INVALID)
     {
@@ -28,6 +28,6 @@ class Assert
 
     public static function thatArgumentNotNull($name, $value)
     {
-        self::thatArgument($name, $value != null, self::ARGUMENT_NULL);
+        self::thatArgument($name, null !== $value, self::ARGUMENT_NULL);
     }
 }

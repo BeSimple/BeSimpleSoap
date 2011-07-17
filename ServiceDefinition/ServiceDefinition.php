@@ -38,6 +38,10 @@ class ServiceDefinition
     {
         $this->setName($name);
         $this->setNamespace($namespace);
+
+        $this->methods = new Collection('getName', 'Bundle\WebServiceBundle\ServiceDefinition\Method');
+        $this->headers = new Collection('getName', 'Bundle\WebServiceBundle\ServiceDefinition\Header');
+
         $this->setMethods($methods);
         $this->setHeaders($headers);
     }
@@ -85,9 +89,8 @@ class ServiceDefinition
     /**
      * @param array $methods
      */
-    public function setMethods($methods)
+    public function setMethods(array $methods)
     {
-        $this->methods = new Collection('getName');
         $this->methods->addAll($methods);
     }
 
@@ -102,9 +105,8 @@ class ServiceDefinition
     /**
      * @param array $headers
      */
-    public function setHeaders($headers)
+    public function setHeaders(array $headers)
     {
-        $this->headers = new Collection('getName');
         $this->headers->addAll($headers);
     }
 }

@@ -20,7 +20,7 @@ class DocumentLiteralWrappedRequestMessageBinder implements MessageBinderInterfa
             throw new \InvalidArgumentException();
         }
 
-        $result = array();
+        $result  = array();
         $message = $message[0];
 
         foreach($messageDefinition->getArguments() as $argument) {

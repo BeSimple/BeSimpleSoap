@@ -13,16 +13,23 @@ namespace Bundle\WebServiceBundle\Util;
 class Collection implements \IteratorAggregate, \Countable
 {
     private $elements = array();
-    private $keyPropertyGetter;
+    private $getter;
+    private $class;
 
-    public function __construct($keyPropertyGetter)
+    public function __construct($getter, $class = null)
     {
-        $this->keyPropertyGetter = $keyPropertyGetter;
+        $this->getter = $getter;
+        $this->class  = $class;
     }
 
     public function add($element)
     {
-        $this->elements[call_user_func(array($element, $this->keyPropertyGetter))] = $element;
+        if ($this->class && !$element instanceof $this->class) {
+            throw new \InvalidArgument(sprintf('Cannot add class "%s" because it is not an instance of "%s"', get_class($element), $class));
+        }
+
+        $getter = $this->getter;
+        $this->elements[$element->$getter()] = $element;
     }
 
     public function addAll($elements)
@@ -52,7 +59,7 @@ class Collection implements \IteratorAggregate, \Countable
         return count($this->elements);
     }
 
-    public function getIterator ()
+    public function getIterator()
     {
         return new \ArrayIterator($this->elements);
     }

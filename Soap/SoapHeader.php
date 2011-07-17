@@ -19,8 +19,8 @@ class SoapHeader
     public function __construct($namespace, $name, $data)
     {
         $this->namespace = $namespace;
-        $this->name = $name;
-        $this->data = $data;
+        $this->name      = $name;
+        $this->data      = $data;
     }
 
     public function getNamespace()

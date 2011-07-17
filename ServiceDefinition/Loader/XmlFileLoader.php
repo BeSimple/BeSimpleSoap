@@ -10,13 +10,13 @@
 
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
-use Symfony\Component\Config\Loader\FileLoader;
-
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+use Bundle\WebServiceBundle\ServiceDefinition\Argument;
 use Bundle\WebServiceBundle\ServiceDefinition\Header;
 use Bundle\WebServiceBundle\ServiceDefinition\Method;
-use Bundle\WebServiceBundle\ServiceDefinition\Argument;
 use Bundle\WebServiceBundle\ServiceDefinition\Type;
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+
+use Symfony\Component\Config\Loader\FileLoader;
 
 class XmlFileLoader extends FileLoader
 {
@@ -28,8 +28,7 @@ class XmlFileLoader extends FileLoader
     public function load($file, $type = null)
     {
         $path = $this->locator->locate($file);
-
-        $xml = $this->parseFile($path);
+        $xml  = $this->parseFile($path);
 
         $definition = new ServiceDefinition();
         $definition->setName((string) $xml['name']);
@@ -53,9 +52,7 @@ class XmlFileLoader extends FileLoader
      */
     protected function parseHeader(\SimpleXMLElement $node)
     {
-        $header = new Header((string)$node['name'], $this->parseType($node->type));
-
-        return $header;
+        return new Header((string)$node['name'], $this->parseType($node->type));
     }
 
     /**
@@ -96,12 +93,10 @@ class XmlFileLoader extends FileLoader
     protected function parseType(\SimpleXMLElement $node)
     {
         $namespaces = $node->getDocNamespaces(true);
-        $qname = explode(':', $node['xml-type'], 2);
-        $xmlType = sprintf('{%s}%s', $namespaces[$qname[0]], $qname[1]);
+        $qname      = explode(':', $node['xml-type'], 2);
+        $xmlType    = sprintf('{%s}%s', $namespaces[$qname[0]], $qname[1]);
 
-        $type = new Type((string)$node['php-type'], $xmlType, (string)$node['converter']);
-
-        return $type;
+        return new Type((string)$node['php-type'], $xmlType, (string)$node['converter']);
     }
 
     /**

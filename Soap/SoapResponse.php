@@ -35,7 +35,7 @@ class SoapResponse extends Response
     {
         parent::__construct();
 
-        $this->soapHeaders = new Collection('getName');
+        $this->soapHeaders = new Collection('getName', 'Bundle\WebServiceBundle\Soap\SoapHeader');
         $this->setReturnValue($returnValue);
     }
 

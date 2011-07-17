@@ -8,17 +8,17 @@
  * with this source code in the file LICENSE.
  */
 
-
 namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
 
-
-
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-use Bundle\WebServiceBundle\ServiceDefinition\Method;
 use Bundle\WebServiceBundle\ServiceDefinition\Argument;
+use Bundle\WebServiceBundle\ServiceDefinition\Method;
 use Bundle\WebServiceBundle\ServiceDefinition\Type;
-
+use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
 use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Method as MethodAnnotation;
+use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Param as ParamAnnotation;
+use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Result as ResultAnnotation;
+
+use Doctrine\Common\Annotations\Reader;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Loader\LoaderResolver;
@@ -32,18 +32,18 @@ use Symfony\Component\Config\Loader\LoaderResolver;
  */
 class AnnotationClassLoader implements LoaderInterface
 {
-    private $wsMethodAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Method';
-    private $wsParamAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Param';
-    private $wsResultAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Result';
+    private $methodAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Method';
+    private $paramAnnotationClass  = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Param';
+    private $resultAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Result';
 
     protected $reader;
 
     /**
      * Constructor.
      *
-     * @param AnnotationReader $reader
+     * @param \Doctrine\Common\Annotations\Reader $reader
      */
-    public function __construct(AnnotationReader $reader)
+    public function __construct(Reader $reader)
     {
         $this->reader = $reader;
     }
@@ -64,31 +64,46 @@ class AnnotationClassLoader implements LoaderInterface
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
-        $class = new \ReflectionClass($class);
-
+        $class      = new \ReflectionClass($class);
         $definition = new ServiceDefinition();
-
         foreach ($class->getMethods() as $method) {
-            $wsMethodAnnot = $this->reader->getMethodAnnotation($method, $this->wsMethodAnnotationClass);
+            $serviceArguments = array();
+            $serviceMethod    =
+            $serviceReturn    = null;
 
-            if($wsMethodAnnot !== null) {
-                $wsParamAnnots = $this->reader->getMethodAnnotations($method, $this->wsParamAnnotationClass);
-                $wsResultAnnot = $this->reader->getMethodAnnotation($method, $this->wsResultAnnotationClass);
+            foreach ($this->reader->getMethodAnnotations($method) as $i => $annotation) {
+                if ($annotation instanceof ParamAnnotation) {
+                    $serviceArguments[] = new Argument(
+                        $annotation->getValue(),
+                        new Type($annotation->getPhpType(), $annotation->getXmlType())
+                    );
+                } elseif ($annotation instanceof MethodAnnotation) {
+                    if ($serviceMethod) {
+                        throw new \LogicException(sprintf('@Method defined twice for "%s".', $method->getName()));
+                    }
 
-                $serviceMethod = new Method();
-                $serviceMethod->setName($wsMethodAnnot->getName($method->getName()));
-                $serviceMethod->setController($this->getController($method, $wsMethodAnnot));
+                    $serviceMethod = new Method(
+                        $annotation->getValue(),
+                        $this->getController($method, $annotation)
+                    );
+                } elseif ($annotation instanceof ResultAnnotation) {
+                    if ($serviceReturn) {
+                        throw new \LogicException(sprintf('@Result defined twice for "%s".', $method->getName()));
+                    }
 
-                foreach($wsParamAnnots as $wsParamAnnot) {
-                    $serviceArgument = new Argument();
-                    $serviceArgument->setName($wsParamAnnot->getName());
-                    $serviceArgument->setType(new Type($wsParamAnnot->getPhpType(), $wsParamAnnot->getXmlType()));
-
-                    $serviceMethod->getArguments()->add($serviceArgument);
+                    $serviceReturn = new Type($annotation->getPhpType(), $annotation->getXmlType());
                 }
+            }
 
-                if($wsResultAnnot !== null) {
-                    $serviceMethod->setReturn(new Type($wsResultAnnot->getPhpType(), $wsResultAnnot->getXmlType()));
+            if (!$serviceMethod && (!empty($serviceArguments) || $serviceReturn)) {
+                throw new \LogicException(sprintf('@Method non-existent for "%s".', $method->getName()));
+            }
+
+            if ($serviceMethod) {
+                $serviceMethod->setArguments($serviceArguments);
+
+                if ($serviceReturn) {
+                    $serviceMethod->setReturn($serviceReturn);
                 }
 
                 $definition->getMethods()->add($serviceMethod);
@@ -100,7 +115,7 @@ class AnnotationClassLoader implements LoaderInterface
 
     private function getController(\ReflectionMethod $method, MethodAnnotation $annotation)
     {
-        if($annotation->getService() !== null) {
+        if(null !== $annotation->getService()) {
             return $annotation->getService() . ':' . $method->name;
         } else {
             return $method->class . '::' . $method->name;
