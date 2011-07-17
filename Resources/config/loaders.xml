@@ -5,7 +5,6 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="webservice.definition.controller.listener.class">Bundle\WebServiceBundle\EventListener\ControllerListener</parameter>
         <parameter key="webservice.definition.loader.resolver.class">Symfony\Component\Config\Loader\LoaderResolver</parameter>
         <parameter key="webservice.definition.loader.class">Symfony\Component\Config\Loader\DelegatingLoader</parameter>
         <parameter key="webservice.definition.loader.annot_dir.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationDirectoryLoader</parameter>
@@ -14,11 +13,6 @@
     </parameters>
 
     <services>
-        <service id="webservice.definition.controller.listener" class="%webservice.definition.controller.listener.class%">
-            <tag name="kernel.event_listener" event="kernel.controller" method="onKernelController" />
-            <argument type="service" id="annotation_reader" />
-        </service>
-
         <service id="webservice.definition.loader.resolver" class="%webservice.definition.loader.resolver.class%" public="false" />
 
         <service id="webservice.definition.loader" class="%webservice.definition.loader.class%">
