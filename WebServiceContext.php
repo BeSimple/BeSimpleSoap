@@ -95,7 +95,7 @@ class WebServiceContext
     public function getServerFactory()
     {
         if (null === $this->serverFactory) {
-            $this->serverFactory = new SoapServerFactory($this->getServiceDefinition(), $this->getWsdlFile(), $this->converterRepository);
+            $this->serverFactory = new SoapServerFactory($this->getServiceDefinition(), $this->getWsdlFile(), $this->converterRepository, $this->options['debug']);
         }
 
         return $this->serverFactory;

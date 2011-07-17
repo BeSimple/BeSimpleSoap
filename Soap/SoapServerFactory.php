@@ -23,34 +23,35 @@ class SoapServerFactory
     private $definition;
     private $converters;
     private $wsdlFile;
+    private $debug;
 
-    public function __construct(ServiceDefinition $definition, $wsdlFile, ConverterRepository $converters)
+    public function __construct(ServiceDefinition $definition, $wsdlFile, ConverterRepository $converters, $debug = false)
     {
         $this->definition = $definition;
         $this->wsdlFile   = $wsdlFile;
         $this->converters = $converters;
+        $this->debug      = $debug;
     }
 
     public function create($request, $response)
     {
-        $server = new \SoapServer(
+        return new \SoapServer(
             $this->wsdlFile,
             array(
-                'classmap' => $this->createSoapServerClassmap(),
-                'typemap'  => $this->createSoapServerTypemap($request, $response),
-                'features' => SOAP_SINGLE_ELEMENT_ARRAYS,
+                'classmap'   => $this->createSoapServerClassmap(),
+                'typemap'    => $this->createSoapServerTypemap($request, $response),
+                'features'   => SOAP_SINGLE_ELEMENT_ARRAYS,
+                'cache_wsdl' => $this->debug ? WSDL_CACHE_NONE : WSDL_CACHE_DISK,
             )
         );
-
-        return $server;
     }
 
     private function createSoapServerTypemap($request, $response)
     {
-        $result = array();
+        $typemap = array();
 
         foreach($this->converters->getTypeConverters() as $typeConverter) {
-            $result[] = array(
+            $typemap[] = array(
                 'type_name' => $typeConverter->getTypeName(),
                 'type_ns'   => $typeConverter->getTypeNamespace(),
                 'from_xml'  => function($input) use ($request, $typeConverter) {
@@ -62,24 +63,24 @@ class SoapServerFactory
             );
         }
 
-        return $result;
+        return $typemap;
     }
 
     private function createSoapServerClassmap()
     {
-        $result = array();
+        $classmap = array();
 
         foreach($this->definition->getHeaders() as $header) {
-            $this->addSoapServerClassmapEntry($result, $header->getType());
+            $this->addSoapServerClassmapEntry($classmap, $header->getType());
         }
 
         foreach($this->definition->getMethods() as $method) {
             foreach($method->getArguments() as $arg) {
-                $this->addSoapServerClassmapEntry($result, $arg->getType());
+                $this->addSoapServerClassmapEntry($classmap, $arg->getType());
             }
         }
 
-        return $result;
+        return $classmap;
     }
 
     private function addSoapServerClassmapEntry(&$classmap, Type $type)

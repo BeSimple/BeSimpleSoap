@@ -24,6 +24,7 @@
             <argument type="service" id="webservice.binder.response"/>
             <argument type="collection">
                 <argument key="cache_dir">%webservice.cache_dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
             </argument>
         </service>
 
