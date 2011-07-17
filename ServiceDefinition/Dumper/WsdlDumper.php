@@ -86,7 +86,7 @@ class WsdlDumper implements DumperInterface
             $dom->insertBefore($stylesheet, $dom->documentElement);
         }
 
-        return $wsdl->toXml();
+        return $this->wsdl->toXml();
     }
 
     protected function qualify($name, $namespace = null)
