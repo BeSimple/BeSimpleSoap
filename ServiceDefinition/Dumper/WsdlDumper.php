@@ -11,8 +11,10 @@
 namespace Bundle\WebServiceBundle\ServiceDefinition\Dumper;
 
 use Bundle\WebServiceBundle\ServiceDefinition\Method;
+use Bundle\WebServiceBundle\ServiceDefinition\Type;
 use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
 use Bundle\WebServiceBundle\Util\Assert;
+use Bundle\WebServiceBundle\Util\QName;
 
 use Zend\Soap\Wsdl;
 
@@ -21,38 +23,39 @@ use Zend\Soap\Wsdl;
  */
 class WsdlDumper implements DumperInterface
 {
+    private $wsdl;
     private $definition;
 
     public function dumpServiceDefinition(ServiceDefinition $definition, array $options = array())
     {
-        $options = array_merge(array('endpoint' => ''), $options);
-
         Assert::thatArgumentNotNull('definition', $definition);
 
+        $options = array_merge(array('endpoint' => '', 'stylesheet' => null), $options);
+
         $this->definition = $definition;
-        $wsdl             = new Wsdl($definition->getName(), $definition->getNamespace());
-        $port             = $wsdl->addPortType($this->getPortTypeName());
-        $binding          = $wsdl->addBinding($this->getBindingName(), 'tns:' . $this->getPortTypeName());
+        $this->wsdl       = new Wsdl($definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy());
+        $port             = $this->wsdl->addPortType($this->getPortTypeName());
+        $binding          = $this->wsdl->addBinding($this->getBindingName(), $this->qualify($this->getPortTypeName()));
 
-        $wsdl->addSoapBinding($binding, 'rpc');
-        $wsdl->addService($this->getServiceName(), $this->getPortName(), 'tns:' . $this->getBindingName(), $options['endpoint']);
+        $this->wsdl->addSoapBinding($binding, 'rpc');
+        $this->wsdl->addService($this->getServiceName(), $this->getPortName(), $this->qualify($this->getBindingName()), $options['endpoint']);
 
-        foreach($definition->getMethods() as $method) {
+        foreach ($definition->getMethods() as $method) {
             $requestParts  = array();
             $responseParts = array();
 
-            foreach($method->getArguments() as $argument) {
-                $requestParts[$argument->getName()] = $wsdl->getType($argument->getType()->getPhpType());
+            foreach ($method->getArguments() as $argument) {
+                $requestParts[$argument->getName()] = $this->wsdl->getType($argument->getType()->getPhpType());
             }
 
-            if($method->getReturn() !== null) {
-                $responseParts['return'] = $wsdl->getType($method->getReturn()->getPhpType());
+            if ($method->getReturn() !== null) {
+                $responseParts['return'] = $this->wsdl->getType($method->getReturn()->getPhpType());
             }
 
-            $wsdl->addMessage($this->getRequestMessageName($method), $requestParts);
-            $wsdl->addMessage($this->getResponseMessageName($method), $responseParts);
+            $this->wsdl->addMessage($this->getRequestMessageName($method), $requestParts);
+            $this->wsdl->addMessage($this->getResponseMessageName($method), $responseParts);
 
-            $portOperation = $wsdl->addPortOperation($port, $method->getName(), 'tns:' . $this->getRequestMessageName($method), 'tns:' . $this->getResponseMessageName($method));
+            $portOperation = $this->wsdl->addPortOperation($port, $method->getName(), $this->qualify($this->getRequestMessageName($method)), $this->qualify($this->getResponseMessageName($method)));
             $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
 
             $bindingInput = array(
@@ -68,15 +71,31 @@ class WsdlDumper implements DumperInterface
                 'encodingStyle' => 'http://schemas.xmlsoap.org/soap/encoding/',
             );
 
-            $bindingOperation = $wsdl->addBindingOperation($binding, $method->getName(), $bindingInput, $bindingOutput);
-            $wsdl->addSoapOperation($bindingOperation, $this->getSoapOperationName($method));
+            $bindingOperation = $this->wsdl->addBindingOperation($binding, $method->getName(), $bindingInput, $bindingOutput);
+            $this->wsdl->addSoapOperation($bindingOperation, $this->getSoapOperationName($method));
         }
 
         $this->definition = null;
 
-        $wsdl->toDomDocument()->formatOutput = true;
+        $dom               = $this->wsdl->toDomDocument();
+        $dom->formatOutput = true;
+
+        if (null !== $options['stylesheet']) {
+            $stylesheet = $dom->createProcessingInstruction('xml-stylesheet', sprintf('type="text/xsl" href="%s"', $options['stylesheet']));
+
+            $dom->insertBefore($stylesheet, $dom->documentElement);
+        }
 
         return $wsdl->toXml();
+    }
+
+    protected function qualify($name, $namespace = null)
+    {
+        if($namespace === null) {
+            $namespace = $this->definition->getNamespace();
+        }
+
+        return $this->wsdl->toDomDocument()->lookupPrefix($namespace).':'.$name;
     }
 
     protected function getPortName()
