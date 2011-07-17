@@ -13,15 +13,17 @@
         <parameter key="webservice.binder.response.documentwrapped.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
         <parameter key="webservice.definition.dumper.wsdl.rpcliteral.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
         <parameter key="webservice.converter.repository.class">Bundle\WebServiceBundle\Converter\ConverterRepository</parameter>
+        <parameter key="webservice.type.repository.class">Bundle\WebServiceBundle\Converter\TypeRepository</parameter>
     </parameters>
 
     <services>
         <service id="webservice.context" class="%webservice.context.class%" abstract="true">
             <argument type="service" id="webservice.definition.loader"/>
             <argument type="service" id="webservice.definition.dumper.wsdl"/>
-            <argument type="service" id="webservice.converter.repository"/>
             <argument type="service" id="webservice.binder.request"/>
             <argument type="service" id="webservice.binder.response"/>
+            <argument type="service" id="webservice.type.repository"/>
+            <argument type="service" id="webservice.converter.repository"/>
             <argument type="collection">
                 <argument key="cache_dir">%webservice.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
@@ -38,9 +40,28 @@
 
         <service id="webservice.definition.dumper.wsdl.rpcliteral" class="%webservice.definition.dumper.wsdl.rpcliteral.class%" />
 
-        <service id="webservice.converter.repository" class="%webservice.converter.repository.class%">
-            <call method="registerTypeConverterServices">
-                <argument type="service" id="service_container" />
+        <service id="webservice.converter.repository" class="%webservice.converter.repository.class%" />
+
+        <service id="webservice.type.repository" class="%webservice.type.repository.class%">
+            <call method="addXmlNamespace">
+                <argument>xsd</argument>
+                <argument>http://www.w3.org/2001/XMLSchema</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>string</argument>
+                <argument>xsd:string</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>int</argument>
+                <argument>xsd:int</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>bool</argument>
+                <argument>xsd:boolean</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>float</argument>
+                <argument>xsd:float</argument>
             </call>
         </service>
     </services>

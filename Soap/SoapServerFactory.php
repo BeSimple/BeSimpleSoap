@@ -11,24 +11,21 @@
 namespace Bundle\WebServiceBundle\Soap;
 
 use Bundle\WebServiceBundle\Converter\ConverterRepository;
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-use Bundle\WebServiceBundle\ServiceDefinition\Type;
-use Bundle\WebServiceBundle\Util\QName;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapServerFactory
 {
-    private $definition;
-    private $converters;
     private $wsdlFile;
+    private $classmap;
+    private $converters;
     private $debug;
 
-    public function __construct(ServiceDefinition $definition, $wsdlFile, ConverterRepository $converters, $debug = false)
+    public function __construct($wsdlFile, array $classmap, ConverterRepository $converters, $debug = false)
     {
-        $this->definition = $definition;
         $this->wsdlFile   = $wsdlFile;
+        $this->classmap   = $classmap;
         $this->converters = $converters;
         $this->debug      = $debug;
     }
@@ -38,7 +35,7 @@ class SoapServerFactory
         return new \SoapServer(
             $this->wsdlFile,
             array(
-                'classmap'   => $this->createSoapServerClassmap(),
+                'classmap'   => $this->classmap,
                 'typemap'    => $this->createSoapServerTypemap($request, $response),
                 'features'   => SOAP_SINGLE_ELEMENT_ARRAYS,
                 'cache_wsdl' => $this->debug ? WSDL_CACHE_NONE : WSDL_CACHE_DISK,
@@ -64,37 +61,5 @@ class SoapServerFactory
         }
 
         return $typemap;
-    }
-
-    private function createSoapServerClassmap()
-    {
-        $classmap = array();
-
-        foreach($this->definition->getHeaders() as $header) {
-            $this->addSoapServerClassmapEntry($classmap, $header->getType());
-        }
-
-        foreach($this->definition->getMethods() as $method) {
-            foreach($method->getArguments() as $arg) {
-                $this->addSoapServerClassmapEntry($classmap, $arg->getType());
-            }
-        }
-
-        return $classmap;
-    }
-
-    private function addSoapServerClassmapEntry(&$classmap, Type $type)
-    {
-        // TODO: fix this hack
-        if(null === $type->getXmlType()) return;
-
-        $xmlType = QName::fromPackedQName($type->getXmlType())->getName();
-        $phpType = $type->getPhpType();
-
-        if(isset($classmap[$xmlType]) && $classmap[$xmlType] != $phpType) {
-            // log warning
-        }
-
-        $classmap[$xmlType] = $phpType;
     }
 }

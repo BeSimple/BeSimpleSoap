@@ -109,4 +109,22 @@ class ServiceDefinition
     {
         $this->headers->addAll($headers);
     }
+
+    /**
+     * @return array
+     */
+    public function getAllTypes()
+    {
+        $types = array();
+
+        foreach($this->methods as $method) {
+            foreach($method->getArguments() as $argument) {
+                $types[] = $argument->getType();
+            }
+
+            $types[] = $method->getReturn();
+        }
+
+        return $types;
+    }
 }

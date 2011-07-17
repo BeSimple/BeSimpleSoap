@@ -65,9 +65,9 @@ class WebServiceExtension extends Extension
 
         $arguments = array();
         foreach($this->contextArguments as $i => $argument) {
-            if (in_array($i, array(1, 3, 4))) {
+            if (in_array($i, array(1, 2, 3))) {
                 $argument = new Reference($argument->__toString().$bindingSuffix);
-            } elseif (5 === $i) {
+            } elseif (6 === $i) {
                 $argument = array_merge($argument, $config);
             } else {
                 $argument = new Reference($argument->__toString());
