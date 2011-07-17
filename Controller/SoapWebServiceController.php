@@ -15,6 +15,7 @@ use Bundle\WebServiceBundle\Soap\SoapResponse;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -47,7 +48,7 @@ class SoapWebServiceController extends ContainerAware
      */
     public function callAction($webservice)
     {
-        $webServiceContext   = $this->container->get('webservice.context.'.$webservice);
+        $webServiceContext = $this->getWebServiceContext($webservice);
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
@@ -66,7 +67,7 @@ class SoapWebServiceController extends ContainerAware
      */
     public function definitionAction($webservice)
     {
-        $webServiceContext = $this->container->get('webservice.context.'.$webservice);
+        $webServiceContext = $this->getWebServiceContext($webservice);
         $request           = $this->container->get('request');
 
         if ($request->query->has('wsdl') || $request->query->has('WSDL')) {
@@ -75,7 +76,7 @@ class SoapWebServiceController extends ContainerAware
             $response = new Response($webServiceContext->getWsdlFileContent($endpoint));
             $response->headers->set('Content-Type', 'application/wsdl+xml');
         } else {
-            // TODO: replace with better represantation
+            // TODO: replace with better representation
             $response = new Response($webServiceContext->getWsdlFileContent());
             $response->headers->set('Content-Type', 'text/xml');
         }
@@ -158,5 +159,14 @@ class SoapWebServiceController extends ContainerAware
     public function getResponse()
     {
         return $this->soapResponse;
+    }
+
+    private function getWebServiceContext($webservice)
+    {
+        if(!$this->container->has('webservice.context.'.$webservice))
+        {
+            throw new NotFoundHttpException(sprintf('No webservice with name "%s" found.', $webservice));
+        }
+        return $this->container->get('webservice.context.'.$webservice);
     }
 }
