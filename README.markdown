@@ -1,7 +1,7 @@
-WebServiceBundle
-================
+BeSimpleSoapBundle
+==================
 
-The WebServiceBundle is a Symfony2 bundle to build WSDL and SOAP based web services.
+The BeSimpleSoapBundle is a Symfony2 bundle to build WSDL and SOAP based web services.
 It is based on the [ckWebServicePlugin] [1] for symfony.
 
 Requirements
@@ -13,7 +13,7 @@ Requirements
         git submodule add http://github.com/zendframework/zf2.git vendor/zend-framework
 
  * Add `Zend\Soap` library to `app/autoload.php`
- 
+
         // app/autoload.php
         $loader->registerNamespaces(array(
             'Zend\\Soap' => __DIR__.'/../vendor/zend-frameword/library',
@@ -23,40 +23,40 @@ Requirements
 QuickStart
 ----------
 
- *  Put WebServiceBundle in your `vendor/bundles/Bundle` dir
+ *  Put BeSimplSoapBundle in your `vendor/bundles/BeSimple` dir
 
-        git submodule add https://github.com/BeSimple/BeSimpleSoapBundle.git vendor/bundles/WebServiceBundle
+        git submodule add https://github.com/BeSimple/BeSimpleSoapBundle.git vendor/bundles/BeSimple/SoapBundle
 
- *  Enable WebServiceBundle in your `app/AppKernel.php`
+ *  Enable BeSimpleSoapBundle in your `app/AppKernel.php`
 
         // app/AppKernel.php
         public function registerBundles()
         {
             return array(
                 // ...
-                new new Bundle\WebServiceBundle\WebServiceBundle(),
+                new new BeSimple\SoapBundle\BeSimpleSoapBundle(),
                 // ...
             );
         }
 
- *  Register the Bundle namespace
+ *  Register the BeSimple namespace
 
         // app/autoload.php
         $loader->registerNamespaces(array(
-            'Bundle'     => __DIR__.'/../vendor/bundles',
+            'BeSimple'   => __DIR__.'/../vendor/bundles',
             'Zend\\Soap' => __DIR__.'/../vendor/zend-frameword/library',
             // your other namespaces
         ));
 
- *  Include the WebServiceBundle's routing configuration in `app/config/routing.yml` (you can choose the prefix arbitrarily)
+ *  Include the BeSimpleSoapBundle's routing configuration in `app/config/routing.yml` (you can choose the prefix arbitrarily)
 
-        _ws:
-            resource: "@WebServiceBundle/Resources/config/routing/webservicecontroller.xml"
+        _besimple_soap:
+            resource: "@BeSimpleSoapBundle/Resources/config/routing/webservicecontroller.xml"
             prefix:   /ws
 
  *  Configure your first web service in `app/config/config.yml`
 
-        web_service:
+        be_simple_soap:
             services:
                 DemoApi:
                     namespace:     http://mysymfonyapp.com/ws/DemoApi/1.0/
@@ -67,10 +67,10 @@ QuickStart
  *  Annotate your controller methods
 
         // src/Acme/DemoBundle/Controller/DemoController.php
-        use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Method;
-        use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Param;
-        use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Result;
-        use Bundle\WebServiceBundle\Soap\SoapResponse;
+        use BeSimple\SoapBundle\ServiceDefinition\Annotation\Method;
+        use BeSimple\SoapBundle\ServiceDefinition\Annotation\Param;
+        use BeSimple\SoapBundle\ServiceDefinition\Annotation\Result;
+        use BeSimple\SoapBundle\Soap\SoapResponse;
 
         class DemoController extends Controller
         {

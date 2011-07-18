@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceDefinition;
+namespace BeSimple\SoapBundle\ServiceDefinition;
 
 class Header
 {

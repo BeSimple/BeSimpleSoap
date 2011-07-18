@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\DependencyInjection;
+namespace BeSimple\SoapBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
@@ -19,11 +19,11 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
- * WebServiceExtension.
+ * BeSimpleSoapExtension.
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class WebServiceExtension extends Extension
+class BeSimpleSoapExtension extends Extension
 {
     private $contextArguments;
 

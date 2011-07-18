@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,12 +8,12 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\Tests\Soap;
+namespace BeSimple\SoapBundle\Tests\Soap;
 
-use Bundle\WebServiceBundle\Soap\SoapRequest;
+use BeSimple\SoapBundle\Soap\SoapRequest;
 
 /**
- * UnitTest for \Bundle\WebServiceBundle\Soap\SoapRequest.
+ * UnitTest for \BeSimple\SoapBundle\Soap\SoapRequest.
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */

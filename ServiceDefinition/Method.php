@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceDefinition;
+namespace BeSimple\SoapBundle\ServiceDefinition;
 
-use Bundle\WebServiceBundle\Util\Collection;
+use BeSimple\SoapBundle\Util\Collection;
 
 class Method
 {
@@ -57,7 +57,7 @@ class Method
 
     public function setArguments(array $arguments)
     {
-        $this->arguments = new Collection('getName', 'Bundle\WebServiceBundle\ServiceDefinition\Argument');
+        $this->arguments = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Argument');
         $this->arguments->addAll($arguments);
     }
 

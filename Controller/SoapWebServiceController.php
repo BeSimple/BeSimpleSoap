@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,10 +8,10 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\Controller;
+namespace BeSimple\SoapBundle\Controller;
 
-use Bundle\WebServiceBundle\Soap\SoapRequest;
-use Bundle\WebServiceBundle\Soap\SoapResponse;
+use BeSimple\SoapBundle\Soap\SoapRequest;
+use BeSimple\SoapBundle\Soap\SoapResponse;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,22 +29,22 @@ class SoapWebServiceController extends ContainerAware
     protected $soapServer;
 
     /**
-     * @var \Bundle\WebServiceBundle\Soap\SoapRequest
+     * @var \BeSimple\SoapBundle\Soap\SoapRequest
      */
     protected $soapRequest;
 
     /**
-     * @var \Bundle\WebServiceBundle\Soap\SoapResponse
+     * @var \BeSimple\SoapBundle\Soap\SoapResponse
      */
     protected $soapResponse;
 
     /**
-     * @var \Bundle\WebServiceBundle\ServiceBinding\ServiceBinder
+     * @var \BeSimple\SoapBundle\ServiceBinding\ServiceBinder
      */
     protected $serviceBinder;
 
     /**
-     * @return \Bundle\WebServiceBundle\Soap\SoapResponse
+     * @return \BeSimple\SoapBundle\Soap\SoapResponse
      */
     public function callAction($webservice)
     {
@@ -146,7 +146,7 @@ class SoapWebServiceController extends ContainerAware
     }
 
     /**
-     * @return \Bundle\WebServiceBundle\Soap\SoapRequest
+     * @return \BeSimple\SoapBundle\Soap\SoapRequest
      */
     public function getRequest()
     {
@@ -154,7 +154,7 @@ class SoapWebServiceController extends ContainerAware
     }
 
     /**
-     * @return \Bundle\WebServiceBundle\Soap\SoapResponse
+     * @return \BeSimple\SoapBundle\Soap\SoapResponse
      */
     public function getResponse()
     {

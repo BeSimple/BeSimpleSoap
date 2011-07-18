@@ -11,7 +11,7 @@ $loader->register();
 
 spl_autoload_register(function($class) {
     //if (0 === strpos($class, 'BeSimple\\SoapBundle\\')) {
-    if (0 === strpos($class, 'Bundle\\WebServiceBundle\\')) {
+    if (0 === strpos($class, 'BeSimple\\SoapBundle\\')) {
         $path = __DIR__.'/../'.implode('/', array_slice(explode('\\', $class), 2)).'.php';
 
         if (file_exists($path)) {

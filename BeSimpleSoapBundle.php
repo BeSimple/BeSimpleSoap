@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,19 +8,19 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle;
+namespace BeSimple\SoapBundle;
 
-use Bundle\WebServiceBundle\DependencyInjection\Compiler\WebServiceResolverPass;
+use BeSimple\SoapBundle\DependencyInjection\Compiler\WebServiceResolverPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * WebServiceBundle.
+ * BeSimpleSoapBundle.
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class WebServiceBundle extends Bundle
+class BeSimpleSoapBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {

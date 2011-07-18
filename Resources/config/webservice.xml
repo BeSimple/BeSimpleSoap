@@ -4,16 +4,16 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="webservice.controller.class">Bundle\WebServiceBundle\Controller\SoapWebServiceController</parameter>
-        <parameter key="webservice.context.class">Bundle\WebServiceBundle\WebServiceContext</parameter>
+        <parameter key="webservice.controller.class">BeSimple\SoapBundle\Controller\SoapWebServiceController</parameter>
+        <parameter key="webservice.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
         <parameter key="webservice.cache_dir">%kernel.cache_dir%/webservice</parameter>
-        <parameter key="webservice.binder.request.rpcliteral.class">Bundle\WebServiceBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
-        <parameter key="webservice.binder.response.rpcliteral.class">Bundle\WebServiceBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
-        <parameter key="webservice.binder.request.documentwrapped.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
-        <parameter key="webservice.binder.response.documentwrapped.class">Bundle\WebServiceBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
-        <parameter key="webservice.definition.dumper.wsdl.rpcliteral.class">Bundle\WebServiceBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
-        <parameter key="webservice.converter.repository.class">Bundle\WebServiceBundle\Converter\ConverterRepository</parameter>
-        <parameter key="webservice.type.repository.class">Bundle\WebServiceBundle\Converter\TypeRepository</parameter>
+        <parameter key="webservice.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
+        <parameter key="webservice.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
+        <parameter key="webservice.binder.request.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
+        <parameter key="webservice.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
+        <parameter key="webservice.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
+        <parameter key="webservice.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
+        <parameter key="webservice.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
     </parameters>
 
     <services>

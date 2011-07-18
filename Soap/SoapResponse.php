@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\Soap;
+namespace BeSimple\SoapBundle\Soap;
 
-use Bundle\WebServiceBundle\Util\Collection;
+use BeSimple\SoapBundle\Util\Collection;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SoapResponse extends Response
 {
     /**
-     * @var \Bundle\WebServiceBundle\Util\Collection
+     * @var \BeSimple\SoapBundle\Util\Collection
      */
     protected $soapHeaders;
 
@@ -35,7 +35,7 @@ class SoapResponse extends Response
     {
         parent::__construct();
 
-        $this->soapHeaders = new Collection('getName', 'Bundle\WebServiceBundle\Soap\SoapHeader');
+        $this->soapHeaders = new Collection('getName', 'BeSimple\SoapBundle\Soap\SoapHeader');
         $this->setReturnValue($returnValue);
     }
 

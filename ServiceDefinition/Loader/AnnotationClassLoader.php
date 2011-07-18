@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,15 +8,15 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
+namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
-use Bundle\WebServiceBundle\ServiceDefinition\Argument;
-use Bundle\WebServiceBundle\ServiceDefinition\Method;
-use Bundle\WebServiceBundle\ServiceDefinition\Type;
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Method as MethodAnnotation;
-use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Param as ParamAnnotation;
-use Bundle\WebServiceBundle\ServiceDefinition\Annotation\Result as ResultAnnotation;
+use BeSimple\SoapBundle\ServiceDefinition\Argument;
+use BeSimple\SoapBundle\ServiceDefinition\Method;
+use BeSimple\SoapBundle\ServiceDefinition\Type;
+use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
+use BeSimple\SoapBundle\ServiceDefinition\Annotation\Method as MethodAnnotation;
+use BeSimple\SoapBundle\ServiceDefinition\Annotation\Param as ParamAnnotation;
+use BeSimple\SoapBundle\ServiceDefinition\Annotation\Result as ResultAnnotation;
 
 use Doctrine\Common\Annotations\Reader;
 
@@ -32,9 +32,9 @@ use Symfony\Component\Config\Loader\LoaderResolver;
  */
 class AnnotationClassLoader implements LoaderInterface
 {
-    private $methodAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Method';
-    private $paramAnnotationClass  = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Param';
-    private $resultAnnotationClass = 'Bundle\\WebServiceBundle\\ServiceDefinition\\Annotation\\Result';
+    private $methodAnnotationClass = 'BeSimple\\SoapBundle\\ServiceDefinition\\Annotation\\Method';
+    private $paramAnnotationClass  = 'BeSimple\\SoapBundle\\ServiceDefinition\\Annotation\\Param';
+    private $resultAnnotationClass = 'BeSimple\\SoapBundle\\ServiceDefinition\\Annotation\\Result';
 
     protected $reader;
 
@@ -127,7 +127,7 @@ class AnnotationClassLoader implements LoaderInterface
      * @param \ReflectionMethod $method
      * @param ParamAnnotation   $annotation
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\Type
+     * @return \BeSimple\SoapBundle\ServiceDefinition\Type
      */
     private function getArgumentType(\ReflectionMethod $method, ParamAnnotation $annotation)
     {

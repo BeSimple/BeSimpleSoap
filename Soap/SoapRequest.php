@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\Soap;
+namespace BeSimple\SoapBundle\Soap;
 
-use Bundle\WebServiceBundle\Util\Collection;
+use BeSimple\SoapBundle\Util\Collection;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -40,12 +40,12 @@ class SoapRequest extends Request
     protected $soapAction;
 
     /**
-     * @var \Bundle\WebServiceBundle\Util\Collection
+     * @var \BeSimple\SoapBundle\Util\Collection
      */
     protected $soapHeaders;
 
     /**
-     * @var \Bundle\WebServiceBundle\Util\Collection
+     * @var \BeSimple\SoapBundle\Util\Collection
      */
     protected $soapAttachments;
 
@@ -54,8 +54,8 @@ class SoapRequest extends Request
         parent::initialize($query, $request, $attributes, $cookies, $files, $server, $content);
 
         $this->soapMessage     = null;
-        $this->soapHeaders     = new Collection('getName', 'Bundle\WebServiceBundle\Soap\SoapHeader');
-        $this->soapAttachments = new Collection('getId', 'Bundle\WebServiceBundle\Soap\SoapAttachment');
+        $this->soapHeaders     = new Collection('getName', 'BeSimple\SoapBundle\Soap\SoapHeader');
+        $this->soapAttachments = new Collection('getId', 'BeSimple\SoapBundle\Soap\SoapAttachment');
 
         $this->setRequestFormat('soap');
     }

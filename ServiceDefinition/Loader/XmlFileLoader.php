@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,13 +8,13 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceDefinition\Loader;
+namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
-use Bundle\WebServiceBundle\ServiceDefinition\Argument;
-use Bundle\WebServiceBundle\ServiceDefinition\Header;
-use Bundle\WebServiceBundle\ServiceDefinition\Method;
-use Bundle\WebServiceBundle\ServiceDefinition\Type;
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
+use BeSimple\SoapBundle\ServiceDefinition\Argument;
+use BeSimple\SoapBundle\ServiceDefinition\Header;
+use BeSimple\SoapBundle\ServiceDefinition\Method;
+use BeSimple\SoapBundle\ServiceDefinition\Type;
+use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
 
 use Symfony\Component\Config\Loader\FileLoader;
 
@@ -48,7 +48,7 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\Header
+     * @return \BeSimple\SoapBundle\ServiceDefinition\Header
      */
     protected function parseHeader(\SimpleXMLElement $node)
     {
@@ -58,7 +58,7 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\Method
+     * @return \BeSimple\SoapBundle\ServiceDefinition\Method
      */
     protected function parseMethod(\SimpleXMLElement $node)
     {
@@ -76,7 +76,7 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\Argument
+     * @return \BeSimple\SoapBundle\ServiceDefinition\Argument
      */
     protected function parseArgument(\SimpleXMLElement $node)
     {
@@ -88,7 +88,7 @@ class XmlFileLoader extends FileLoader
     /**
      * @param \SimpleXMLElement $node
      *
-     * @return \Bundle\WebServiceBundle\ServiceDefinition\Type
+     * @return \BeSimple\SoapBundle\ServiceDefinition\Type
      */
     protected function parseType(\SimpleXMLElement $node)
     {

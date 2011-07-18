@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -11,7 +11,7 @@
 
 /*
 
-CAUTION: This file installs the dependencies needed to run the WebServiceBundle test suite.
+CAUTION: This file installs the dependencies needed to run the BeSimpleSoapBundle test suite.
 
 https://github.com/BeSimple/BeSimpleSoapBundle
 

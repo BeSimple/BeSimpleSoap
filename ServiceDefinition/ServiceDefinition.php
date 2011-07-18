@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceDefinition;
+namespace BeSimple\SoapBundle\ServiceDefinition;
 
-use Bundle\WebServiceBundle\Util\Collection;
+use BeSimple\SoapBundle\Util\Collection;
 
 class ServiceDefinition
 {
@@ -25,12 +25,12 @@ class ServiceDefinition
     private $namespace;
 
     /**
-     * @var \Bundle\WebServiceBundle\Util\Collection
+     * @var \BeSimple\SoapBundle\Util\Collection
      */
     private $methods;
 
     /**
-     * @var \Bundle\WebServiceBundle\Util\Collection
+     * @var \BeSimple\SoapBundle\Util\Collection
      */
     private $headers;
 
@@ -39,8 +39,8 @@ class ServiceDefinition
         $this->setName($name);
         $this->setNamespace($namespace);
 
-        $this->methods = new Collection('getName', 'Bundle\WebServiceBundle\ServiceDefinition\Method');
-        $this->headers = new Collection('getName', 'Bundle\WebServiceBundle\ServiceDefinition\Header');
+        $this->methods = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Method');
+        $this->headers = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Header');
 
         $this->setMethods($methods);
         $this->setHeaders($headers);
@@ -79,7 +79,7 @@ class ServiceDefinition
     }
 
     /**
-     * @return \Bundle\WebServiceBundle\Util\Collection
+     * @return \BeSimple\SoapBundle\Util\Collection
      */
     public function getMethods()
     {
@@ -95,7 +95,7 @@ class ServiceDefinition
     }
 
     /**
-     * @return \Bundle\WebServiceBundle\Util\Collection
+     * @return \BeSimple\SoapBundle\Util\Collection
      */
     public function getHeaders()
     {

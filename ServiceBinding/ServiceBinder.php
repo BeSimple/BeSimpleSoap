@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,27 +8,27 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceBinding;
+namespace BeSimple\SoapBundle\ServiceBinding;
 
-use Bundle\WebServiceBundle\ServiceDefinition\Header;
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-use Bundle\WebServiceBundle\Soap\SoapHeader;
-use Bundle\WebServiceBundle\Util\QName;
+use BeSimple\SoapBundle\ServiceDefinition\Header;
+use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
+use BeSimple\SoapBundle\Soap\SoapHeader;
+use BeSimple\SoapBundle\Util\QName;
 
 class ServiceBinder
 {
     /**
-     * @var \Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition
+     * @var \BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition
      */
     private $definition;
 
     /**
-     * @var \Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface
+     * @var \BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface
      */
     private $requestMessageBinder;
 
     /**
-     * @var \Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface
+     * @var \BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface
      */
     private $responseMessageBinder;
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\Soap;
+namespace BeSimple\SoapBundle\Soap;
 
-use Bundle\WebServiceBundle\Converter\ConverterRepository;
+use BeSimple\SoapBundle\Converter\ConverterRepository;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>

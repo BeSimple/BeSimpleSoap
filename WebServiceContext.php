@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,14 +8,14 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle;
+namespace BeSimple\SoapBundle;
 
-use Bundle\WebServiceBundle\Converter\ConverterRepository;
-use Bundle\WebServiceBundle\Converter\TypeRepository;
-use Bundle\WebServiceBundle\ServiceBinding\MessageBinderInterface;
-use Bundle\WebServiceBundle\ServiceBinding\ServiceBinder;
-use Bundle\WebServiceBundle\ServiceDefinition\Dumper\DumperInterface;
-use Bundle\WebServiceBundle\Soap\SoapServerFactory;
+use BeSimple\SoapBundle\Converter\ConverterRepository;
+use BeSimple\SoapBundle\Converter\TypeRepository;
+use BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface;
+use BeSimple\SoapBundle\ServiceBinding\ServiceBinder;
+use BeSimple\SoapBundle\ServiceDefinition\Dumper\DumperInterface;
+use BeSimple\SoapBundle\Soap\SoapServerFactory;
 
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;

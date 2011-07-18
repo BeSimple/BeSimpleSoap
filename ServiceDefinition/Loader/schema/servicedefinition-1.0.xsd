@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://christiankerl.github.com/WebServiceBundle/servicedefinition/1.0/" xmlns:tns="http://christiankerl.github.com/WebServiceBundle/servicedefinition/1.0/" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://github.com/BeSimple/BeSimpleSoapBundle/servicedefinition/1.0/" xmlns:tns="http://github.com/BeSimple/BeSimpleSoapBundle/servicedefinition/1.0/" elementFormDefault="qualified">
     <element name="webservice" type="tns:WebserviceType" />
     <complexType name="WebserviceType">
         <sequence>

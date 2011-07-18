@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the WebServiceBundle.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  *
@@ -8,13 +8,13 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Bundle\WebServiceBundle\ServiceDefinition\Dumper;
+namespace BeSimple\SoapBundle\ServiceDefinition\Dumper;
 
-use Bundle\WebServiceBundle\ServiceDefinition\Method;
-use Bundle\WebServiceBundle\ServiceDefinition\Type;
-use Bundle\WebServiceBundle\ServiceDefinition\ServiceDefinition;
-use Bundle\WebServiceBundle\Util\Assert;
-use Bundle\WebServiceBundle\Util\QName;
+use BeSimple\SoapBundle\ServiceDefinition\Method;
+use BeSimple\SoapBundle\ServiceDefinition\Type;
+use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
+use BeSimple\SoapBundle\Util\Assert;
+use BeSimple\SoapBundle\Util\QName;
 
 use Zend\Soap\Wsdl;
 

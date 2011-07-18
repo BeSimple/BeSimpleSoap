@@ -7,9 +7,9 @@
     <parameters>
         <parameter key="webservice.definition.loader.resolver.class">Symfony\Component\Config\Loader\LoaderResolver</parameter>
         <parameter key="webservice.definition.loader.class">Symfony\Component\Config\Loader\DelegatingLoader</parameter>
-        <parameter key="webservice.definition.loader.annot_dir.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationDirectoryLoader</parameter>
-        <parameter key="webservice.definition.loader.annot_file.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationFileLoader</parameter>
-        <parameter key="webservice.definition.loader.annot_class.class">Bundle\WebServiceBundle\ServiceDefinition\Loader\AnnotationClassLoader</parameter>
+        <parameter key="webservice.definition.loader.annot_dir.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationDirectoryLoader</parameter>
+        <parameter key="webservice.definition.loader.annot_file.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationFileLoader</parameter>
+        <parameter key="webservice.definition.loader.annot_class.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationClassLoader</parameter>
     </parameters>
 
     <services>
