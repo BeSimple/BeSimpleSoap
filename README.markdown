@@ -23,7 +23,7 @@ Requirements
 QuickStart
 ----------
 
- *  Put BeSimplSoapBundle in your `vendor/bundles/BeSimple` dir
+ *  Put BeSimpleSoapBundle in your `vendor/bundles/BeSimple` dir
 
         git submodule add https://github.com/BeSimple/BeSimpleSoapBundle.git vendor/bundles/BeSimple/SoapBundle
 
