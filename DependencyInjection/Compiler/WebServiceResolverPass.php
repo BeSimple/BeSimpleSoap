@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
- * Adds tagged webservice.definition.loader services to ebservice.definition.resolver service
+ * Adds tagged besimple.soap.definition.loader services to ebservice.definition.resolver service
  *
  * @author Francis Besset <francis.besset@gmail.com>
  */
@@ -23,13 +23,13 @@ class WebServiceResolverPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition('webservice.definition.loader.resolver')) {
+        if (false === $container->hasDefinition('besimple.soap.definition.loader.resolver')) {
             return;
         }
 
-        $definition = $container->getDefinition('webservice.definition.loader.resolver');
+        $definition = $container->getDefinition('besimple.soap.definition.loader.resolver');
 
-        foreach ($container->findTaggedServiceIds('webservice.definition.loader') as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds('besimple.soap.definition.loader') as $id => $attributes) {
             $definition->addMethodCall('addLoader', array(new Reference($id)));
         }
     }

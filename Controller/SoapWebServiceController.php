@@ -163,10 +163,10 @@ class SoapWebServiceController extends ContainerAware
 
     private function getWebServiceContext($webservice)
     {
-        if(!$this->container->has('webservice.context.'.$webservice))
+        if(!$this->container->has('besimple.soap.context.'.$webservice))
         {
             throw new NotFoundHttpException(sprintf('No webservice with name "%s" found.', $webservice));
         }
-        return $this->container->get('webservice.context.'.$webservice);
+        return $this->container->get('besimple.soap.context.'.$webservice);
     }
 }

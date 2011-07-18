@@ -27,7 +27,7 @@ class BeSimpleSoapExtension extends Extension
 {
     private $contextArguments;
 
-    // maps config options to service suffix'
+    // maps config options to service suffix
     private $bindingConfigToServiceSuffixMap = array('rpc-literal' => '.rpcliteral', 'document-wrapped' => '.documentwrapped');
 
     public function load(array $configs, ContainerBuilder $container)
@@ -55,13 +55,13 @@ class BeSimpleSoapExtension extends Extension
 
         if (null === $this->contextArguments) {
             $this->contextArguments = $container
-                ->getDefinition('webservice.context')
+                ->getDefinition('besimple.soap.context')
                 ->getArguments()
             ;
         }
 
-        $contextId = 'webservice.context.'.$config['name'];
-        $context   = $container->setDefinition($contextId, $definition = new DefinitionDecorator('webservice.context'));
+        $contextId = 'besimple.soap.context.'.$config['name'];
+        $context   = $container->setDefinition($contextId, $definition = new DefinitionDecorator('besimple.soap.context'));
 
         $arguments = array();
         foreach($this->contextArguments as $i => $argument) {

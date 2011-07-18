@@ -4,45 +4,44 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="webservice.controller.class">BeSimple\SoapBundle\Controller\SoapWebServiceController</parameter>
-        <parameter key="webservice.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
-        <parameter key="webservice.cache_dir">%kernel.cache_dir%/webservice</parameter>
-        <parameter key="webservice.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
-        <parameter key="webservice.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
-        <parameter key="webservice.binder.request.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
-        <parameter key="webservice.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
-        <parameter key="webservice.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
-        <parameter key="webservice.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
-        <parameter key="webservice.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
+        <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
+        <parameter key="besimple.soap.cache_dir">%kernel.cache_dir%/webservice</parameter>
+        <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.request.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
+        <parameter key="besimple.soap.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
+        <parameter key="besimple.soap.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
+        <parameter key="besimple.soap.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
     </parameters>
 
     <services>
-        <service id="webservice.context" class="%webservice.context.class%" abstract="true">
-            <argument type="service" id="webservice.definition.loader"/>
-            <argument type="service" id="webservice.definition.dumper.wsdl"/>
-            <argument type="service" id="webservice.binder.request"/>
-            <argument type="service" id="webservice.binder.response"/>
-            <argument type="service" id="webservice.type.repository"/>
-            <argument type="service" id="webservice.converter.repository"/>
+        <service id="besimple.soap.context" class="%besimple.soap.context.class%" abstract="true">
+            <argument type="service" id="besimple.soap.definition.loader"/>
+            <argument type="service" id="besimple.soap.definition.dumper.wsdl"/>
+            <argument type="service" id="besimple.soap.binder.request"/>
+            <argument type="service" id="besimple.soap.binder.response"/>
+            <argument type="service" id="besimple.soap.type.repository"/>
+            <argument type="service" id="besimple.soap.converter.repository"/>
             <argument type="collection">
-                <argument key="cache_dir">%webservice.cache_dir%</argument>
+                <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
             </argument>
         </service>
 
-        <service id="webservice.binder.request.rpcliteral" class="%webservice.binder.request.rpcliteral.class%" />
+        <service id="besimple.soap.binder.request.rpcliteral" class="%besimple.soap.binder.request.rpcliteral.class%" />
 
-        <service id="webservice.binder.response.rpcliteral" class="%webservice.binder.response.rpcliteral.class%" />
+        <service id="besimple.soap.binder.response.rpcliteral" class="%besimple.soap.binder.response.rpcliteral.class%" />
 
-        <service id="webservice.binder.request.documentwrapped" class="%webservice.binder.request.documentwrapped.class%" />
+        <service id="besimple.soap.binder.request.documentwrapped" class="%besimple.soap.binder.request.documentwrapped.class%" />
 
-        <service id="webservice.binder.response.documentwrapped" class="%webservice.binder.response.documentwrapped.class%" />
+        <service id="besimple.soap.binder.response.documentwrapped" class="%besimple.soap.binder.response.documentwrapped.class%" />
 
-        <service id="webservice.definition.dumper.wsdl.rpcliteral" class="%webservice.definition.dumper.wsdl.rpcliteral.class%" />
+        <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%" />
 
-        <service id="webservice.converter.repository" class="%webservice.converter.repository.class%" />
+        <service id="besimple.soap.converter.repository" class="%besimple.soap.converter.repository.class%" />
 
-        <service id="webservice.type.repository" class="%webservice.type.repository.class%">
+        <service id="besimple.soap.type.repository" class="%besimple.soap.type.repository.class%">
             <call method="addXmlNamespace">
                 <argument>xsd</argument>
                 <argument>http://www.w3.org/2001/XMLSchema</argument>
