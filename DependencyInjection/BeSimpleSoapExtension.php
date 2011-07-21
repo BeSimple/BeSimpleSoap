@@ -25,10 +25,11 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class BeSimpleSoapExtension extends Extension
 {
-    private $contextArguments;
-
     // maps config options to service suffix
-    private $bindingConfigToServiceSuffixMap = array('rpc-literal' => '.rpcliteral', 'document-wrapped' => '.documentwrapped');
+    private $bindingConfigToServiceSuffixMap = array(
+        'rpc-literal'      => 'rpcliteral',
+        'document-wrapped' => 'documentwrapped'
+    );
 
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -53,27 +54,14 @@ class BeSimpleSoapExtension extends Extension
         $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
         unset($config['binding']);
 
-        if (null === $this->contextArguments) {
-            $this->contextArguments = $container
-                ->getDefinition('besimple.soap.context')
-                ->getArguments()
-            ;
-        }
+        $contextId  = 'besimple.soap.context.'.$config['name'];
+        $definition = new DefinitionDecorator('besimple.soap.context.'.$bindingSuffix);
+        $context    = $container->setDefinition($contextId, $definition);
 
-        $contextId = 'besimple.soap.context.'.$config['name'];
-        $context   = $container->setDefinition($contextId, $definition = new DefinitionDecorator('besimple.soap.context'));
+        $options = $container
+            ->getDefinition('besimple.soap.context.'.$bindingSuffix)
+            ->getArgument(6);
 
-        $arguments = array();
-        foreach($this->contextArguments as $i => $argument) {
-            if (in_array($i, array(1, 2, 3))) {
-                $argument = new Reference($argument->__toString().$bindingSuffix);
-            } elseif (6 === $i) {
-                $argument = array_merge($argument, $config);
-            } else {
-                $argument = new Reference($argument->__toString());
-            }
-
-            $definition->replaceArgument($i, $argument);
-        }
+        $definition->replaceArgument(6, array_merge($options, $config));
     }
 }

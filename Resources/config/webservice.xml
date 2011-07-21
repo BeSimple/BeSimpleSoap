@@ -16,13 +16,26 @@
     </parameters>
 
     <services>
-        <service id="besimple.soap.context" class="%besimple.soap.context.class%" abstract="true">
-            <argument type="service" id="besimple.soap.definition.loader"/>
-            <argument type="service" id="besimple.soap.definition.dumper.wsdl"/>
-            <argument type="service" id="besimple.soap.binder.request"/>
-            <argument type="service" id="besimple.soap.binder.response"/>
-            <argument type="service" id="besimple.soap.type.repository"/>
-            <argument type="service" id="besimple.soap.converter.repository"/>
+        <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
+            <argument type="service" id="besimple.soap.definition.loader" />
+            <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
+            <argument type="service" id="besimple.soap.binder.request.rpcliteral" />
+            <argument type="service" id="besimple.soap.binder.response.rpcliteral" />
+            <argument type="service" id="besimple.soap.type.repository" />
+            <argument type="service" id="besimple.soap.converter.repository" />
+            <argument type="collection">
+                <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
+            </argument>
+        </service>
+
+        <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
+            <argument type="service" id="besimple.soap.definition.loader" />
+            <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
+            <argument type="service" id="besimple.soap.binder.request.documentwrapped" />
+            <argument type="service" id="besimple.soap.binder.response.documentwrapped" />
+            <argument type="service" id="besimple.soap.type.repository" />
+            <argument type="service" id="besimple.soap.converter.repository" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
