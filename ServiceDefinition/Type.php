@@ -28,9 +28,9 @@ class Type
         return $this->phpType;
     }
 
-    public function setPhpType($value)
+    public function setPhpType($phpType)
     {
-        $this->phpType = $value;
+        $this->phpType = $phpType;
     }
 
     public function getXmlType()
@@ -38,9 +38,9 @@ class Type
         return $this->xmlType;
     }
 
-    public function setXmlType($value)
+    public function setXmlType($xmlType)
     {
-        $this->xmlType = $value;
+        $this->xmlType = $xmlType;
     }
 
     public function getConverter()
@@ -48,8 +48,8 @@ class Type
         return $this->converter;
     }
 
-    public function setConverter($value)
+    public function setConverter($converter)
     {
-        $this->converter = $value;
+        $this->converter = $converter;
     }
 }

@@ -36,7 +36,7 @@ class Argument
         return $this->type;
     }
 
-    public function setType($type)
+    public function setType(Type $type)
     {
         $this->type = $type;
     }
