@@ -67,17 +67,15 @@ QuickStart
  *  Annotate your controller methods
 
         // src/Acme/DemoBundle/Controller/DemoController.php
-        use BeSimple\SoapBundle\ServiceDefinition\Annotation\Method;
-        use BeSimple\SoapBundle\ServiceDefinition\Annotation\Param;
-        use BeSimple\SoapBundle\ServiceDefinition\Annotation\Result;
+        use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
         use BeSimple\SoapBundle\Soap\SoapResponse;
 
         class DemoController extends Controller
         {
             /**
-             * @Method("Hello")
-             * @Param("name", phpType = "string")
-             * @Result(phpType = "string")
+             * @Soap\Method("Hello")
+             * @Soap\Param("name", phpType = "string")
+             * @Soap\Result(phpType = "string")
              */
             public function helloAction($name)
             {
