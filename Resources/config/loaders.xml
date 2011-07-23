@@ -10,6 +10,7 @@
         <parameter key="besimple.soap.definition.loader.annot_dir.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationDirectoryLoader</parameter>
         <parameter key="besimple.soap.definition.loader.annot_file.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationFileLoader</parameter>
         <parameter key="besimple.soap.definition.loader.annot_class.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationClassLoader</parameter>
+        <parameter key="besimple.soap.definition.loader.annot_complextype.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader</parameter>
     </parameters>
 
     <services>
@@ -27,6 +28,10 @@
 
         <service id="besimple.soap.definition.loader.annot_class" class="%besimple.soap.definition.loader.annot_class.class%" public="false">
             <tag name="besimple.soap.definition.loader" />
+            <argument type="service" id="annotation_reader" />
+        </service>
+
+        <service id="besimple.soap.definition.loader.annot_complextype" class="%besimple.soap.definition.loader.annot_complextype.class%" public="false">
             <argument type="service" id="annotation_reader" />
         </service>
     </services>

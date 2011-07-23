@@ -13,6 +13,7 @@ namespace BeSimple\SoapBundle\ServiceDefinition\Dumper;
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Type;
 use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
+use BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader;
 use BeSimple\SoapBundle\Util\Assert;
 use BeSimple\SoapBundle\Util\QName;
 
@@ -23,8 +24,14 @@ use Zend\Soap\Wsdl;
  */
 class WsdlDumper implements DumperInterface
 {
+    private $loader;
     private $wsdl;
     private $definition;
+
+    public function __construct(AnnotationComplexTypeLoader $loader)
+    {
+        $this->loader = $loader;
+    }
 
     public function dumpServiceDefinition(ServiceDefinition $definition, array $options = array())
     {
@@ -33,7 +40,7 @@ class WsdlDumper implements DumperInterface
         $options = array_merge(array('endpoint' => '', 'stylesheet' => null), $options);
 
         $this->definition = $definition;
-        $this->wsdl       = new Wsdl($definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy());
+        $this->wsdl       = new Wsdl($definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy($this->loader, $definition));
         $port             = $this->wsdl->addPortType($this->getPortTypeName());
         $binding          = $this->wsdl->addBinding($this->getBindingName(), $this->qualify($this->getPortTypeName()));
 

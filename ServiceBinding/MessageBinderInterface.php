@@ -20,5 +20,5 @@ interface MessageBinderInterface
      *
      * @return mixed
      */
-    function processMessage(Method $messageDefinition, $message);
+    function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array());
 }
