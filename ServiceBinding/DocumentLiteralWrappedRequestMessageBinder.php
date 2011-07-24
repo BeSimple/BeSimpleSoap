@@ -12,6 +12,9 @@ namespace BeSimple\SoapBundle\ServiceBinding;
 
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 
+/**
+ * @author Christian Kerl <christian-kerl@web.de>
+ */
 class DocumentLiteralWrappedRequestMessageBinder implements MessageBinderInterface
 {
     public function processMessage(Method $messageDefinition, $message)

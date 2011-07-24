@@ -14,6 +14,10 @@ use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
 
+/**
+ * @author Christian Kerl <christian-kerl@web.de>
+ * @author Francis Besset <francis.besset@gmail.com>
+ */
 class RpcLiteralResponseMessageBinder implements MessageBinderInterface
 {
     public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())

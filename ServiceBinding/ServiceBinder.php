@@ -15,6 +15,9 @@ use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
 use BeSimple\SoapBundle\Soap\SoapHeader;
 use BeSimple\SoapBundle\Util\QName;
 
+/**
+ * @author Christian Kerl <christian-kerl@web.de>
+ */
 class ServiceBinder
 {
     /**
