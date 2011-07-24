@@ -25,7 +25,7 @@ class Collection implements \IteratorAggregate, \Countable
     public function add($element)
     {
         if ($this->class && !$element instanceof $this->class) {
-            throw new \InvalidArgument(sprintf('Cannot add class "%s" because it is not an instance of "%s"', get_class($element), $class));
+            throw new \InvalidArgumentException(sprintf('Cannot add class "%s" because it is not an instance of "%s"', get_class($element), $this->class));
         }
 
         $getter = $this->getter;
