@@ -27,58 +27,68 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
         $return = $messageDefinition->getReturn();
         $class  = $return->getPhpType();
 
-        if (preg_match('/^([^\[]+)\[\]$/', $class, $match)) {
+        $message = $this->processType($messageDefinition->getReturn()->getPhpType(), $message, $definitionComplexTypes);
+
+        return $message;
+    }
+
+    private function processType($phpType, $message, array $definitionComplexTypes)
+    {
+        if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;
-            $type    =
-            $class   = $match[1];
+            $type    = $match[1];
         } else {
             $isArray = false;
-            $type    = $return->getPhpType();
+            $type    = $phpType;
         }
 
         if (isset($definitionComplexTypes[$type])) {
-            if ($class[0] == '\\') {
-                $class = substr($class, 1);
-            }
-
             if ($isArray) {
                 $array = array();
 
                 foreach ($message as $complexType) {
-                    $array[] = $this->getInstanceOfStdClass($type, $class, $complexType, $definitionComplexTypes);
+                    $array[] = $this->getInstanceOfStdClass($type, $complexType, $definitionComplexTypes);
                 }
 
                 $message = $array;
             } else {
-                $message = $this->getInstanceOfStdClass($type, $class, $message, $definitionComplexTypes);
+                $message = $this->getInstanceOfStdClass($type, $message, $definitionComplexTypes);
             }
         }
 
         return $message;
     }
 
-    private function getInstanceOfStdClass($type, $class, $message, $definitionComplexTypes)
+    private function getInstanceOfStdClass($phpType, $message, $definitionComplexTypes)
     {
-        if (get_class($message) !== $class) {
-            throw new \InvalidArgumentException();
-        }
-
         $hash = spl_object_hash($message);
         if (isset($this->messageRefs[$hash])) {
             return $this->messageRefs[$hash];
         }
 
+        $class = $phpType;
+        if ($class[0] == '\\') {
+            $class = substr($class, 1);
+        }
+
+        if (get_class($message) !== $class) {
+            throw new \InvalidArgumentException();
+        }
+
         $stdClass = new \stdClass();
         $this->messageRefs[$hash] = $stdClass;
 
-        foreach ($definitionComplexTypes[$type] as $type) {
+        foreach ($definitionComplexTypes[$phpType] as $type) {
+
             if ($type instanceof PropertyComplexType) {
-                $stdClass->{$type->getName()} = $message->{$type->getOriginalName()};
+                $value = $message->{$type->getOriginalName()};
             } elseif ($type instanceof MethodComplexType) {
-                $stdClass->{$type->getName()} = $message->{$type->getOriginalName()}();
+                $value = $message->{$type->getOriginalName()}();
             } else {
                 throw new \InvalidArgumentException();
             }
+
+            $stdClass->{$type->getName()} = $this->processType($type->getValue(), $value, $definitionComplexTypes);
         }
 
         return $stdClass;
