@@ -20,29 +20,25 @@ use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
  */
 class RpcLiteralRequestMessageBinder implements MessageBinderInterface
 {
-    private $definitionComplexTypes;
+    private $messageRefs = array();
 
     public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
     {
-        $this->definitionComplexTypes = $definitionComplexTypes;
-
         $result = array();
         $i      = 0;
 
         foreach($messageDefinition->getArguments() as $argument) {
             if (isset($message[$i])) {
-                $result[$argument->getName()] = $this->processType($argument->getType()->getPhpType(), $message[$i]);
+                $result[$argument->getName()] = $this->processType($argument->getType()->getPhpType(), $message[$i], $definitionComplexTypes);
             }
 
             $i++;
         }
 
-        $this->definitionComplexTypes = array();
-
         return $result;
     }
 
-    private function processType($phpType, $message)
+    private function processType($phpType, $message, array $definitionComplexTypes)
     {
         if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;
@@ -52,17 +48,17 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             $type    = $phpType;
         }
 
-        if (isset($this->definitionComplexTypes[$type])) {
+        if (isset($definitionComplexTypes[$type])) {
             if ($isArray) {
                 $array = array();
 
                 foreach ($message->item as $complexType) {
-                    $array[] = $this->getInstanceOfType($type, $complexType);
+                    $array[] = $this->getInstanceOfType($type, $complexType, $definitionComplexTypes);
                 }
 
                 $message = $array;
             } else {
-                $message = $this->getInstanceOfType($type, $message);
+                $message = $this->getInstanceOfType($type, $message, $definitionComplexTypes);
             }
         } elseif ($isArray) {
             $message = $message->item;
@@ -71,12 +67,18 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         return $message;
     }
 
-    private function getInstanceOfType($phpType, $message)
+    private function getInstanceOfType($phpType, $message, array $definitionComplexTypes)
     {
-        $instanceType = new $phpType();
+        $hash = spl_object_hash($message);
+        if (isset($this->messageRefs[$hash])) {
+            return $this->messageRefs[$hash];
+        }
 
-        foreach ($this->definitionComplexTypes[$phpType] as $type) {
-            $value = $this->processType($type->getValue(), $message->{$type->getName()});
+        $this->messageRefs[$hash] =
+        $instanceType             = new $phpType();
+
+        foreach ($definitionComplexTypes[$phpType] as $type) {
+            $value = $this->processType($type->getValue(), $message->{$type->getName()}, $definitionComplexTypes);
 
             if ($type instanceof PropertyComplexType) {
                 $instanceType->{$type->getOriginalName()} = $value;

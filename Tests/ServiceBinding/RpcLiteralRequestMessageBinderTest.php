@@ -38,18 +38,17 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessMessageWithComplexType()
     {
-        $definitionComplexTypes = $this->getDefinitionComplexTypes();
-
         $attributes = new \stdClass();
         $attributes->foo = 'bar';
         $attributes->bar = 10;
+
         $messageBinder = new RpcLiteralRequestMessageBinder();
         $result        = $messageBinder->processMessage(
             new Method('complextype_argument', null, array(
                 new Argument('attributes', new Type('\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Attributes')),
             )),
             array($attributes),
-            $definitionComplexTypes
+            $this->getDefinitionComplexTypes()
         );
 
         $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Attributes', $result['attributes']);
@@ -62,15 +61,17 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $attributes2  = new \stdClass();
         $attributes2->foo = 'barfoo';
         $attributes2->bar = 12;
+
         $message = new \stdClass();
         $message->item = array($attributes1, $attributes2);
+
         $messageBinder = new RpcLiteralRequestMessageBinder();
         $result        = $messageBinder->processMessage(
             new Method('complextype_argument', null, array(
                 new Argument('attributes', new Type('\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Attributes[]')),
             )),
             array($message),
-            $definitionComplexTypes
+            $this->getDefinitionComplexTypes()
         );
 
         $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Attributes', $result['attributes'][0]);
@@ -83,18 +84,17 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessMessageWithComplexTypeIntoComplexType()
     {
-        $definitionComplexTypes = $this->getDefinitionComplexTypes();
-
         $methods = new \stdClass();
         $methods->foo = 'bar';
         $methods->bar = 23;
+
         $messageBinder = new RpcLiteralRequestMessageBinder();
         $result        = $messageBinder->processMessage(
             new Method('complextype_methods', null, array(
                 new Argument('setters', new Type('\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Setters')),
             )),
             array($methods),
-            $definitionComplexTypes
+            $this->getDefinitionComplexTypes()
         );
 
         $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Setters', $result['setters']);
@@ -104,22 +104,22 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessMessageWithComplexTypeMethods()
     {
-        $definitionComplexTypes = $this->getDefinitionComplexTypes();
-
         $complexType = new \stdClass();
         $foo = $complexType->foo = new \stdClass();
         $foo->foo = 'hello';
         $foo->bar = 24;
+
         $bar = $complexType->bar = new \stdClass();
         $bar->foo = 'bonjour';
         $bar->bar = 1012;
+
         $messageBinder = new RpcLiteralRequestMessageBinder();
         $result        = $messageBinder->processMessage(
             new Method('complextype_complextype', null, array(
                 new Argument('complex_type', new Type('\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\ComplexType')),
             )),
             array($complexType),
-            $definitionComplexTypes
+            $this->getDefinitionComplexTypes()
         );
 
         $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\ComplexType', $result['complex_type']);
@@ -131,6 +131,40 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Setters', $result['complex_type']->bar);
         $this->assertSame('bonjour', $result['complex_type']->bar->getFoo());
         $this->assertSame(1012, $result['complex_type']->bar->getBar());
+    }
+
+    public function testProcessMessageWithComplexTypeReferences()
+    {
+        $complexType1 = new \stdClass();
+        $foo = $complexType1->foo = new \stdClass();
+        $foo->foo = 'hello';
+        $foo->bar = 24;
+
+        $bar = $complexType1->bar = new \stdClass();
+        $bar->foo = 'bonjour';
+        $bar->bar = 1012;
+
+        $complexType2 = new \stdClass();
+        $complexType2->foo = $foo;
+        $complexType2->bar = $bar;
+
+        $complexTypes = new \stdClass();
+        $complexTypes->item = array($complexType1, $complexType2);
+
+        $messageBinder = new RpcLiteralRequestMessageBinder();
+        $result        = $messageBinder->processMessage(
+            new Method('complextypes_references', null, array(
+                new Argument('complex_types', new Type('\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\ComplexType[]')),
+            )),
+            array($complexTypes),
+            $this->getDefinitionComplexTypes()
+        );
+
+        $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\ComplexType', $result['complex_types'][0]);
+        $this->assertInstanceOf('BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\ComplexType', $result['complex_types'][1]);
+
+        $this->assertSame($result['complex_types'][0]->getFoo(), $result['complex_types'][1]->getFoo());
+        $this->assertSame($result['complex_types'][0]->bar, $result['complex_types'][1]->bar);
     }
 
     public function messageProvider()
