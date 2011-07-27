@@ -83,6 +83,24 @@ class RpcLiteralResponseMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(123992, $result[1]->bar);
     }
 
+    public function testProcessMessageWithComplexTypeReferences()
+    {
+        $attributes = new Attributes();
+        $attributes->foo = 'bar';
+        $attributes->bar = 2929;
+
+        $message = array($attributes, $attributes);
+        $messageBinder = new RpcLiteralResponseMessageBinder();
+        $result        = $messageBinder->processMessage(
+            new Method('complextype_argument', null, array(), new  Type('\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Attributes[]')),
+            $message,
+            $this->getDefinitionComplexTypes()
+        );
+
+        $this->assertInstanceOf('stdClass', $result[0]);
+        $this->assertSame($result[0], $result[1]);
+    }
+
     public function messageProvider()
     {
         $messages = array();

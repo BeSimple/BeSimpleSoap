@@ -20,6 +20,8 @@ use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
  */
 class RpcLiteralResponseMessageBinder implements MessageBinderInterface
 {
+    private $messageRefs = array();
+
     public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
     {
         $return = $messageDefinition->getReturn();
@@ -61,7 +63,13 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
             throw new \InvalidArgumentException();
         }
 
+        $hash = spl_object_hash($message);
+        if (isset($this->messageRefs[$hash])) {
+            return $this->messageRefs[$hash];
+        }
+
         $stdClass = new \stdClass();
+        $this->messageRefs[$hash] = $stdClass;
 
         foreach ($definitionComplexTypes[$type] as $type) {
             if ($type instanceof PropertyComplexType) {
