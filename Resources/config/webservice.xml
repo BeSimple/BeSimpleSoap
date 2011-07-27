@@ -31,7 +31,7 @@
 
         <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
-            <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
+            <argument type="service" id="besimple.soap.definition.dumper.wsdl.documentwrapped" />
             <argument type="service" id="besimple.soap.binder.request.documentwrapped" />
             <argument type="service" id="besimple.soap.binder.response.documentwrapped" />
             <argument type="service" id="besimple.soap.type.repository" />
