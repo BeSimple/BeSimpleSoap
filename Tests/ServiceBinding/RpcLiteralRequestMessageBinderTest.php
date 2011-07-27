@@ -82,7 +82,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(12, $result['attributes'][1]->bar);
     }
 
-    public function testProcessMessageWithComplexTypeIntoComplexType()
+    public function testProcessMessageWithComplexTypeMethods()
     {
         $methods = new \stdClass();
         $methods->foo = 'bar';
@@ -102,7 +102,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(23, $result['setters']->getBar());
     }
 
-    public function testProcessMessageWithComplexTypeMethods()
+    public function testProcessMessageWithComplexTypeIntoComplexType()
     {
         $complexType = new \stdClass();
         $foo = $complexType->foo = new \stdClass();
