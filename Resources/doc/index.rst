@@ -21,7 +21,7 @@ Tutorial
     :maxdepth: 1
     :numbered:
 
-    tutorial/complex_type
     tutorial/array
+    tutorial/complex_type
 
 .. _`ckWebServicePlugin`: http://www.symfony-project.org/plugins/ckWebServicePlugin
