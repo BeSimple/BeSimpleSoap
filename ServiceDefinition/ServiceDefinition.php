@@ -34,6 +34,8 @@ class ServiceDefinition
      */
     private $headers;
 
+    private $complexTypes = array();
+
     public function __construct($name = null, $namespace = null, array $methods = array(), array $headers = array())
     {
         $this->setName($name);
@@ -126,5 +128,15 @@ class ServiceDefinition
         }
 
         return $types;
+    }
+
+    public function addDefinitionComplexType($type, Collection $complexType)
+    {
+        $this->complexTypes[$type] = $complexType;
+    }
+
+    public function getDefinitionComplexTypes()
+    {
+        return $this->complexTypes;
     }
 }

@@ -53,6 +53,7 @@ class SoapWebServiceController extends ContainerAware
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
         $this->soapServer  = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->soapResponse);
+
         $this->soapServer->setObject($this);
 
         ob_start();

@@ -12,6 +12,9 @@ namespace BeSimple\SoapBundle\ServiceBinding;
 
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 
+/**
+ * @author Christian Kerl <christian-kerl@web.de>
+ */
 interface MessageBinderInterface
 {
     /**
@@ -20,5 +23,5 @@ interface MessageBinderInterface
      *
      * @return mixed
      */
-    function processMessage(Method $messageDefinition, $message);
+    function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array());
 }

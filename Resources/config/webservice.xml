@@ -50,7 +50,9 @@
 
         <service id="besimple.soap.binder.response.documentwrapped" class="%besimple.soap.binder.response.documentwrapped.class%" />
 
-        <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%" />
+        <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
+            <argument type="service" id="besimple.soap.definition.loader.annot_complextype" />
+        </service>
 
         <service id="besimple.soap.converter.repository" class="%besimple.soap.converter.repository.class%" />
 

@@ -23,7 +23,8 @@ if (!is_dir($vendorDir = dirname(__FILE__).'/vendor')) {
 
 $deps = array(
     array('symfony', 'http://github.com/symfony/symfony.git', 'origin/HEAD'),
-    array('zend', 'http://github.com/zendframework/zf2.git', 'origin/HEAD'),
+    array('zend-framework/library/Zend/Soap', 'http://github.com/BeSimple/zend-soap.git', 'origin/HEAD'),
+    array('zend-framework/library/Zend/Mime', 'http://github.com/BeSimple/zend-mime.git', 'origin/HEAD'),
 );
 
 foreach ($deps as $dep) {

@@ -32,10 +32,6 @@ use Symfony\Component\Config\Loader\LoaderResolver;
  */
 class AnnotationClassLoader implements LoaderInterface
 {
-    private $methodAnnotationClass = 'BeSimple\\SoapBundle\\ServiceDefinition\\Annotation\\Method';
-    private $paramAnnotationClass  = 'BeSimple\\SoapBundle\\ServiceDefinition\\Annotation\\Param';
-    private $resultAnnotationClass = 'BeSimple\\SoapBundle\\ServiceDefinition\\Annotation\\Result';
-
     protected $reader;
 
     /**

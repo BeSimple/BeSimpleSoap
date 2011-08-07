@@ -15,6 +15,9 @@ use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
 use BeSimple\SoapBundle\Soap\SoapHeader;
 use BeSimple\SoapBundle\Util\QName;
 
+/**
+ * @author Christian Kerl <christian-kerl@web.de>
+ */
 class ServiceBinder
 {
     /**
@@ -61,7 +64,7 @@ class ServiceBinder
 
         $result                = array();
         $result['_controller'] = $methodDefinition->getController();
-        $result                = array_merge($result, $this->requestMessageBinder->processMessage($methodDefinition, $arguments));
+        $result                = array_merge($result, $this->requestMessageBinder->processMessage($methodDefinition, $arguments, $this->definition->getDefinitionComplexTypes()));
 
         return $result;
     }
@@ -70,7 +73,7 @@ class ServiceBinder
     {
         $methodDefinition = $this->definition->getMethods()->get($name);
 
-        return $this->responseMessageBinder->processMessage($methodDefinition, $return);
+        return $this->responseMessageBinder->processMessage($methodDefinition, $return, $this->definition->getDefinitionComplexTypes());
     }
 
     protected function createSoapHeader(Header $headerDefinition, $data)
