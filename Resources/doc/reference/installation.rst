@@ -5,7 +5,7 @@ Requirements
 ------------
 
 Install and enable PHP's SOAP extension
-Download `Zend\Soap`_ or add in `deps` file
+Download `Zend\\Soap`_ and `Zend\\Mime`_ or add in `deps` file
 
 .. code-block:: ini
 
@@ -14,13 +14,17 @@ Download `Zend\Soap`_ or add in `deps` file
         git=http://github.com/BeSimple/zend-soap.git
         target=/zend-framework/library/Zend/Soap
 
-Add Zend\Soap library in autoload.php
+    [Zend\Mime]
+        git=http://github.com/BeSimple/zend-mime.git
+        target=/zend-framework/library/Zend/Mime
+
+Add `Zend` library in autoload.php
 
 .. code-block:: php
 
     // app/autoload.php
     $loader->registerNamespaces(array(
-        'ZendSoap' => __DIR__.'/../vendor/zend-framework/library',
+        'Zend' => __DIR__.'/../vendor/zend-framework/library',
         // your other namespaces
     ));
 
@@ -61,5 +65,6 @@ Add `BeSimpleSoapBundle` in your Kernel class
     }
 
 
-.. _`Zend\Soap`: http://github.com/BeSimple/zend-soap
+.. _`Zend\\Soap`: http://github.com/BeSimple/zend-soap
+.. _`Zend\\Mime`: http://github.com/BeSimple/zend-mime
 .. _`Download`: http://github.com/BeSimple/BeSimpleSoapBundle
