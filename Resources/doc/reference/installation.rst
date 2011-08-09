@@ -59,7 +59,7 @@ Add `BeSimpleSoapBundle` in your Kernel class
     {
         return array(
             // ...
-            new new BeSimple\SoapBundle\BeSimpleSoapBundle(),
+            new BeSimple\SoapBundle\BeSimpleSoapBundle(),
             // ...
         );
     }
