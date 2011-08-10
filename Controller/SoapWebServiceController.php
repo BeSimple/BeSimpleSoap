@@ -111,7 +111,13 @@ class SoapWebServiceController extends ContainerAware
             );
 
             // forward to controller
-            $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
+            try {
+                $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
+            } catch (\SoapFault $e) {
+                $this->soapResponse = new Response(null, 500);
+
+                throw $e;
+            }
 
             $this->soapResponse = $this->checkResponse($response);
 
@@ -139,7 +145,7 @@ class SoapWebServiceController extends ContainerAware
      */
     protected function checkResponse(Response $response)
     {
-        if (null === $response || !$response instanceof SoapResponse) {
+        if (!$response instanceof SoapResponse) {
             throw new \InvalidArgumentException();
         }
 
