@@ -39,6 +39,17 @@ class SoapResponse extends Response
         $this->setReturnValue($returnValue);
     }
 
+    /**
+     * @param SoapHeader $soapHeader
+     */
+    public function addSoapHeader(SoapHeader $soapHeader)
+    {
+        $this->soapHeaders->add($soapHeader);
+    }
+
+    /**
+     * @return \BeSimple\SoapBundle\Util\Collection
+     */
     public function getSoapHeaders()
     {
         return $this->soapHeaders;

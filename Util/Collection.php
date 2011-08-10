@@ -28,8 +28,7 @@ class Collection implements \IteratorAggregate, \Countable
             throw new \InvalidArgumentException(sprintf('Cannot add class "%s" because it is not an instance of "%s"', get_class($element), $this->class));
         }
 
-        $getter = $this->getter;
-        $this->elements[$element->$getter()] = $element;
+        $this->elements[$element->{$this->getter}()] = $element;
     }
 
     public function addAll($elements)
