@@ -62,11 +62,10 @@ class ServiceBinder
     {
         $methodDefinition = $this->definition->getMethods()->get($name);
 
-        $result                = array();
-        $result['_controller'] = $methodDefinition->getController();
-        $result                = array_merge($result, $this->requestMessageBinder->processMessage($methodDefinition, $arguments, $this->definition->getDefinitionComplexTypes()));
-
-        return $result;
+        return array_merge(
+            array('_controller' => $methodDefinition->getController()),
+            $this->requestMessageBinder->processMessage($methodDefinition, $arguments, $this->definition->getDefinitionComplexTypes())
+        );
     }
 
     public function processServiceMethodReturnValue($name, $return)

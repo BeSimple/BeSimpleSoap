@@ -101,11 +101,7 @@ class SoapWebServiceController extends ContainerAware
             $this->soapRequest->getSoapHeaders()->add(
                 $this->serviceBinder->processServiceHeader($method, $arguments[0])
             );
-
-            return;
-        }
-
-        if ($this->serviceBinder->isServiceMethod($method)) {
+        } elseif ($this->serviceBinder->isServiceMethod($method)) {
             $this->soapRequest->attributes->add(
                 $this->serviceBinder->processServiceMethodArguments($method, $arguments)
             );

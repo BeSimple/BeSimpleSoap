@@ -24,11 +24,6 @@ use Zend\Mime\Message;
  */
 class SoapRequest extends Request
 {
-    public static function createFromHttpRequest(Request $request)
-    {
-        return new static($request->query->all(), $request->request->all(), $request->attributes->all(), $request->cookies->all(), $request->files->all(), $request->server->all(), $request->content);
-    }
-
     /**
      * @var string
      */
@@ -48,6 +43,16 @@ class SoapRequest extends Request
      * @var \BeSimple\SoapBundle\Util\Collection
      */
     protected $soapAttachments;
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return SoapRequest
+     */
+    public static function createFromHttpRequest(Request $request)
+    {
+        return new static($request->query->all(), $request->request->all(), $request->attributes->all(), $request->cookies->all(), $request->files->all(), $request->server->all(), $request->content);
+    }
 
     public function initialize(array $query = array(), array $request = array(), array $attributes = array(), array $cookies = array(), array $files = array(), array $server = array(), $content = null)
     {
