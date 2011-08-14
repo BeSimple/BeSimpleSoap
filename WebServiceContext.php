@@ -27,8 +27,6 @@ use Symfony\Component\Config\Loader\LoaderInterface;
  */
 class WebServiceContext
 {
-    private $requestMessageBinder;
-    private $responseMessageBinder;
     private $typeRepository;
     private $converterRepository;
 
@@ -40,12 +38,9 @@ class WebServiceContext
     private $serviceBinder;
     private $serverFactory;
 
-    public function __construct(LoaderInterface $loader, DumperInterface $dumper, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder, TypeRepository $typeRepository, ConverterRepository $converterRepository, array $options) {
+    public function __construct(LoaderInterface $loader, DumperInterface $dumper, TypeRepository $typeRepository, ConverterRepository $converterRepository, array $options) {
         $this->loader         = $loader;
         $this->wsdlFileDumper = $dumper;
-
-        $this->requestMessageBinder  = $requestMessageBinder;
-        $this->responseMessageBinder = $responseMessageBinder;
 
         $this->typeRepository      = $typeRepository;
         $this->converterRepository = $converterRepository;
@@ -90,7 +85,11 @@ class WebServiceContext
     public function getServiceBinder()
     {
         if (null === $this->serviceBinder) {
-            $this->serviceBinder = new ServiceBinder($this->getServiceDefinition(), $this->requestMessageBinder, $this->responseMessageBinder);
+            $this->serviceBinder = new ServiceBinder(
+                $this->getServiceDefinition(),
+                new $this->options['binder_request_class'](),
+                new $this->options['binder_response_class']()
+            );
         }
 
         return $this->serviceBinder;

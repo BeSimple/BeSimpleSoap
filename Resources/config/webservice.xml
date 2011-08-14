@@ -19,36 +19,28 @@
         <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
-            <argument type="service" id="besimple.soap.binder.request.rpcliteral" />
-            <argument type="service" id="besimple.soap.binder.response.rpcliteral" />
             <argument type="service" id="besimple.soap.type.repository" />
             <argument type="service" id="besimple.soap.converter.repository" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="binder_request_class">%besimple.soap.binder.request.rpcliteral.class%</argument>
+                <argument key="binder_response_class">%besimple.soap.binder.response.rpcliteral.class%</argument>
             </argument>
         </service>
 
         <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.documentwrapped" />
-            <argument type="service" id="besimple.soap.binder.request.documentwrapped" />
-            <argument type="service" id="besimple.soap.binder.response.documentwrapped" />
             <argument type="service" id="besimple.soap.type.repository" />
             <argument type="service" id="besimple.soap.converter.repository" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="binder_request_class">%besimple.soap.binder.request.documentwrapped.class%</argument>
+                <argument key="binder_response_class">%besimple.soap.binder.response.documentwrapped.class%</argument>
             </argument>
         </service>
-
-        <service id="besimple.soap.binder.request.rpcliteral" class="%besimple.soap.binder.request.rpcliteral.class%" />
-
-        <service id="besimple.soap.binder.response.rpcliteral" class="%besimple.soap.binder.response.rpcliteral.class%" />
-
-        <service id="besimple.soap.binder.request.documentwrapped" class="%besimple.soap.binder.request.documentwrapped.class%" />
-
-        <service id="besimple.soap.binder.response.documentwrapped" class="%besimple.soap.binder.response.documentwrapped.class%" />
 
         <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
             <argument type="service" id="besimple.soap.definition.loader.annot_complextype" />
