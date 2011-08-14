@@ -76,7 +76,7 @@ class WebServiceContext
         $cache = new ConfigCache($file, $this->options['debug']);
 
         if(!$cache->isFresh()) {
-            $cache->write($this->wsdlFileDumper->dumpServiceDefinition($this->getServiceDefinition(), array('endpoint' => $endpoint)));
+            $cache->write($this->wsdlFileDumper->dumpServiceDefinition($this->getServiceDefinition(), $endpoint));
         }
 
         return (string) $cache;

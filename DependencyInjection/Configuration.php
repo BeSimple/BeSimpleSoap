@@ -10,6 +10,7 @@
 
 namespace BeSimple\SoapBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**
@@ -27,8 +28,16 @@ class Configuration
     public function getConfigTree()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('web_service');
+        $rootNode = $treeBuilder->root('be_simple_soap');
 
+        $this->addServicesSection($rootNode);
+        $this->addWsdlDumperSection($rootNode);
+
+        return $treeBuilder->buildTree();
+    }
+
+    private function addServicesSection(ArrayNodeDefinition $rootNode)
+    {
         $rootNode
             ->children()
                 ->arrayNode('services')
@@ -55,7 +64,19 @@ class Configuration
                 ->end()
             ->end()
         ;
+    }
 
-        return $treeBuilder->buildTree();
+    private function addWsdlDumperSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('wsdl_dumper')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('stylesheet')->defaultNull()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 }

@@ -14,5 +14,5 @@ use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
 
 interface DumperInterface
 {
-    function dumpServiceDefinition(ServiceDefinition $definition, array $options = array());
+    function dumpServiceDefinition(ServiceDefinition $definition, $endpoint);
 }

@@ -25,19 +25,20 @@ use Zend\Soap\Wsdl;
 class WsdlDumper implements DumperInterface
 {
     private $loader;
+    private $options;
+
     private $wsdl;
     private $definition;
 
-    public function __construct(AnnotationComplexTypeLoader $loader)
+    public function __construct(AnnotationComplexTypeLoader $loader, array $options)
     {
-        $this->loader = $loader;
+        $this->loader  = $loader;
+        $this->options = $options;
     }
 
-    public function dumpServiceDefinition(ServiceDefinition $definition, array $options = array())
+    public function dumpServiceDefinition(ServiceDefinition $definition, $endpoint)
     {
         Assert::thatArgumentNotNull('definition', $definition);
-
-        $options = array_merge(array('endpoint' => '', 'stylesheet' => null), $options);
 
         $this->definition = $definition;
         $this->wsdl       = new Wsdl($definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy($this->loader, $definition));
@@ -45,7 +46,7 @@ class WsdlDumper implements DumperInterface
         $binding          = $this->wsdl->addBinding($this->getBindingName(), $this->qualify($this->getPortTypeName()));
 
         $this->wsdl->addSoapBinding($binding, 'rpc');
-        $this->wsdl->addService($this->getServiceName(), $this->getPortName(), $this->qualify($this->getBindingName()), $options['endpoint']);
+        $this->wsdl->addService($this->getServiceName(), $this->getPortName(), $this->qualify($this->getBindingName()), $endpoint);
 
         foreach ($definition->getMethods() as $method) {
             $requestParts  = array();
@@ -87,8 +88,8 @@ class WsdlDumper implements DumperInterface
         $dom               = $this->wsdl->toDomDocument();
         $dom->formatOutput = true;
 
-        if (null !== $options['stylesheet']) {
-            $stylesheet = $dom->createProcessingInstruction('xml-stylesheet', sprintf('type="text/xsl" href="%s"', $options['stylesheet']));
+        if ($this->options['stylesheet']) {
+            $stylesheet = $dom->createProcessingInstruction('xml-stylesheet', sprintf('type="text/xsl" href="%s"', $this->options['stylesheet']));
 
             $dom->insertBefore($stylesheet, $dom->documentElement);
         }
