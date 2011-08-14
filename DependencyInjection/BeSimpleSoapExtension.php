@@ -60,8 +60,8 @@ class BeSimpleSoapExtension extends Extension
 
         $options = $container
             ->getDefinition('besimple.soap.context.'.$bindingSuffix)
-            ->getArgument(7);
+            ->getArgument(4);
 
-        $definition->replaceArgument(7, array_merge($options, $config));
+        $definition->replaceArgument(4, array_merge($options, $config));
     }
 }
