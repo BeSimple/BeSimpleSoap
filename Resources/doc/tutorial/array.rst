@@ -15,12 +15,12 @@ Controller
     class DemoController extends ContainerAware
     {
         /**
-         * @Soap\Method("isString")
-         * @Soap\Param("strings", phpType = "string[]")
-         * @Soap\Result(phpType = "boolean")
+         * @Soap\Method("hello")
+         * @Soap\Param("names", phpType = "string[]")
+         * @Soap\Result(phpType = "string")
          */
-        public function helloAction(array $strings)
+        public function helloAction(array $names)
         {
-            return new SoapResponse(true);
+            return new SoapResponse("Hello ".implode(', ', $names));
         }
     }
