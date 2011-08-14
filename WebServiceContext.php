@@ -27,6 +27,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
  */
 class WebServiceContext
 {
+    private $requestHeaderMessageBinder;
     private $requestMessageBinder;
     private $responseMessageBinder;
     private $typeRepository;
@@ -40,12 +41,13 @@ class WebServiceContext
     private $serviceBinder;
     private $serverFactory;
 
-    public function __construct(LoaderInterface $loader, DumperInterface $dumper, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder, TypeRepository $typeRepository, ConverterRepository $converterRepository, array $options) {
+    public function __construct(LoaderInterface $loader, DumperInterface $dumper, MessageBinderInterface $requestHeaderMessageBinder, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder, TypeRepository $typeRepository, ConverterRepository $converterRepository, array $options) {
         $this->loader         = $loader;
         $this->wsdlFileDumper = $dumper;
 
-        $this->requestMessageBinder  = $requestMessageBinder;
-        $this->responseMessageBinder = $responseMessageBinder;
+        $this->requestHeaderMessageBinder  = $requestHeaderMessageBinder;
+        $this->requestMessageBinder        = $requestMessageBinder;
+        $this->responseMessageBinder       = $responseMessageBinder;
 
         $this->typeRepository      = $typeRepository;
         $this->converterRepository = $converterRepository;
@@ -90,7 +92,7 @@ class WebServiceContext
     public function getServiceBinder()
     {
         if (null === $this->serviceBinder) {
-            $this->serviceBinder = new ServiceBinder($this->getServiceDefinition(), $this->requestMessageBinder, $this->responseMessageBinder);
+            $this->serviceBinder = new ServiceBinder($this->getServiceDefinition(), $this->requestHeaderMessageBinder, $this->requestMessageBinder, $this->responseMessageBinder);
         }
 
         return $this->serviceBinder;

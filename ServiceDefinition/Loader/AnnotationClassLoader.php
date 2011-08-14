@@ -10,13 +10,8 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
-use BeSimple\SoapBundle\ServiceDefinition\Argument;
-use BeSimple\SoapBundle\ServiceDefinition\Method;
-use BeSimple\SoapBundle\ServiceDefinition\Type;
-use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
-use BeSimple\SoapBundle\ServiceDefinition\Annotation\Method as MethodAnnotation;
-use BeSimple\SoapBundle\ServiceDefinition\Annotation\Param as ParamAnnotation;
-use BeSimple\SoapBundle\ServiceDefinition\Annotation\Result as ResultAnnotation;
+use BeSimple\SoapBundle\ServiceDefinition as Definition;
+use BeSimple\SoapBundle\ServiceDefinition\Annotation;
 
 use Doctrine\Common\Annotations\Reader;
 
@@ -50,7 +45,7 @@ class AnnotationClassLoader implements LoaderInterface
      * @param string $class A class name
      * @param string $type  The resource type
      *
-     * @return ServiceDefinition A ServiceDefinition instance
+     * @return \BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition A ServiceDefinition instance
      *
      * @throws \InvalidArgumentException When route can't be parsed
      */
@@ -61,47 +56,56 @@ class AnnotationClassLoader implements LoaderInterface
         }
 
         $class      = new \ReflectionClass($class);
-        $definition = new ServiceDefinition();
+        $definition = new Definition\ServiceDefinition();
 
         foreach ($class->getMethods() as $method) {
-            $serviceArguments = array();
+            $serviceArguments =
+            $serviceHeaders   = array();
             $serviceMethod    =
             $serviceReturn    = null;
 
             foreach ($this->reader->getMethodAnnotations($method) as $i => $annotation) {
-                if ($annotation instanceof ParamAnnotation) {
-                    $serviceArguments[] = new Argument(
+                if ($annotation instanceof Annotation\Header) {
+                    $serviceHeaders[] = new Definition\Header(
                         $annotation->getValue(),
                         $this->getArgumentType($method, $annotation)
                     );
-                } elseif ($annotation instanceof MethodAnnotation) {
+                } elseif ($annotation instanceof Annotation\Param) {
+                    $serviceArguments[] = new Definition\Argument(
+                        $annotation->getValue(),
+                        $this->getArgumentType($method, $annotation)
+                    );
+                } elseif ($annotation instanceof Annotation\Method) {
                     if ($serviceMethod) {
-                        throw new \LogicException(sprintf('@Method defined twice for "%s".', $method->getName()));
+                        throw new \LogicException(sprintf('@Soap\Method defined twice for "%s".', $method->getName()));
                     }
 
-                    $serviceMethod = new Method(
+                    $serviceMethod = new Definition\Method(
                         $annotation->getValue(),
                         $this->getController($method, $annotation)
                     );
-                } elseif ($annotation instanceof ResultAnnotation) {
+                } elseif ($annotation instanceof Annotation\Result) {
                     if ($serviceReturn) {
-                        throw new \LogicException(sprintf('@Result defined twice for "%s".', $method->getName()));
+                        throw new \LogicException(sprintf('@Soap\Result defined twice for "%s".', $method->getName()));
                     }
 
-                    $serviceReturn = new Type($annotation->getPhpType(), $annotation->getXmlType());
+                    $serviceReturn = new Definition\Type($annotation->getPhpType(), $annotation->getXmlType());
                 }
             }
 
             if (!$serviceMethod && (!empty($serviceArguments) || $serviceReturn)) {
-                throw new \LogicException(sprintf('@Method non-existent for "%s".', $method->getName()));
+                throw new \LogicException(sprintf('@Soap\Method non-existent for "%s".', $method->getName()));
             }
 
             if ($serviceMethod) {
                 $serviceMethod->setArguments($serviceArguments);
+                $serviceMethod->setHeaders($serviceHeaders);
 
-                if ($serviceReturn) {
-                    $serviceMethod->setReturn($serviceReturn);
+                if (!$serviceReturn) {
+                    throw new \LogicException(sprintf('@Soap\Result non-existent for "%s".', $method->getName()));
                 }
+
+                $serviceMethod->setReturn($serviceReturn);
 
                 $definition->getMethods()->add($serviceMethod);
             }
@@ -110,7 +114,13 @@ class AnnotationClassLoader implements LoaderInterface
         return $definition;
     }
 
-    private function getController(\ReflectionMethod $method, MethodAnnotation $annotation)
+    /**
+     * @param \ReflectionMethod $method
+     * @param \BeSimple\SoapBundle\ServiceDefinition\Annotation\Method $annotation
+     *
+     * @return string
+     */
+    private function getController(\ReflectionMethod $method, Annotation\Method $annotation)
     {
         if(null !== $annotation->getService()) {
             return $annotation->getService() . ':' . $method->name;
@@ -121,11 +131,11 @@ class AnnotationClassLoader implements LoaderInterface
 
     /**
      * @param \ReflectionMethod $method
-     * @param ParamAnnotation   $annotation
+     * @param \BeSimple\SoapBundle\ServiceDefinition\Annotation\Param $annotation
      *
      * @return \BeSimple\SoapBundle\ServiceDefinition\Type
      */
-    private function getArgumentType(\ReflectionMethod $method, ParamAnnotation $annotation)
+    private function getArgumentType(\ReflectionMethod $method, Annotation\Param $annotation)
     {
         $phpType = $annotation->getPhpType();
         $xmlType = $annotation->getXmlType();
@@ -140,7 +150,7 @@ class AnnotationClassLoader implements LoaderInterface
             }
         }
 
-        return new Type($phpType, $xmlType);
+        return new Definition\Type($phpType, $xmlType);
     }
 
     /**

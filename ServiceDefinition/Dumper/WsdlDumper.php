@@ -17,8 +17,6 @@ use BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader;
 use BeSimple\SoapBundle\Util\Assert;
 use BeSimple\SoapBundle\Util\QName;
 
-use Zend\Soap\Wsdl;
-
 /**
  * @author Christian Kerl <christian-kerl@web.de>
  */
@@ -48,8 +46,13 @@ class WsdlDumper implements DumperInterface
         $this->wsdl->addService($this->getServiceName(), $this->getPortName(), $this->qualify($this->getBindingName()), $options['endpoint']);
 
         foreach ($definition->getMethods() as $method) {
-            $requestParts  = array();
-            $responseParts = array();
+            $requestHeaderParts =
+            $requestParts       =
+            $responseParts      = array();
+
+            foreach ($method->getHeaders() as $header) {
+                $requestHeaderParts[$header->getName()] = $this->wsdl->getType($header->getType()->getPhpType());
+            }
 
             foreach ($method->getArguments() as $argument) {
                 $requestParts[$argument->getName()] = $this->wsdl->getType($argument->getType()->getPhpType());
@@ -59,26 +62,38 @@ class WsdlDumper implements DumperInterface
                 $responseParts['return'] = $this->wsdl->getType($method->getReturn()->getPhpType());
             }
 
+            if (!empty($requestHeaderParts)) {
+                $this->wsdl->addMessage($this->getRequestHeaderMessageName($method), $requestHeaderParts);
+            }
             $this->wsdl->addMessage($this->getRequestMessageName($method), $requestParts);
             $this->wsdl->addMessage($this->getResponseMessageName($method), $responseParts);
 
-            $portOperation = $this->wsdl->addPortOperation($port, $method->getName(), $this->qualify($this->getRequestMessageName($method)), $this->qualify($this->getResponseMessageName($method)));
+            $portOperation = $this->wsdl->addPortOperation(
+                $port,
+                $method->getName(),
+                $this->qualify($this->getRequestMessageName($method)),
+                $this->qualify($this->getResponseMessageName($method))
+            );
             $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
 
-            $bindingInput = array(
-                'parts'         => implode(' ', array_keys($requestParts)),
-                'use'           => 'literal',
-                'namespace'     => $definition->getNamespace(),
-                'encodingStyle' => 'http://schemas.xmlsoap.org/soap/encoding/',
-            );
-            $bindingOutput = array(
-                'parts'         => implode(' ', array_keys($responseParts)),
+            $baseBinding = array(
                 'use'           => 'literal',
                 'namespace'     => $definition->getNamespace(),
                 'encodingStyle' => 'http://schemas.xmlsoap.org/soap/encoding/',
             );
 
-            $bindingOperation = $this->wsdl->addBindingOperation($binding, $method->getName(), $bindingInput, $bindingOutput);
+            $bindingOperation = $this->wsdl->addBindingOperation(
+                $binding,
+                $method->getName(),
+                array_merge(array('parts' => implode(' ', array_keys($requestParts))), $baseBinding),
+                array_merge(array('parts' => implode(' ', array_keys($responseParts))), $baseBinding)
+            );
+            $bindingOperation = $this->wsdl->addBindingOperationHeader(
+                $bindingOperation,
+                array_keys($requestHeaderParts),
+                array_merge(array('message' => $this->qualify($this->getRequestHeaderMessageName($method))), $baseBinding)
+            );
+
             $this->wsdl->addSoapOperation($bindingOperation, $this->getSoapOperationName($method));
         }
 
@@ -123,6 +138,11 @@ class WsdlDumper implements DumperInterface
     protected function getServiceName()
     {
         return $this->definition->getName().'Service';
+    }
+
+    protected function getRequestHeaderMessageName(Method $method)
+    {
+        return $method->getName().'Header';
     }
 
     protected function getRequestMessageName(Method $method)

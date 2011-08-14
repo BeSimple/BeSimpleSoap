@@ -44,6 +44,11 @@ class SoapWebServiceController extends ContainerAware
     protected $serviceBinder;
 
     /**
+     * @var array
+     */
+    private $headers = array();
+
+    /**
      * @return \BeSimple\SoapBundle\Soap\SoapResponse
      */
     public function callAction($webservice)
@@ -96,12 +101,14 @@ class SoapWebServiceController extends ContainerAware
      */
     public function __call($method, $arguments)
     {
-        if ($this->serviceBinder->isServiceHeader($method)) {
-            // collect request soap headers
-            $this->soapRequest->getSoapHeaders()->add(
-                $this->serviceBinder->processServiceHeader($method, $arguments[0])
-            );
-        } elseif ($this->serviceBinder->isServiceMethod($method)) {
+        if ($this->serviceBinder->isServiceMethod($method)) {
+            foreach ($this->headers as $name => $value) {
+                if ($this->serviceBinder->isServiceHeader($method, $name)) {
+                    $this->soapRequest->getSoapHeaders()->add($this->serviceBinder->processServiceHeader($method, $name, $value));
+                }
+            }
+            $this->headers = null;
+
             $this->soapRequest->attributes->add(
                 $this->serviceBinder->processServiceMethodArguments($method, $arguments)
             );
@@ -127,7 +134,26 @@ class SoapWebServiceController extends ContainerAware
                 $method,
                 $this->soapResponse->getReturnValue()
             );
+        } else {
+            // collect request soap headers
+            $this->headers[$method] = $arguments[0];
         }
+    }
+
+    /**
+     * @return \BeSimple\SoapBundle\Soap\SoapRequest
+     */
+    public function getRequest()
+    {
+        return $this->soapRequest;
+    }
+
+    /**
+     * @return \BeSimple\SoapBundle\Soap\SoapResponse
+     */
+    public function getResponse()
+    {
+        return $this->soapResponse;
     }
 
     /**
@@ -148,28 +174,12 @@ class SoapWebServiceController extends ContainerAware
         return $response;
     }
 
-    /**
-     * @return \BeSimple\SoapBundle\Soap\SoapRequest
-     */
-    public function getRequest()
-    {
-        return $this->soapRequest;
-    }
-
-    /**
-     * @return \BeSimple\SoapBundle\Soap\SoapResponse
-     */
-    public function getResponse()
-    {
-        return $this->soapResponse;
-    }
-
     private function getWebServiceContext($webservice)
     {
-        if(!$this->container->has('besimple.soap.context.'.$webservice))
-        {
+        if (!$this->container->has('besimple.soap.context.'.$webservice)) {
             throw new NotFoundHttpException(sprintf('No webservice with name "%s" found.', $webservice));
         }
+
         return $this->container->get('besimple.soap.context.'.$webservice);
     }
 }

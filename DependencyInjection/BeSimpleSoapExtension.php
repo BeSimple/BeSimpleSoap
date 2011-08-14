@@ -28,7 +28,7 @@ class BeSimpleSoapExtension extends Extension
     // maps config options to service suffix
     private $bindingConfigToServiceSuffixMap = array(
         'rpc-literal'      => 'rpcliteral',
-        'document-wrapped' => 'documentwrapped'
+        'document-wrapped' => 'documentwrapped',
     );
 
     public function load(array $configs, ContainerBuilder $container)
@@ -60,8 +60,8 @@ class BeSimpleSoapExtension extends Extension
 
         $options = $container
             ->getDefinition('besimple.soap.context.'.$bindingSuffix)
-            ->getArgument(6);
+            ->getArgument(7);
 
-        $definition->replaceArgument(6, array_merge($options, $config));
+        $definition->replaceArgument(7, array_merge($options, $config));
     }
 }

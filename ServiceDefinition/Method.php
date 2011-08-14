@@ -17,12 +17,14 @@ class Method
     private $name;
     private $controller;
     private $arguments;
+    private $headers;
     private $return;
 
-    public function __construct($name = null, $controller = null, array $arguments = array(), Type $return = null)
+    public function __construct($name = null, $controller = null, array $headers = array(), array $arguments = array(), Type $return = null)
     {
         $this->setName($name);
         $this->setController($controller);
+        $this->setHeaders($headers);
         $this->setArguments($arguments);
 
         if ($return) {
@@ -48,6 +50,17 @@ class Method
     public function setController($controller)
     {
         $this->controller = $controller;
+    }
+
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    public function setHeaders(array $headers)
+    {
+        $this->headers = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Header');
+        $this->headers->addAll($headers);
     }
 
     public function getArguments()

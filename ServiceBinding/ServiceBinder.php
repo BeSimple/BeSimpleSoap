@@ -28,6 +28,11 @@ class ServiceBinder
     /**
      * @var \BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface
      */
+    private $requestHeaderMessageBinder;
+
+    /**
+     * @var \BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface
+     */
     private $requestMessageBinder;
 
     /**
@@ -35,32 +40,39 @@ class ServiceBinder
      */
     private $responseMessageBinder;
 
-    public function __construct(ServiceDefinition $definition, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder) {
-        $this->definition            = $definition;
-        $this->requestMessageBinder  = $requestMessageBinder;
+    public function __construct(ServiceDefinition $definition, MessageBinderInterface $requestHeaderMessageBinder, MessageBinderInterface $requestMessageBinder, MessageBinderInterface $responseMessageBinder) {
+        $this->definition = $definition;
+
+        $this->requestHeaderMessageBinder = $requestHeaderMessageBinder;
+        $this->requestMessageBinder       = $requestMessageBinder;
+
         $this->responseMessageBinder = $responseMessageBinder;
     }
 
-    public function isServiceHeader($name)
+    public function isServiceHeader($method, $header)
     {
-        return $this->definition->getHeaders()->has($name);
+        return $this->definition->getMethods()->get($method)->getHeaders()->has($header);
     }
 
-    public function isServiceMethod($name)
+    public function isServiceMethod($method)
     {
-        return $this->definition->getMethods()->has($name);
+        return $this->definition->getMethods()->has($method);
     }
 
-    public function processServiceHeader($name, $data)
+    public function processServiceHeader($method, $header, $data)
     {
-        $headerDefinition = $this->definition->getHeaders()->get($name);
+        $methodDefinition = $this->definition->getMethods()->get($method);
+        $headerDefinition = $methodDefinition->getHeaders()->get($header);
+
+        $this->requestHeaderMessageBinder->setHeader($header);
+        $data = $this->requestHeaderMessageBinder->processMessage($methodDefinition, $data, $this->definition->getDefinitionComplexTypes());
 
         return $this->createSoapHeader($headerDefinition, $data);
     }
 
-    public function processServiceMethodArguments($name, $arguments)
+    public function processServiceMethodArguments($method, $arguments)
     {
-        $methodDefinition = $this->definition->getMethods()->get($name);
+        $methodDefinition = $this->definition->getMethods()->get($method);
 
         return array_merge(
             array('_controller' => $methodDefinition->getController()),
@@ -79,6 +91,6 @@ class ServiceBinder
     {
         $qname = QName::fromPackedQName($headerDefinition->getType()->getXmlType());
 
-        return new SoapHeader($qname->getNamespace(), $qname->getName(), $data);
+        return new SoapHeader($qname->getNamespace(), $headerDefinition->getName(), $data);
     }
 }

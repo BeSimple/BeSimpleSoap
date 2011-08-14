@@ -38,7 +38,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         return $result;
     }
 
-    private function processType($phpType, $message, array $definitionComplexTypes)
+    protected function processType($phpType, $message, array $definitionComplexTypes)
     {
         if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;

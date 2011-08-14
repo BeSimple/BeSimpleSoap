@@ -29,23 +29,16 @@ class ServiceDefinition
      */
     private $methods;
 
-    /**
-     * @var \BeSimple\SoapBundle\Util\Collection
-     */
-    private $headers;
-
     private $complexTypes = array();
 
-    public function __construct($name = null, $namespace = null, array $methods = array(), array $headers = array())
+    public function __construct($name = null, $namespace = null, array $methods = array())
     {
         $this->setName($name);
         $this->setNamespace($namespace);
 
         $this->methods = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Method');
-        $this->headers = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Header');
 
         $this->setMethods($methods);
-        $this->setHeaders($headers);
     }
 
     /**
@@ -97,31 +90,19 @@ class ServiceDefinition
     }
 
     /**
-     * @return \BeSimple\SoapBundle\Util\Collection
-     */
-    public function getHeaders()
-    {
-        return $this->headers;
-    }
-
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
-    {
-        $this->headers->addAll($headers);
-    }
-
-    /**
      * @return array
      */
     public function getAllTypes()
     {
         $types = array();
 
-        foreach($this->methods as $method) {
-            foreach($method->getArguments() as $argument) {
+        foreach ($this->methods as $method) {
+            foreach ($method->getArguments() as $argument) {
                 $types[] = $argument->getType();
+            }
+
+            foreach ($method->getHeaders() as $header) {
+                $types[] = $header->getType();
             }
 
             $types[] = $method->getReturn();

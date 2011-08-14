@@ -6,6 +6,7 @@
     <parameters>
         <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
         <parameter key="besimple.soap.cache_dir">%kernel.cache_dir%/webservice</parameter>
+        <parameter key="besimple.soap.binder.request.header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
         <parameter key="besimple.soap.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
@@ -19,6 +20,7 @@
         <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
+            <argument type="service" id="besimple.soap.binder.request.header.rpcliteral" />
             <argument type="service" id="besimple.soap.binder.request.rpcliteral" />
             <argument type="service" id="besimple.soap.binder.response.rpcliteral" />
             <argument type="service" id="besimple.soap.type.repository" />
@@ -32,6 +34,7 @@
         <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.documentwrapped" />
+            <argument type="service" id="besimple.soap.binder.request.header.documentwrapped" />
             <argument type="service" id="besimple.soap.binder.request.documentwrapped" />
             <argument type="service" id="besimple.soap.binder.response.documentwrapped" />
             <argument type="service" id="besimple.soap.type.repository" />
@@ -42,6 +45,7 @@
             </argument>
         </service>
 
+        <service id="besimple.soap.binder.request.header.rpcliteral" class="%besimple.soap.binder.request.header.rpcliteral.class%" />
         <service id="besimple.soap.binder.request.rpcliteral" class="%besimple.soap.binder.request.rpcliteral.class%" />
 
         <service id="besimple.soap.binder.response.rpcliteral" class="%besimple.soap.binder.response.rpcliteral.class%" />
