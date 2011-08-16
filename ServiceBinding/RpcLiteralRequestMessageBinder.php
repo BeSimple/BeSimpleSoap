@@ -80,6 +80,10 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         foreach ($definitionComplexTypes[$phpType] as $type) {
             $value = $this->processType($type->getValue(), $message->{$type->getName()}, $definitionComplexTypes);
 
+            if (null === $value && $type->isNillable()) {
+                continue;
+            }
+
             if ($type instanceof PropertyComplexType) {
                 $instanceType->{$type->getOriginalName()} = $value;
             } elseif ($type instanceof MethodComplexType) {
