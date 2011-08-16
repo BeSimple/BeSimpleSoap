@@ -84,7 +84,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
                 $instanceType->{$type->getOriginalName()} = $value;
             } elseif ($type instanceof MethodComplexType) {
                 if (!$type->getSetter()) {
-                    throw new \LogicException();
+                    throw new \LogicException(sprintf('"setter" option must be specified to hydrate "%s::%s()"', $phpType, $type->getOriginalName()));
                 }
 
                 $instanceType->{$type->getSetter()}($value);
