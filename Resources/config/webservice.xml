@@ -6,9 +6,11 @@
     <parameters>
         <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
         <parameter key="besimple.soap.cache_dir">%kernel.cache_dir%/webservice</parameter>
+        <parameter key="besimple.soap.binder.request_header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
         <parameter key="besimple.soap.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.request_header.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
         <parameter key="besimple.soap.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
         <parameter key="besimple.soap.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
@@ -24,6 +26,7 @@
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="binder_request_header_class">%besimple.soap.binder.request_header.rpcliteral.class%</argument>
                 <argument key="binder_request_class">%besimple.soap.binder.request.rpcliteral.class%</argument>
                 <argument key="binder_response_class">%besimple.soap.binder.response.rpcliteral.class%</argument>
             </argument>
@@ -37,6 +40,7 @@
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="binder_request_header_class">%besimple.soap.binder.request_header.documentwrapped.class%</argument>
                 <argument key="binder_request_class">%besimple.soap.binder.request.documentwrapped.class%</argument>
                 <argument key="binder_response_class">%besimple.soap.binder.response.documentwrapped.class%</argument>
             </argument>

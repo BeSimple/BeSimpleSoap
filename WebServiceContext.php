@@ -87,6 +87,7 @@ class WebServiceContext
         if (null === $this->serviceBinder) {
             $this->serviceBinder = new ServiceBinder(
                 $this->getServiceDefinition(),
+                new $this->options['binder_request_header_class'](),
                 new $this->options['binder_request_class'](),
                 new $this->options['binder_response_class']()
             );

@@ -38,7 +38,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         return $result;
     }
 
-    private function processType($phpType, $message, array $definitionComplexTypes)
+    protected function processType($phpType, $message, array $definitionComplexTypes)
     {
         if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;
@@ -80,11 +80,15 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         foreach ($definitionComplexTypes[$phpType] as $type) {
             $value = $this->processType($type->getValue(), $message->{$type->getName()}, $definitionComplexTypes);
 
+            if (null === $value && $type->isNillable()) {
+                continue;
+            }
+
             if ($type instanceof PropertyComplexType) {
                 $instanceType->{$type->getOriginalName()} = $value;
             } elseif ($type instanceof MethodComplexType) {
                 if (!$type->getSetter()) {
-                    throw new \LogicException();
+                    throw new \LogicException(sprintf('"setter" option must be specified to hydrate "%s::%s()"', $phpType, $type->getOriginalName()));
                 }
 
                 $instanceType->{$type->getSetter()}($value);

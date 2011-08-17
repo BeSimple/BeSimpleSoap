@@ -16,7 +16,7 @@ use BeSimple\SoapBundle\ServiceDefinition\Strategy\ComplexType;
 use BeSimple\SoapBundle\Util\String;
 
 use Zend\Soap\Exception;
-use Zend\Soap\Wsdl;
+use Zend\Soap\Wsdl as BaseWsdl;
 use Zend\Soap\Wsdl\Strategy;
 use Zend\Soap\Wsdl\Strategy\ArrayOfTypeSequence;
 
@@ -46,7 +46,7 @@ class WsdlTypeStrategy implements Strategy
      *
      * @param \Zend\Soap\Wsdl $context
      */
-    public function setContext(Wsdl $context)
+    public function setContext(BaseWsdl $context)
     {
         $this->context = $context;
 

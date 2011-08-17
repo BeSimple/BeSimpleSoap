@@ -23,5 +23,6 @@ Tutorial
 
     tutorial/array
     tutorial/complex_type
+    tutorial/header
 
 .. _`ckWebServicePlugin`: http://www.symfony-project.org/plugins/ckWebServicePlugin
