@@ -40,6 +40,6 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
 
     private function loadRequestContentFixture($name)
     {
-        return file_get_contents(__DIR__.'/../Fixtures/Soap/'.$name);
+        return file_get_contents(__DIR__.'/../fixtures/Soap/'.$name);
     }
 }
