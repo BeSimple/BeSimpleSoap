@@ -28,8 +28,4 @@ class ConverterRepository
     {
         return $this->typeConverters;
     }
-
-    public function registerTypeConverterServices(ContainerInterface $container)
-    {
-    }
 }
