@@ -36,6 +36,7 @@ class BeSimpleSoapExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('loaders.xml');
+        $loader->load('converters.xml');
         $loader->load('webservice.xml');
 
         $processor     = new Processor();

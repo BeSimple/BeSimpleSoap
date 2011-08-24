@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="besimple.soap.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
+        <parameter key="besimple.soap.converter.date_time.class">BeSimple\SoapBundle\Converter\DateTimeTypeConverter</parameter>
+    </parameters>
+
+    <services>
+        <service id="besimple.soap.converter.repository" class="%besimple.soap.converter.repository.class%" />
+
+        <service id="besimple.soap.converter.date_time" class="%besimple.soap.converter.date_time.class%" public="false">
+            <tag name="besimple.soap.converter" />
+        </service>
+    </services>
+</container>

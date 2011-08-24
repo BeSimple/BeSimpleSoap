@@ -13,7 +13,6 @@
         <parameter key="besimple.soap.binder.request_header.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
         <parameter key="besimple.soap.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
-        <parameter key="besimple.soap.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
         <parameter key="besimple.soap.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
     </parameters>
 
@@ -52,8 +51,6 @@
                 <argument key="stylesheet">%besimple.soap.definition.dumper.options.stylesheet%</argument>
             </argument>
         </service>
-
-        <service id="besimple.soap.converter.repository" class="%besimple.soap.converter.repository.class%" />
 
         <service id="besimple.soap.type.repository" class="%besimple.soap.type.repository.class%">
             <call method="addXmlNamespace">
