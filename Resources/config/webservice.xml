@@ -76,6 +76,10 @@
                 <argument>float</argument>
                 <argument>xsd:float</argument>
             </call>
+            <call method="addDefaultTypeMapping">
+                <argument>DateTime</argument>
+                <argument>xsd:dateTime</argument>
+            </call>
         </service>
     </services>
 
