@@ -10,9 +10,7 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
-use BeSimple\SoapBundle\ServiceDefinition\Annotation\ComplexType;
-use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
-use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
+use BeSimple\SoapBundle\ServiceDefinition\ComplexType;
 use BeSimple\SoapBundle\Util\Collection;
 
 /**
@@ -24,8 +22,7 @@ use BeSimple\SoapBundle\Util\Collection;
  */
 class AnnotationComplexTypeLoader extends AnnotationClassLoader
 {
-    private $propertyComplexTypeClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\PropertyComplexType';
-    private $methodComplexTypeClass   = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\MethodComplexType';
+    private $complexTypeClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\ComplexType';
 
     /**
      * Loads a ServiceDefinition from annotations from a class.
@@ -44,48 +41,17 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
         }
 
         $class      = new \ReflectionClass($class);
-        $collection = new Collection('getName');
+        $collection = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\ComplexType');
 
         foreach ($class->getProperties() as $property) {
-            if ($property->isPublic()) {
-                $complexType = $this->reader->getPropertyAnnotation($property, $this->propertyComplexTypeClass);
+            $complexType = $this->reader->getPropertyAnnotation($property, $this->complexTypeClass);
 
-                if ($complexType) {
-                    $propertyComplexType = new PropertyComplexType();
-                    $propertyComplexType->setValue($complexType->getValue());
-                    $propertyComplexType->setNillable($complexType->isNillable());
-
-                    if (!$complexType->getName()) {
-                        $propertyComplexType->setName($property->getName());
-                    } else {
-                        $propertyComplexType->setName($complexType->getName());
-                        $propertyComplexType->setOriginalName($property->getName());
-                    }
-
-                    $collection->add($propertyComplexType);
-                }
-            }
-        }
-
-        foreach ($class->getMethods() as $method) {
-            if ($method->isPublic()) {
-                $complexType = $this->reader->getMethodAnnotation($method, $this->methodComplexTypeClass);
-
-                if ($complexType) {
-                    $methodComplexType = new MethodComplexType();
-                    $methodComplexType->setValue($complexType->getValue());
-                    $methodComplexType->setSetter($complexType->getSetter());
-                    $methodComplexType->setNillable($complexType->isNillable());
-
-                    if (!$complexType->getName()) {
-                        $methodComplexType->setName($property->getName());
-                    } else {
-                        $methodComplexType->setName($complexType->getName());
-                        $methodComplexType->setOriginalName($method->getName());
-                    }
-
-                    $collection->add($methodComplexType);
-                }
+            if ($complexType) {
+                $propertyComplexType = new ComplexType();
+                $propertyComplexType->setValue($complexType->getValue());
+                $propertyComplexType->setNillable($complexType->isNillable());
+                $propertyComplexType->setName($property->getName());
+                $collection->add($propertyComplexType);
             }
         }
 

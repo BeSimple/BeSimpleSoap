@@ -53,10 +53,13 @@ class SoapWebServiceController extends ContainerAware
      */
     public function callAction($webservice)
     {
-        $webServiceContext = $this->getWebServiceContext($webservice);
+        $webServiceContext   = $this->getWebServiceContext($webservice);
+
         $this->serviceBinder = $webServiceContext->getServiceBinder();
+        //$this->serviceBinder->fixXmlRequestContent();
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
+        //$this->soapRequest->setContent($this->serviceBinder->fixXmlRequestContent($this->soapRequest->getContent()));
         $this->soapServer  = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->soapResponse);
 
         $this->soapServer->setObject($this);

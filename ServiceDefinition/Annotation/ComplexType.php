@@ -8,26 +8,20 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapBundle\ServiceDefinition\Strategy;
+namespace BeSimple\SoapBundle\ServiceDefinition\Annotation;
 
 /**
- * @author Francis Besset <francis.besset@gmail.com>
+ * @Annotation
  */
-abstract class BaseComplexType
+class ComplexType extends Configuration
 {
     private $name;
-    private $originalName;
     private $value;
     private $isNillable = false;
 
     public function getName()
     {
         return $this->name;
-    }
-
-    public function getOriginalName()
-    {
-        return $this->originalName ?: $this->name;
     }
 
     public function getValue()
@@ -45,11 +39,6 @@ abstract class BaseComplexType
         $this->name = $name;
     }
 
-    public function setOriginalName($originalName)
-    {
-        $this->originalName = $originalName;
-    }
-
     public function setValue($value)
     {
         $this->value = $value;
@@ -58,5 +47,10 @@ abstract class BaseComplexType
     public function setNillable($isNillable)
     {
         $this->isNillable = (bool) $isNillable;
+    }
+
+    public function getAliasName()
+    {
+        return 'complextype';
     }
 }

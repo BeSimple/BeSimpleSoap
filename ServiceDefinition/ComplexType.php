@@ -8,12 +8,12 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapBundle\ServiceDefinition\Annotation;
+namespace BeSimple\SoapBundle\ServiceDefinition;
 
 /**
- * @Annotation
+ * @author Francis Besset <francis.besset@gmail.com>
  */
-class PropertyComplexType extends Configuration
+class ComplexType
 {
     private $name;
     private $value;
@@ -47,10 +47,5 @@ class PropertyComplexType extends Configuration
     public function setNillable($isNillable)
     {
         $this->isNillable = (bool) $isNillable;
-    }
-
-    public function getAliasName()
-    {
-        return 'propertycomplextype';
     }
 }

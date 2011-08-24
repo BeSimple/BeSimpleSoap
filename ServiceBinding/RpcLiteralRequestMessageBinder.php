@@ -14,6 +14,8 @@ use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
 
+use Zend\Soap\Wsdl;
+
 /**
  * @author Christian Kerl <christian-kerl@web.de>
  * @author Francis Besset <francis.besset@gmail.com>
@@ -21,15 +23,18 @@ use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
 class RpcLiteralRequestMessageBinder implements MessageBinderInterface
 {
     private $messageRefs = array();
+    private $definitionComplexTypes;
 
     public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
     {
+        $this->definitionComplexTypes = $definitionComplexTypes;
+
         $result = array();
         $i      = 0;
 
         foreach ($messageDefinition->getArguments() as $argument) {
             if (isset($message[$i])) {
-                $result[$argument->getName()] = $this->processType($argument->getType()->getPhpType(), $message[$i], $definitionComplexTypes);
+                $result[$argument->getName()] = $this->processType($argument->getType()->getPhpType(), $message[$i]);
             }
 
             $i++;
@@ -38,27 +43,27 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         return $result;
     }
 
-    protected function processType($phpType, $message, array $definitionComplexTypes)
+    protected function processType($phpType, $message)
     {
+        $isArray = false;
+
         if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;
-            $type    = $match[1];
-        } else {
-            $isArray = false;
-            $type    = $phpType;
+            $phpType = $match[1];
         }
 
-        if (isset($definitionComplexTypes[$type])) {
+        // @TODO Fix array reference
+        if (isset($this->definitionComplexTypes[$phpType])) {
             if ($isArray) {
                 $array = array();
 
                 foreach ($message->item as $complexType) {
-                    $array[] = $this->getInstanceOfType($type, $complexType, $definitionComplexTypes);
+                    $array[] = $this->checkComplexType($phpType, $complexType);
                 }
 
                 $message = $array;
             } else {
-                $message = $this->getInstanceOfType($type, $message, $definitionComplexTypes);
+                $message = $this->checkComplexType($phpType, $message);
             }
         } elseif ($isArray) {
             $message = $message->item;
@@ -67,36 +72,30 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         return $message;
     }
 
-    private function getInstanceOfType($phpType, $message, array $definitionComplexTypes)
+    protected function checkComplexType($phpType, $message)
     {
         $hash = spl_object_hash($message);
         if (isset($this->messageRefs[$hash])) {
-            return $this->messageRefs[$hash];
+            return $message;
         }
 
-        $this->messageRefs[$hash] =
-        $instanceType             = new $phpType();
-
-        foreach ($definitionComplexTypes[$phpType] as $type) {
-            $value = $this->processType($type->getValue(), $message->{$type->getName()}, $definitionComplexTypes);
-
-            if (null === $value && $type->isNillable()) {
-                continue;
-            }
-
-            if ($type instanceof PropertyComplexType) {
-                $instanceType->{$type->getOriginalName()} = $value;
-            } elseif ($type instanceof MethodComplexType) {
-                if (!$type->getSetter()) {
-                    throw new \LogicException(sprintf('"setter" option must be specified to hydrate "%s::%s()"', $phpType, $type->getOriginalName()));
-                }
-
-                $instanceType->{$type->getSetter()}($value);
+        $r = new \ReflectionClass($message);
+        foreach ($this->definitionComplexTypes[$phpType] as $type) {
+            $p = $r->getProperty($type->getName());
+            if ($p->isPublic()) {
+                $value = $message->{$type->getName()};
             } else {
-                throw new \InvalidArgumentException();
+                $p->setAccessible(true);
+                $value = $p->getValue($message);
+            }
+
+            $value = $this->processType($type->getValue(), $value);
+
+            if (!$type->isNillable() && null === $value) {
+                throw new \SoapFault('SOAP_ERROR_COMPLEX_TYPE', sprintf('"%s:%s" cannot be null.', ucfirst(Wsdl::translateType($phpType)), $type->getName()));
             }
         }
 
-        return $instanceType;
+        return $this->messageRefs[$hash] = $message;
     }
 }

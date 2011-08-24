@@ -11,6 +11,7 @@
 namespace BeSimple\SoapBundle\Soap;
 
 use BeSimple\SoapBundle\Converter\ConverterRepository;
+use Zend\Soap\Wsdl;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
@@ -25,7 +26,7 @@ class SoapServerFactory
     public function __construct($wsdlFile, array $classmap, ConverterRepository $converters, $debug = false)
     {
         $this->wsdlFile   = $wsdlFile;
-        $this->classmap   = $classmap;
+        $this->classmap   = $this->fixSoapServerClassmap($classmap);
         $this->converters = $converters;
         $this->debug      = $debug;
     }
@@ -61,5 +62,16 @@ class SoapServerFactory
         }
 
         return $typemap;
+    }
+
+    private function fixSoapServerClassmap($classmap)
+    {
+        $classmapFixed = array();
+
+        foreach ($classmap as $class => $definition) {
+            $classmapFixed[Wsdl::translateType($class)] = $class;
+        }
+
+        return $classmapFixed;
     }
 }

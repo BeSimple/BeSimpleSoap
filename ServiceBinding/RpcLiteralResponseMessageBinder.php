@@ -14,6 +14,8 @@ use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
 
+use Zend\Soap\Wsdl;
+
 /**
  * @author Christian Kerl <christian-kerl@web.de>
  * @author Francis Besset <francis.besset@gmail.com>
@@ -21,45 +23,42 @@ use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
 class RpcLiteralResponseMessageBinder implements MessageBinderInterface
 {
     private $messageRefs = array();
+    private $definitionComplexTypes;
 
     public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
     {
-        $return = $messageDefinition->getReturn();
-        $class  = $return->getPhpType();
+        $this->definitionComplexTypes = $definitionComplexTypes;
 
-        $message = $this->processType($messageDefinition->getReturn()->getPhpType(), $message, $definitionComplexTypes);
-
-        return $message;
+        return $this->processType($messageDefinition->getReturn()->getPhpType(), $message);
     }
 
-    private function processType($phpType, $message, array $definitionComplexTypes)
+    private function processType($phpType, $message)
     {
+        $isArray = false;
+
         if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;
-            $type    = $match[1];
-        } else {
-            $isArray = false;
-            $type    = $phpType;
+            $phpType = $match[1];
         }
 
-        if (isset($definitionComplexTypes[$type])) {
+        if (isset($this->definitionComplexTypes[$phpType])) {
             if ($isArray) {
                 $array = array();
 
                 foreach ($message as $complexType) {
-                    $array[] = $this->getInstanceOfStdClass($type, $complexType, $definitionComplexTypes);
+                    $array[] = $this->checkComplexType($phpType, $complexType);
                 }
 
                 $message = $array;
             } else {
-                $message = $this->getInstanceOfStdClass($type, $message, $definitionComplexTypes);
+                $message = $this->checkComplexType($phpType, $message);
             }
         }
 
         return $message;
     }
 
-    private function getInstanceOfStdClass($phpType, $message, $definitionComplexTypes)
+    private function checkComplexType($phpType, $message)
     {
         $hash = spl_object_hash($message);
         if (isset($this->messageRefs[$hash])) {
@@ -71,26 +70,27 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
             $class = substr($class, 1);
         }
 
-        if (get_class($message) !== $class) {
-            throw new \InvalidArgumentException();
+        if (!$message instanceof $class) {
+            throw new \InvalidArgumentException(sprintf('The instance class must be "%s", "%s" given.', get_class($message), $class));
         }
 
-        $stdClass = new \stdClass();
-        $this->messageRefs[$hash] = $stdClass;
-
-        foreach ($definitionComplexTypes[$phpType] as $type) {
-
-            if ($type instanceof PropertyComplexType) {
-                $value = $message->{$type->getOriginalName()};
-            } elseif ($type instanceof MethodComplexType) {
-                $value = $message->{$type->getOriginalName()}();
+        $r = new \ReflectionClass($message);
+        foreach ($this->definitionComplexTypes[$class] as $type) {
+            $p = $r->getProperty($type->getName());
+            if ($p->isPublic()) {
+                $value = $message->{$type->getName()};
             } else {
-                throw new \InvalidArgumentException();
+                $p->setAccessible(true);
+                $value = $p->getValue($message);
             }
 
-            $stdClass->{$type->getName()} = $this->processType($type->getValue(), $value, $definitionComplexTypes);
+            $value = $this->processType($type->getValue(), $value);
+
+            if (!$type->isNillable() && null === $value) {
+                throw new \InvalidArgumentException(sprintf('"%s::%s" cannot be null.', $class, $type->getName()));
+            }
         }
 
-        return $stdClass;
+        return $this->messageRefs[$hash] = $message;
     }
 }
