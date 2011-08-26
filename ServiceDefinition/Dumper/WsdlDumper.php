@@ -10,6 +10,7 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Dumper;
 
+use BeSimple\SoapBundle\Converter\TypeRepository;
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Type;
 use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
@@ -23,15 +24,17 @@ use BeSimple\SoapBundle\Util\QName;
 class WsdlDumper implements DumperInterface
 {
     private $loader;
+    private $typeRepository;
     private $options;
 
     private $wsdl;
     private $definition;
 
-    public function __construct(AnnotationComplexTypeLoader $loader, array $options)
+    public function __construct(AnnotationComplexTypeLoader $loader, TypeRepository $typeRepository, array $options)
     {
-        $this->loader  = $loader;
-        $this->options = $options;
+        $this->loader         = $loader;
+        $this->typeRepository = $typeRepository;
+        $this->options        = $options;
     }
 
     public function dumpServiceDefinition(ServiceDefinition $definition, $endpoint)
@@ -39,7 +42,7 @@ class WsdlDumper implements DumperInterface
         Assert::thatArgumentNotNull('definition', $definition);
 
         $this->definition = $definition;
-        $this->wsdl       = new Wsdl($definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy($this->loader, $definition));
+        $this->wsdl       = new Wsdl($this->typeRepository, $definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy($this->loader, $definition));
         $port             = $this->wsdl->addPortType($this->getPortTypeName());
         $binding          = $this->wsdl->addBinding($this->getBindingName(), $this->qualify($this->getPortTypeName()));
 

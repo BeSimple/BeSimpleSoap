@@ -47,6 +47,7 @@
 
         <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
             <argument type="service" id="besimple.soap.definition.loader.annot_complextype" />
+            <argument type="service" id="besimple.soap.type.repository" />
             <argument type="collection">
                 <argument key="stylesheet">%besimple.soap.definition.dumper.options.stylesheet%</argument>
             </argument>
@@ -66,7 +67,7 @@
                 <argument>xsd:int</argument>
             </call>
             <call method="addDefaultTypeMapping">
-                <argument>bool</argument>
+                <argument>boolean</argument>
                 <argument>xsd:boolean</argument>
             </call>
             <call method="addDefaultTypeMapping">
@@ -74,7 +75,7 @@
                 <argument>xsd:float</argument>
             </call>
             <call method="addDefaultTypeMapping">
-                <argument>DateTime</argument>
+                <argument>dateTime</argument>
                 <argument>xsd:dateTime</argument>
             </call>
         </service>

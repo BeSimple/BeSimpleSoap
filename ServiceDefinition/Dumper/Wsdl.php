@@ -10,6 +10,8 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Dumper;
 
+use BeSimple\SoapBundle\Converter\TypeRepository;
+use BeSimple\SoapBundle\ServiceDefinition\Type;
 use Zend\Soap\Wsdl as BaseWsdl;
 
 /**
@@ -17,6 +19,26 @@ use Zend\Soap\Wsdl as BaseWsdl;
  */
 class Wsdl extends BaseWsdl
 {
+    private $typeRepository;
+
+    public function __construct(TypeRepository $typeRepository, $name, $uri, $strategy = true)
+    {
+        $this->typeRepository = $typeRepository;
+
+        parent::__construct($name, $uri, $strategy);
+    }
+
+    public function getType($type)
+    {
+        if ($type instanceof Type) {
+            $xmlType = $type->getXmlType();
+        } else {
+            $xmlType = $this->typeRepository->getXmlTypeMapping($type);
+        }
+
+        return $xmlType ?: $this->addComplexType($type);
+    }
+
     public function addBindingOperationHeader(\DOMElement $bindingOperation, array $headers, array $baseBinding)
     {
         foreach ($headers as $header) {

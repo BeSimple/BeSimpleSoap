@@ -40,7 +40,12 @@ class TypeRepository
         Assert::thatArgumentNotNull('phpType', $phpType);
         Assert::thatArgumentNotNull('xmlType', $xmlType);
 
-        $this->defaultTypeMap[$phpType] = $this->getQName($xmlType);
+        $this->defaultTypeMap[$phpType] = $xmlType;
+    }
+
+    public function getXmlTypeMapping($phpType)
+    {
+        return isset($this->defaultTypeMap[$phpType]) ? $this->defaultTypeMap[$phpType] : null;
     }
 
     public function fixTypeInformation(ServiceDefinition $definition)
@@ -56,36 +61,10 @@ class TypeRepository
             }
 
             if (null === $xmlType) {
-                if (!isset($typeMap[$phpType])) {
-                    $parts       = explode('\\', $phpType);
-                    $xmlTypeName = ucfirst(end($parts));
-
-                    if (String::endsWith($phpType, self::ARRAY_SUFFIX)) {
-                        $xmlTypeName = str_replace(self::ARRAY_SUFFIX, 'Array', $xmlTypeName);
-                    }
-
-                    $typeMap[$phpType] = new QName($definition->getNamespace(), $xmlTypeName);
-                }
-
-                $xmlType = $typeMap[$phpType];
-            } else {
-                $xmlType = $this->getQName($xmlType);
+                $xmlType = $this->getXmlTypeMapping($phpType);
             }
 
-            $type->setXmlType((string) $xmlType);
+            $type->setXmlType($xmlType);
         }
-    }
-
-    private function getQName($xmlType)
-    {
-        if (QName::isPrefixedQName($xmlType)) {
-            return QName::fromPrefixedQName($xmlType, array($this, 'getXmlNamespace'));
-        } else {
-            return QName::fromPackedQName($xmlType);
-        }
-    }
-
-    public function createComplexTypeMap(ServiceDefinition $definition)
-    {
     }
 }
