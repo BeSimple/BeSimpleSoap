@@ -31,7 +31,10 @@ class DateTimeTypeConverter implements TypeConverterInterface
 
     public function convertXmlToPhp(SoapRequest $request, $data)
     {
-        return new \DateTime(strip_tags($data));
+        $doc = new \DOMDocument();
+        $doc->loadXML($data);
+
+        return new \DateTime($doc->textContent);
     }
 
     public function convertPhpToXml(SoapResponse $response, $data)
