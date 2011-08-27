@@ -58,15 +58,15 @@ class SoapWebServiceController extends ContainerAware
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
-        $this->soapServer  = $webServiceContext->getServerFactory()->create($this->soapRequest, new SoapResponse());
+        $this->soapServer  = $webServiceContext->getServerFactory()->create($this->soapRequest, $this->getResponse());
 
         $this->soapServer->setObject($this);
 
         ob_start();
         $this->soapServer->handle($this->soapRequest->getSoapMessage());
-        $this->soapResponse->setContent(ob_get_clean());
+        $this->getResponse()->setContent(ob_get_clean());
 
-        return $this->soapResponse;
+        return $this->getResponse();
     }
 
     /**
@@ -127,14 +127,14 @@ class SoapWebServiceController extends ContainerAware
             $this->soapResponse = $this->checkResponse($response);
 
             // add response soap headers to soap server
-            foreach ($this->soapResponse->getSoapHeaders() as $header) {
+            foreach ($this->getResponse()->getSoapHeaders() as $header) {
                 $this->soapServer->addSoapHeader($header->toNativeSoapHeader());
             }
 
             // return operation return value to soap server
             return $this->serviceBinder->processServiceMethodReturnValue(
                 $method,
-                $this->soapResponse->getReturnValue()
+                $this->getResponse()->getReturnValue()
             );
         } else {
             // collect request soap headers
@@ -155,7 +155,7 @@ class SoapWebServiceController extends ContainerAware
      */
     public function getResponse()
     {
-        return $this->soapResponse;
+        return $this->soapResponse ?: $this->soapResponse = $this->container->get('besimple.soap.response');
     }
 
     /**
@@ -165,12 +165,12 @@ class SoapWebServiceController extends ContainerAware
      *
      * @return SoapResponse A valid SoapResponse
      *
-     * @throws InvalidArgumentException if the given Response is null or not a SoapResponse
+     * @throws InvalidArgumentException if the given Response is not an instance of SoapResponse
      */
     protected function checkResponse(Response $response)
     {
         if (!$response instanceof SoapResponse) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('You must return an instance of BeSimple\SoapBundle\Soap\SoapResponse');
         }
 
         return $response;

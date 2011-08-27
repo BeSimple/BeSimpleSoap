@@ -34,18 +34,20 @@ Annotations for Controllers
 
 .. code-block:: php
 
-    use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use BeSimple\SoapBundle\Soap\SoapResponse;
+    namespace My\App\Controller;
 
-    class DemoController extends Controller
+    use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
+    use Symfony\Component\DependencyInjection\ContainerAware;
+
+    class DemoController extends ContainerAware
     {
         /**
-         * @Soap\Method("Hello")
+         * @Soap\Method("hello")
          * @Soap\Param("name", phpType = "string")
          * @Soap\Result(phpType = "string")
          */
         public function helloAction($name)
         {
-            return new SoapResponse(sprintf('Hello %s!', $name));
+            return $this->container->get('besimple.soap.response')->setReturnValue(sprintf('Hello %s!', $name));
         }
     }

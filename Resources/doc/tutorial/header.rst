@@ -9,7 +9,6 @@ Controller
     namespace My\App\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use BeSimple\SoapBundle\Soap\SoapResponse;
     use Symfony\Component\DependencyInjection\ContainerAware;
 
     class DemoController extends ContainerAware
@@ -27,6 +26,6 @@ Controller
                 throw new \SoapFault("INVALID_API_KEY", "The api_key is invalid.");
             }
 
-            return new SoapResponse("Hello ".implode(', ', $names));
+            return $this->container->get('besimple.soap.response')->setReturnValue("Hello ".implode(', ', $names));
         }
     }

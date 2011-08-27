@@ -4,6 +4,7 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
+        <parameter key="besimple.soap.response.class">BeSimple\SoapBundle\Soap\SoapResponse</parameter>
         <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
         <parameter key="besimple.soap.cache_dir">%kernel.cache_dir%/webservice</parameter>
         <parameter key="besimple.soap.binder.request_header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
@@ -17,6 +18,8 @@
     </parameters>
 
     <services>
+        <service id="besimple.soap.response" class="%besimple.soap.response.class%" />
+
         <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />

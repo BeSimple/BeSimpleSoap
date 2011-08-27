@@ -58,6 +58,8 @@ class SoapResponse extends Response
     public function setReturnValue($value)
     {
         $this->soapReturnValue = $value;
+
+        return $this;
     }
 
     public function getReturnValue()

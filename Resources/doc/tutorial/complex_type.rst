@@ -15,7 +15,6 @@ Controller
     namespace My\App\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use BeSimple\SoapBundle\Soap\SoapResponse;
     use Symfony\Component\DependencyInjection\ContainerAware;
 
     class DemoController extends ContainerAware
@@ -29,13 +28,13 @@ Controller
         {
             $user = $this->container->getDoctrine()->getRepository('MyApp:User')->findOneBy(array(
                 'name' => $name,
-            );
+            ));
 
             if (!$user) {
                 throw new \SoapFault('USER_NOT_FOUND', sprintf('The user with the name "%s" can not be found', $name));
             }
 
-            return new SoapResponse($user);
+            return $this->container->get('besimple.soap.response')->setReturnValue($user);
         }
     }
 
