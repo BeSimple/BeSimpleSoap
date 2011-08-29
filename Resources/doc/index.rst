@@ -13,6 +13,7 @@ Reference Guide
 
     reference/installation
     reference/configuration
+    reference/types
 
 Tutorial
 --------

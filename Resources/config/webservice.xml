@@ -66,24 +66,24 @@
                 <argument>xsd:string</argument>
             </call>
             <call method="addDefaultTypeMapping">
-                <argument>int</argument>
-                <argument>xsd:int</argument>
-            </call>
-            <call method="addDefaultTypeMapping">
                 <argument>boolean</argument>
                 <argument>xsd:boolean</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>int</argument>
+                <argument>xsd:int</argument>
             </call>
             <call method="addDefaultTypeMapping">
                 <argument>float</argument>
                 <argument>xsd:float</argument>
             </call>
             <call method="addDefaultTypeMapping">
-                <argument>dateTime</argument>
-                <argument>xsd:dateTime</argument>
-            </call>
-            <call method="addDefaultTypeMapping">
                 <argument>date</argument>
                 <argument>xsd:date</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>dateTime</argument>
+                <argument>xsd:dateTime</argument>
             </call>
         </service>
     </services>
