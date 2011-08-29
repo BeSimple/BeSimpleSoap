@@ -7,12 +7,17 @@
     <parameters>
         <parameter key="besimple.soap.converter.repository.class">BeSimple\SoapBundle\Converter\ConverterRepository</parameter>
         <parameter key="besimple.soap.converter.date_time.class">BeSimple\SoapBundle\Converter\DateTimeTypeConverter</parameter>
+        <parameter key="besimple.soap.converter.date.class">BeSimple\SoapBundle\Converter\DateTypeConverter</parameter>
     </parameters>
 
     <services>
         <service id="besimple.soap.converter.repository" class="%besimple.soap.converter.repository.class%" />
 
         <service id="besimple.soap.converter.date_time" class="%besimple.soap.converter.date_time.class%" public="false">
+            <tag name="besimple.soap.converter" />
+        </service>
+
+        <service id="besimple.soap.converter.date" class="%besimple.soap.converter.date.class%" public="false">
             <tag name="besimple.soap.converter" />
         </service>
     </services>

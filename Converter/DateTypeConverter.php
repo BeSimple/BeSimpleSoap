@@ -15,9 +15,9 @@ use BeSimple\SoapBundle\Soap\SoapResponse;
 use BeSimple\SoapBundle\Util\String;
 
 /**
- * @author Christian Kerl <christian-kerl@web.de>
+ * @author Francis Besset <francis.besset@gmail.com>
  */
-class DateTimeTypeConverter implements TypeConverterInterface
+class DateTypeConverter implements TypeConverterInterface
 {
     public function getTypeNamespace()
     {
@@ -26,7 +26,7 @@ class DateTimeTypeConverter implements TypeConverterInterface
 
     public function getTypeName()
     {
-        return 'dateTime';
+        return 'date';
     }
 
     public function convertXmlToPhp(SoapRequest $request, $data)
@@ -39,6 +39,6 @@ class DateTimeTypeConverter implements TypeConverterInterface
 
     public function convertPhpToXml(SoapResponse $response, $data)
     {
-        return sprintf('<%1$s>%2$s</%1$s>', $this->getTypeName(), $data->format('Y-m-d\TH:i:sP'));
+        return sprintf('<%1$s>%2$s</%1$s>', $this->getTypeName(), $data->format('Y-m-d'));
     }
 }

@@ -81,6 +81,10 @@
                 <argument>dateTime</argument>
                 <argument>xsd:dateTime</argument>
             </call>
+            <call method="addDefaultTypeMapping">
+                <argument>date</argument>
+                <argument>xsd:date</argument>
+            </call>
         </service>
     </services>
 
