@@ -23,6 +23,11 @@ class SoapHeader
         $this->data      = $data;
     }
 
+    public function __toString()
+    {
+        return $this->data;
+    }
+
     public function getNamespace()
     {
         return $this->namespace;

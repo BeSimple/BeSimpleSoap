@@ -22,6 +22,8 @@ Controller
         public function helloAction(array $names)
         {
             $soapHeaders = $this->container->get('request')->getSoapHeaders();
+
+            // You can use '1234' !== (string) $soapHeaders->get('api_key')
             if (!$soapHeaders->has('api_key') || '1234' !== $soapHeaders->get('api_key')->getData()) {
                 throw new \SoapFault("INVALID_API_KEY", "The api_key is invalid.");
             }

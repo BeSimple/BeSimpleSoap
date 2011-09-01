@@ -67,7 +67,7 @@ class ServiceBinder
         $this->requestHeaderMessageBinder->setHeader($header);
         $data = $this->requestHeaderMessageBinder->processMessage($methodDefinition, $data, $this->definition->getDefinitionComplexTypes());
 
-        return $this->createSoapHeader($headerDefinition, $data);
+        return new SoapHeader($this->definition->getNamespace(), $headerDefinition->getName(), $data);
     }
 
     public function processServiceMethodArguments($method, $arguments)
@@ -85,12 +85,5 @@ class ServiceBinder
         $methodDefinition = $this->definition->getMethods()->get($name);
 
         return $this->responseMessageBinder->processMessage($methodDefinition, $return, $this->definition->getDefinitionComplexTypes());
-    }
-
-    protected function createSoapHeader(Header $headerDefinition, $data)
-    {
-        $qname = QName::fromPackedQName($headerDefinition->getType()->getXmlType());
-
-        return new SoapHeader($qname->getNamespace(), $headerDefinition->getName(), $data);
     }
 }
