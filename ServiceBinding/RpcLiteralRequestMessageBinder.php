@@ -49,16 +49,17 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
 
         if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
             $isArray = true;
+            $array   = array();
             $phpType = $match[1];
         }
 
         // @TODO Fix array reference
         if (isset($this->definitionComplexTypes[$phpType])) {
             if ($isArray) {
-                $array = array();
-
-                foreach ($message->item as $complexType) {
-                    $array[] = $this->checkComplexType($phpType, $complexType);
+                if (isset($message->item)) {
+                    foreach ($message->item as $complexType) {
+                        $array[] = $this->checkComplexType($phpType, $complexType);
+                    }
                 }
 
                 $message = $array;
@@ -66,7 +67,11 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
                 $message = $this->checkComplexType($phpType, $message);
             }
         } elseif ($isArray) {
-            $message = $message->item;
+            if (isset($message->item)) {
+                $message = $message->item;
+            } else {
+                $message = $array;
+            }
         }
 
         return $message;

@@ -61,7 +61,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException     SoapFault
+     * @expectedException SoapFault
      */
     public function testProcessMessageSoapFault()
     {
@@ -115,6 +115,21 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('fooBar' => $fooBar), $result);
     }
 
+    public function testProcessMessageWithEmptyArrayComplexType()
+    {
+        $messageBinder = new RpcLiteralRequestMessageBinder();
+
+        $result = $messageBinder->processMessage(
+            new Definition\Method('empty_array_complex_type', null, array(), array(
+                new Definition\Argument('foo', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]')),
+            )),
+            array(new \stdClass()),
+            $this->getDefinitionComplexTypes()
+        );
+
+        $this->assertEquals(array('foo' => array()), $result);
+    }
+
     public function messageProvider()
     {
         $messages = array();
@@ -151,6 +166,14 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
             )),
             array($strings, 4),
             array('foo' => array('foo', 'bar', 'barfoo'), 'bar' => 4),
+        );
+
+        $messages[] = array(
+            new Definition\Method('empty_array', null, array(), array(
+                new Definition\Argument('foo', new Definition\Type('string[]')),
+            )),
+            array(new \stdClass()),
+            array('foo' => array()),
         );
 
         return $messages;
