@@ -30,10 +30,28 @@ class Configuration
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('be_simple_soap');
 
+        $this->addClientSection($rootNode);
         $this->addServicesSection($rootNode);
         $this->addWsdlDumperSection($rootNode);
 
         return $treeBuilder->buildTree();
+    }
+
+    private function addClientSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('clients')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                    ->children()
+                        ->scalarNode('wsdl')
+                            ->isRequired()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     private function addServicesSection(ArrayNodeDefinition $rootNode)

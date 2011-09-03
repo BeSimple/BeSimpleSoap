@@ -44,11 +44,27 @@ class BeSimpleSoapExtension extends Extension
 
         $config = $processor->process($configuration->getConfigTree(), $configs);
 
+        if (isset($config['clients'])) {
+            $this->registerClientConfiguration($config['clients'], $container, $loader);
+        }
+
         $container->setParameter('besimple.soap.definition.dumper.options.stylesheet', $config['wsdl_dumper']['stylesheet']);
 
         foreach($config['services'] as $name => $serviceConfig) {
             $serviceConfig['name'] = $name;
             $this->createWebServiceContext($serviceConfig, $container);
+        }
+    }
+
+    private function registerClientConfiguration(array $config, ContainerBuilder $container, XmlFileLoader $loader)
+    {
+        $loader->load('client.xml');
+
+        foreach ($config as $client => $options) {
+            $definition = new DefinitionDecorator('besimple.soap.client');
+            $context    = $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
+
+            $definition->replaceArgument(0, $options['wsdl']);
         }
     }
 
