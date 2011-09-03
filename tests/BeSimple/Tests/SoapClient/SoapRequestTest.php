@@ -10,9 +10,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\Tests\SoapClient\Soap;
+namespace BeSimple\Tests\SoapClient;
 
-use BeSimple\SoapClient\Soap\SoapRequest;
+use BeSimple\SoapClient\SoapRequest;
 
 class SoapRequestTest extends \PHPUnit_Framework_TestCase
 {

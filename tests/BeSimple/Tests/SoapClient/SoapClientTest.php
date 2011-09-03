@@ -10,10 +10,10 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\Tests\SoapClient\Soap;
+namespace BeSimple\Tests\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
-use BeSimple\SoapClient\Soap\SoapClient;
+use BeSimple\SoapClient\SoapClient;
 
 class SoapClientTest extends \PHPUnit_Framework_TestCase
 {

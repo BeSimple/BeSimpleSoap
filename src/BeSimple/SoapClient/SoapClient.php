@@ -10,7 +10,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapClient\Soap;
+namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
 
