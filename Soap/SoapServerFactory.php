@@ -11,6 +11,7 @@
 namespace BeSimple\SoapBundle\Soap;
 
 use BeSimple\SoapBundle\Converter\ConverterRepository;
+use BeSimple\SoapCommon\Cache;
 use Zend\Soap\Wsdl;
 
 /**
@@ -39,7 +40,7 @@ class SoapServerFactory
                 'classmap'   => $this->classmap,
                 'typemap'    => $this->createSoapServerTypemap($request, $response),
                 'features'   => SOAP_SINGLE_ELEMENT_ARRAYS,
-                'cache_wsdl' => $this->debug ? WSDL_CACHE_NONE : WSDL_CACHE_DISK,
+                'cache_wsdl' => Cache::getType(),
             )
         );
     }

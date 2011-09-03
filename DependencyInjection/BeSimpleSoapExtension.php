@@ -1,14 +1,18 @@
 <?php
+
 /*
  * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
+ * (c) Francis Besset <francis.besset@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
 
 namespace BeSimple\SoapBundle\DependencyInjection;
+
+use BeSimple\SoapCommon\Cache;
 
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
@@ -22,6 +26,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  * BeSimpleSoapExtension.
  *
  * @author Christian Kerl <christian-kerl@web.de>
+ * @author Francis Besset <francis.besset@gmail.com>
  */
 class BeSimpleSoapExtension extends Extension
 {
@@ -44,6 +49,8 @@ class BeSimpleSoapExtension extends Extension
 
         $config = $processor->process($configuration->getConfigTree(), $configs);
 
+        $this->registerCacheConfiguration($config['cache'], $container, $loader);
+
         if (isset($config['clients'])) {
             $this->registerClientConfiguration($config['clients'], $container, $loader);
         }
@@ -53,6 +60,33 @@ class BeSimpleSoapExtension extends Extension
         foreach($config['services'] as $name => $serviceConfig) {
             $serviceConfig['name'] = $name;
             $this->createWebServiceContext($serviceConfig, $container);
+        }
+    }
+
+    private function registerCacheConfiguration(array $config, ContainerBuilder $container, XmlFileLoader $loader)
+    {
+        $loader->load('soap.xml');
+
+        switch ($config['type']) {
+            case 'none':
+                $config['type'] = Cache::TYPE_NONE;
+                break;
+
+            case 'disk':
+                $config['type'] = Cache::TYPE_DISK;
+                break;
+
+            case 'memory':
+                $config['type'] = Cache::TYPE_MEMORY;
+                break;
+
+            case 'disk_memory':
+                $config['type'] = Cache::TYPE_DISK_MEMORY;
+                break;
+        }
+
+        foreach (array('type', 'lifetime', 'limit') as $key) {
+            $container->setParameter('besimple.soap.cache.'.$key, $config[$key]);
         }
     }
 

@@ -1,8 +1,10 @@
 <?php
+
 /*
  * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
+ * (c) Francis Besset <francis.besset@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -17,6 +19,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  * WebServiceExtension configuration structure.
  *
  * @author Christian Kerl <christian-kerl@web.de>
+ * @author Francis Besset <francis.besset@gmail.com>
  */
 class Configuration
 {
@@ -30,11 +33,33 @@ class Configuration
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('be_simple_soap');
 
+        $this->addCacheSection($rootNode);
         $this->addClientSection($rootNode);
         $this->addServicesSection($rootNode);
         $this->addWsdlDumperSection($rootNode);
 
         return $treeBuilder->buildTree();
+    }
+
+    private function addCacheSection(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('cache')
+                    ->children()
+                        ->scalarNode('type')
+                            ->defaultValue('disk')
+                            ->validate()
+                                ->ifNotInArray(array('none', 'disk', 'memory', 'disk_memory'))
+                                ->thenInvalid('The cache type has to be either "none", "disk", "memory" or "disk_memory"')
+                            ->end()
+                        ->end()
+                        ->scalarNode('lifetime')->defaultNull()->end()
+                        ->scalarNode('limit')->defaultNull()->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     private function addClientSection(ArrayNodeDefinition $rootNode)

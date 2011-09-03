@@ -32,6 +32,7 @@
                 <argument key="binder_request_class">%besimple.soap.binder.request.rpcliteral.class%</argument>
                 <argument key="binder_response_class">%besimple.soap.binder.response.rpcliteral.class%</argument>
             </argument>
+            <argument type="service" id="besimple.soap.cache" />
         </service>
 
         <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
@@ -46,6 +47,7 @@
                 <argument key="binder_request_class">%besimple.soap.binder.request.documentwrapped.class%</argument>
                 <argument key="binder_response_class">%besimple.soap.binder.response.documentwrapped.class%</argument>
             </argument>
+            <argument type="service" id="besimple.soap.cache" />
         </service>
 
         <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
