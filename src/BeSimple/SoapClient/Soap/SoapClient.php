@@ -12,6 +12,8 @@
 
 namespace BeSimple\SoapClient\Soap;
 
+use BeSimple\SoapCommon\Cache;
+
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
@@ -33,8 +35,8 @@ class SoapClient
     public function setOptions(array $options)
     {
         $this->options = array(
-            'cache_dir' => null,
-            'debug'     => false,
+            'debug'      => false,
+            'cache_wsdl' => null,
         );
 
         // check option names and live merge, if errors are encountered Exception will be thrown
@@ -135,7 +137,11 @@ class SoapClient
     {
         $options = array();
 
-        $options['cache_wsdl'] = $this->options['debug'] ? WSDL_CACHE_NONE : WSDL_CACHE_DISK;
+        if (null === $this->options['cache_wsdl']) {
+            $this->options['cache_wsdl'] = Cache::getType();
+        }
+
+        $options['cache_wsdl'] = $this->options['cache_wsdl'];
         $options['trace']      = $this->options['debug'];
 
         return $options;

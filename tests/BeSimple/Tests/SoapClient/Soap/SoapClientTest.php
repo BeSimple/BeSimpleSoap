@@ -12,6 +12,7 @@
 
 namespace BeSimple\Tests\SoapClient\Soap;
 
+use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapClient\Soap\SoapClient;
 
 class SoapClientTest extends \PHPUnit_Framework_TestCase
@@ -20,8 +21,8 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     {
         $soapClient = new SoapClient('foo.wsdl');
         $options = array(
-            'cache_dir' => '/tmp',
-            'debug'     => true,
+            'cache_wsdl' => Cache::TYPE_DISK_MEMORY,
+            'debug'      => true,
         );
         $soapClient->setOptions($options);
 
@@ -62,9 +63,12 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSoapOptions()
     {
+        Cache::setType(Cache::TYPE_MEMORY);
         $soapClient = new SoapClient('foo.wsdl', array('debug' => true));
+        $this->assertEquals(array('cache_wsdl' => Cache::getType(), 'trace' => true), $soapClient->getSoapOptions());
 
-        $this->assertEquals(array('cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true), $soapClient->getSoapOptions());
+        $soapClient = new SoapClient('foo.wsdl', array('debug' => false, 'cache_wsdl' => Cache::TYPE_NONE));
+        $this->assertEquals(array('cache_wsdl' => Cache::TYPE_NONE, 'trace' => false), $soapClient->getSoapOptions());
     }
 
     public function testGetNativeSoapClient()
