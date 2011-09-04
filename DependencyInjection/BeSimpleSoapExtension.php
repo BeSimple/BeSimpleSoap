@@ -106,6 +106,10 @@ class BeSimpleSoapExtension extends Extension
         $definition = new DefinitionDecorator('besimple.soap.context.'.$bindingSuffix);
         $context    = $container->setDefinition($contextId, $definition);
 
+        if (isset($config['cache_type'])) {
+            $config['cache_type'] = $this->getCacheType($config['cache_type']);
+        }
+
         $options = $container
             ->getDefinition('besimple.soap.context.'.$bindingSuffix)
             ->getArgument(4);

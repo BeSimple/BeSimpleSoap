@@ -103,7 +103,10 @@ class WebServiceContext
                 $this->getWsdlFile(),
                 $this->serviceDefinition->getDefinitionComplexTypes(),
                 $this->converterRepository,
-                $this->options['debug']
+                array(
+                    'debug'      => $this->options['debug'],
+                    'cache_type' => isset($this->options['cache_type']) ? $this->options['cache_type'] : null,
+                )
             );
         }
 

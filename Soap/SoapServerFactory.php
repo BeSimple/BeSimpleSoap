@@ -22,14 +22,42 @@ class SoapServerFactory
     private $wsdlFile;
     private $classmap;
     private $converters;
-    private $debug;
+    private $options;
 
-    public function __construct($wsdlFile, array $classmap, ConverterRepository $converters, $debug = false)
+    public function __construct($wsdlFile, array $classmap, ConverterRepository $converters, array $options = array())
     {
         $this->wsdlFile   = $wsdlFile;
         $this->classmap   = $this->fixSoapServerClassmap($classmap);
         $this->converters = $converters;
-        $this->debug      = $debug;
+        $this->setOptions($options);
+    }
+
+    public function setOptions(array $options)
+    {
+        $this->options = array(
+            'debug'      => false,
+            'cache_type' => null,
+        );
+
+        // check option names and live merge, if errors are encountered Exception will be thrown
+        $invalid   = array();
+        $isInvalid = false;
+        foreach ($options as $key => $value) {
+            if (array_key_exists($key, $this->options)) {
+                $this->options[$key] = $value;
+            } else {
+                $isInvalid = true;
+                $invalid[] = $key;
+            }
+        }
+
+        if ($isInvalid) {
+            throw new \InvalidArgumentException(sprintf(
+                'The "%s" class does not support the following options: "%s".',
+                get_class($this),
+                implode('\', \'', $invalid)
+            ));
+        }
     }
 
     public function create($request, $response)
@@ -40,7 +68,7 @@ class SoapServerFactory
                 'classmap'   => $this->classmap,
                 'typemap'    => $this->createSoapServerTypemap($request, $response),
                 'features'   => SOAP_SINGLE_ELEMENT_ARRAYS,
-                'cache_wsdl' => Cache::getType(),
+                'cache_wsdl' => null !== $this->options['cache_type'] ? $this->options['cache_type'] : Cache::getType(),
             )
         );
     }
