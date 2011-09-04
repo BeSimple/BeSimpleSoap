@@ -76,7 +76,7 @@ class Configuration
                         ->scalarNode('wsdl')
                             ->isRequired()
                         ->end()
-                        ->scalarNode('cache_wsdl')
+                        ->scalarNode('cache_type')
                             ->validate()
                                 ->ifNotInArray($this->cacheTypes)
                                 ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))

@@ -84,14 +84,14 @@ class BeSimpleSoapExtension extends Extension
 
             $definition->replaceArgument(0, $options['wsdl']);
 
-            if (isset($options['cache_wsdl'])) {
-                $options['cache_wsdl'] = $this->getCacheType($options['cache_wsdl']);
+            if (isset($options['cache_type'])) {
+                $options['cache_type'] = $this->getCacheType($options['cache_type']);
 
                 $defOptions = $container
                     ->getDefinition('besimple.soap.client')
                     ->getArgument(1);
 
-                $defOptions['cache_wsdl'] = $options['cache_wsdl'];
+                $defOptions['cache_type'] = $options['cache_type'];
                 $definition->replaceArgument(1, $defOptions);
             }
         }
