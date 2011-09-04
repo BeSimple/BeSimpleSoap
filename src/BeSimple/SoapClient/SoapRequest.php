@@ -20,12 +20,14 @@ class SoapRequest
     protected $function;
     protected $arguments;
     protected $options;
+    protected $headers;
 
-    public function __construct($function = null, array $arguments = array(), array $options = array())
+    public function __construct($function = null, array $arguments = array(), array $options = array(), array $headers = array())
     {
         $this->function  = $function;
         $this->arguments = $arguments;
         $this->options   = $options;
+        $this->setHeaders($headers);
     }
 
     /**
@@ -139,6 +141,42 @@ class SoapRequest
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param array $headers
+     *
+     * @return SoapRequest
+     */
+    public function setHeaders(array $headers)
+    {
+        $this->headers = array();
+
+        foreach ($headers as $header) {
+            $this->addHeader($header);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param \SoapHeader $header
+     *
+     * @return SoapRequest
+     */
+    public function addHeader(\SoapHeader $header)
+    {
+        $this->headers[] = $header;
 
         return $this;
     }

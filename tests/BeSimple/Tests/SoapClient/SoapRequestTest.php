@@ -40,7 +40,8 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
     {
         $soapRequest = new SoapRequest();
 
-        $this->assertEquals(false, $soapRequest->getArgument('foo', false));
+        $this->assertSame(null, $soapRequest->getArgument('foo'));
+        $this->assertFalse($soapRequest->getArgument('foo', false));
 
         $soapRequest->addArgument('foo', 'bar');
 
@@ -63,11 +64,28 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
     {
         $soapRequest = new SoapRequest();
 
-        $this->assertEquals(false, $soapRequest->getOption('soapaction'));
+        $this->assertSame(null, $soapRequest->getOption('soapaction'));
+        $this->assertFalse($soapRequest->getOption('soapaction', false));
 
         $soapRequest->addOption('soapaction', 'foo');
 
         $this->assertEquals('foo', $soapRequest->getOption('soapaction'));
+    }
+
+    public function testSetHeaders()
+    {
+        $soapRequest = new SoapRequest();
+
+        $this->assertEquals(array(), $soapRequest->getHeaders());
+
+        $header1 = new \SoapHeader('foobar', 'foo', 'bar');
+        $header2 = new \SoapHeader('barfoo', 'bar', 'foo');
+        $soapRequest
+            ->addHeader($header1)
+            ->addHeader($header2)
+        ;
+
+        $this->assertSame(array($header1, $header2), $soapRequest->getHeaders());
     }
 
     public function testConstruct()
@@ -77,13 +95,19 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($soapRequest->getFunction());
         $this->assertEquals(array(), $soapRequest->getArguments());
         $this->assertEquals(array(), $soapRequest->getOptions());
+        $this->assertEquals(array(), $soapRequest->getHeaders());
 
         $arguments   = array('bar' => 'foobar');
         $options     = array('soapaction' => 'foobar');
-        $soapRequest = new SoapRequest('foo', $arguments, $options);
+        $headers     = array(
+            new \SoapHeader('foobar', 'foo', 'bar'),
+            new \SoapHeader('barfoo', 'bar', 'foo'),
+        );
+        $soapRequest = new SoapRequest('foo', $arguments, $options, $headers);
 
         $this->assertEquals('foo', $soapRequest->getFunction());
         $this->assertEquals($arguments, $soapRequest->getArguments());
         $this->assertEquals($options, $soapRequest->getOptions());
+        $this->assertSame($headers, $soapRequest->getHeaders());
     }
 }

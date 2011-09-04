@@ -37,6 +37,7 @@ class SoapClient
         $this->options = array(
             'debug'      => false,
             'cache_type' => null,
+            'namespace'  => null,
         );
 
         // check option names and live merge, if errors are encountered Exception will be thrown
@@ -114,8 +115,24 @@ class SoapClient
         return $this->getNativeSoapClient()->__soapCall(
             $soapRequest->getFunction(),
             $soapRequest->getArguments(),
-            $soapRequest->getOptions()
+            $soapRequest->getOptions(),
+            $soapRequest->getHeaders()
         );
+    }
+
+    /**
+     * @param string The SoapHeader name
+     * @param mixed  The SoapHeader value
+     *
+     * @return \SoapHeader
+     */
+    public function createSoapHeader($name, $value)
+    {
+        if (null === $namespace = $this->getOption('namespace')) {
+            throw new \RuntimeException('You cannot create SoapHeader if you do not specify a namespace.');
+        }
+
+        return new \SoapHeader($namespace, $name, $value);
     }
 
     /**

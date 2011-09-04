@@ -23,6 +23,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'cache_type' => Cache::TYPE_DISK_MEMORY,
             'debug'      => true,
+            'namespace'  => 'foo',
         );
         $soapClient->setOptions($options);
 
@@ -59,6 +60,25 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('InvalidArgumentException');
         $soapClient->getOption('bad_option');
+    }
+
+    public function testCreateSoapHeader()
+    {
+        $soapClient = new SoapClient('foo.wsdl', array('namespace' => 'http://foobar/soap/User/1.0/'));
+        $soapHeader = $soapClient->createSoapHeader('foo', 'bar');
+
+        $this->assertInstanceOf('SoapHeader', $soapHeader);
+        $this->assertEquals('http://foobar/soap/User/1.0/', $soapHeader->namespace);
+        $this->assertEquals('foo', $soapHeader->name);
+        $this->assertEquals('bar', $soapHeader->data);
+    }
+
+    public function testCreateSoapHeaderThrowsAnExceptionIfNamespaceIsNull()
+    {
+        $soapClient = new SoapClient('foo.wsdl');
+
+        $this->setExpectedException('RuntimeException');
+        $soapHeader = $soapClient->createSoapHeader('foo', 'bar');
     }
 
     public function testGetSoapOptions()
