@@ -67,23 +67,7 @@ class BeSimpleSoapExtension extends Extension
     {
         $loader->load('soap.xml');
 
-        switch ($config['type']) {
-            case 'none':
-                $config['type'] = Cache::TYPE_NONE;
-                break;
-
-            case 'disk':
-                $config['type'] = Cache::TYPE_DISK;
-                break;
-
-            case 'memory':
-                $config['type'] = Cache::TYPE_MEMORY;
-                break;
-
-            case 'disk_memory':
-                $config['type'] = Cache::TYPE_DISK_MEMORY;
-                break;
-        }
+        $config['type'] = $this->getCacheType($config['type']);
 
         foreach (array('type', 'lifetime', 'limit') as $key) {
             $container->setParameter('besimple.soap.cache.'.$key, $config[$key]);
@@ -99,6 +83,17 @@ class BeSimpleSoapExtension extends Extension
             $context    = $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
 
             $definition->replaceArgument(0, $options['wsdl']);
+
+            if (isset($options['cache_wsdl'])) {
+                $options['cache_wsdl'] = $this->getCacheType($options['cache_wsdl']);
+
+                $defOptions = $container
+                    ->getDefinition('besimple.soap.client')
+                    ->getArgument(1);
+
+                $defOptions['cache_wsdl'] = $options['cache_wsdl'];
+                $definition->replaceArgument(1, $defOptions);
+            }
         }
     }
 
@@ -116,5 +111,22 @@ class BeSimpleSoapExtension extends Extension
             ->getArgument(4);
 
         $definition->replaceArgument(4, array_merge($options, $config));
+    }
+
+    private function getCacheType($type)
+    {
+        switch ($type) {
+            case 'none':
+                return Cache::TYPE_NONE;
+
+            case 'disk':
+                return Cache::TYPE_DISK;
+
+            case 'memory':
+                return Cache::TYPE_MEMORY;
+
+            case 'disk_memory':
+                return Cache::TYPE_DISK_MEMORY;
+        }
     }
 }

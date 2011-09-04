@@ -23,6 +23,8 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  */
 class Configuration
 {
+    private $cacheTypes = array('none', 'disk', 'memory', 'disk_memory');
+
     /**
      * Generates the configuration tree.
      *
@@ -46,12 +48,13 @@ class Configuration
         $rootNode
             ->children()
                 ->arrayNode('cache')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('type')
                             ->defaultValue('disk')
                             ->validate()
-                                ->ifNotInArray(array('none', 'disk', 'memory', 'disk_memory'))
-                                ->thenInvalid('The cache type has to be either "none", "disk", "memory" or "disk_memory"')
+                                ->ifNotInArray($this->cacheTypes)
+                                ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
                             ->end()
                         ->end()
                         ->scalarNode('lifetime')->defaultNull()->end()
@@ -72,6 +75,12 @@ class Configuration
                     ->children()
                         ->scalarNode('wsdl')
                             ->isRequired()
+                        ->end()
+                        ->scalarNode('cache_wsdl')
+                            ->validate()
+                                ->ifNotInArray($this->cacheTypes)
+                                ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
+                            ->end()
                         ->end()
                     ->end()
                 ->end()

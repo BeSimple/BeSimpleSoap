@@ -12,6 +12,7 @@
             <argument>wsdl</argument>
             <argument type="collection">
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="cache_wsdl">null</argument>
             </argument>
             <argument type="service" id="besimple.soap.cache" />
         </service>
