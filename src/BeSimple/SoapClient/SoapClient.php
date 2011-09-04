@@ -36,7 +36,7 @@ class SoapClient
     {
         $this->options = array(
             'debug'      => false,
-            'cache_wsdl' => null,
+            'cache_type' => null,
         );
 
         // check option names and live merge, if errors are encountered Exception will be thrown
@@ -137,11 +137,11 @@ class SoapClient
     {
         $options = array();
 
-        if (null === $this->options['cache_wsdl']) {
-            $this->options['cache_wsdl'] = Cache::getType();
+        if (null === $this->options['cache_type']) {
+            $this->options['cache_type'] = Cache::getType();
         }
 
-        $options['cache_wsdl'] = $this->options['cache_wsdl'];
+        $options['cache_wsdl'] = $this->options['cache_type'];
         $options['trace']      = $this->options['debug'];
 
         return $options;
