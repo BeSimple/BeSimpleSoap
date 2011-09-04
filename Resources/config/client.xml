@@ -13,6 +13,7 @@
             <argument type="collection">
                 <argument key="debug">%kernel.debug%</argument>
                 <argument key="cache_type">null</argument>
+                <argument key="namespace">null</argument>
             </argument>
             <argument type="service" id="besimple.soap.cache" />
         </service>
