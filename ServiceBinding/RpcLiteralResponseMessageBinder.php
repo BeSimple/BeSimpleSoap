@@ -65,6 +65,8 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
             return $this->messageRefs[$hash];
         }
 
+        $this->messageRefs[$hash] = $message;
+
         $class = $phpType;
         if ($class[0] == '\\') {
             $class = substr($class, 1);
@@ -93,6 +95,6 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
             }
         }
 
-        return $this->messageRefs[$hash] = $message;
+        return $message;
     }
 }
