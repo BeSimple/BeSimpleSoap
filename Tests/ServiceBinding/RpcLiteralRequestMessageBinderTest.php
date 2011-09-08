@@ -188,12 +188,12 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
             array('bar', 'int'),
         ));
 
-        $this->definitionComplexTypes['\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\Bar'] = $this->createComplexTypeCollection(array(
+        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar'] = $this->createComplexTypeCollection(array(
             array('foo', 'string'),
             array('bar', 'int', true),
         ));
 
-        $this->definitionComplexTypes['\BeSimple\SoapBundle\Tests\ServiceBinding\fixtures\FooBar'] = $this->createComplexTypeCollection(array(
+        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar'] = $this->createComplexTypeCollection(array(
             array('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo'),
             array('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar'),
         ));
