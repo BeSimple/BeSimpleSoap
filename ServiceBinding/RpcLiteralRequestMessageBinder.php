@@ -81,8 +81,10 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
     {
         $hash = spl_object_hash($message);
         if (isset($this->messageRefs[$hash])) {
-            return $message;
+            return $this->messageRefs[$hash];
         }
+
+        $this->messageRefs[$hash] = $message;
 
         $r = new \ReflectionClass($message);
         foreach ($this->definitionComplexTypes[$phpType] as $type) {
@@ -101,6 +103,6 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             }
         }
 
-        return $this->messageRefs[$hash] = $message;
+        return $message;
     }
 }

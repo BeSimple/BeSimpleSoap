@@ -130,6 +130,25 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('foo' => array()), $result);
     }
 
+    public function testProccessMessagePreventInfiniteRecursion()
+    {
+        $messageBinder = new RpcLiteralRequestMessageBinder();
+
+        $foo = new Fixtures\FooRecursive('foo', '');
+        $bar = new Fixtures\BarRecursive($foo, 10394);
+        $foo->setBar($bar);
+
+        $result = $messageBinder->processMessage(
+            new Definition\Method('prevent_infinite_recursion', null, array(), array(
+                new Definition\Argument('foo_recursive', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive')),
+            )),
+            array($foo),
+            $this->getDefinitionComplexTypes()
+        );
+
+        $this->assertEquals(array('foo_recursive' => $foo), $result);
+    }
+
     public function messageProvider()
     {
         $messages = array();
@@ -196,6 +215,14 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar'] = $this->createComplexTypeCollection(array(
             array('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo'),
             array('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar'),
+        ));
+
+        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive'] = $this->createComplexTypeCollection(array(
+            array('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\BarRecursive'),
+        ));
+
+        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\BarRecursive'] = $this->createComplexTypeCollection(array(
+            array('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive'),
         ));
 
         return $definitionComplexTypes;
