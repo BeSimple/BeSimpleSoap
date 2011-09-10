@@ -72,6 +72,10 @@ class Cache
 
     static public function setDirectory($directory)
     {
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
         self::iniSet('soap.wsdl_cache_dir', $directory);
     }
 

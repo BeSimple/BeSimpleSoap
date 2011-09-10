@@ -36,11 +36,19 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDirectory()
     {
-        Cache::setDirectory('/foo');
-        $this->assertEquals('/foo', Cache::getDirectory());
+        \vfsStream::setup('Fixtures');
 
-        Cache::setDirectory('/bar');
-        $this->assertEquals('/bar', Cache::getDirectory());
+        $this->assertFalse(\vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $dir = \vfsStream::url('Fixtures/foo');
+        Cache::setDirectory($dir);
+        $this->assertEquals($dir, Cache::getDirectory());
+        $this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('foo'));
+
+        $this->assertFalse(\vfsStreamWrapper::getRoot()->hasChild('bar'));
+        $dir = \vfsStream::url('Fixtures/bar');
+        Cache::setDirectory($dir);
+        $this->assertEquals($dir, Cache::getDirectory());
+        $this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('bar'));
     }
 
     public function testSetLifetime()
