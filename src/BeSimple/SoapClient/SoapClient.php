@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the BeSimpleSoapBundle.
+ * This file is part of the BeSimpleSoapClient.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  * (c) Francis Besset <francis.besset@gmail.com>
@@ -13,6 +13,7 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>
@@ -20,15 +21,17 @@ use BeSimple\SoapCommon\Cache;
 class SoapClient
 {
     protected $wsdl;
+    protected $converters;
     protected $soapClient;
 
     /**
      * @param string $wsdl
      * @param array  $options
      */
-    public function __construct($wsdl, array $options = array())
+    public function __construct($wsdl, TypeConverterCollection $converters = null, array $options = array())
     {
-        $this->wsdl = $wsdl;
+        $this->wsdl       = $wsdl;
+        $this->converters = $converters;
         $this->setOptions($options);
     }
 
@@ -160,7 +163,35 @@ class SoapClient
 
         $options['cache_wsdl'] = $this->options['cache_type'];
         $options['trace']      = $this->options['debug'];
+        $options['typemap']    = $this->getTypemap();
 
         return $options;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getTypemap()
+    {
+        $typemap = array();
+
+        if (!$this->converters) {
+            return $typemap;
+        }
+
+        foreach ($this->converters->all() as $typeConverter) {
+            $typemap[] = array(
+                'type_name' => $typeConverter->getTypeName(),
+                'type_ns'   => $typeConverter->getTypeNamespace(),
+                'from_xml'  => function($input) use ($typeConverter) {
+                    return $typeConverter->convertXmlToPhp($input);
+                },
+                'to_xml'    => function($input) use ($typeConverter) {
+                    return $typeConverter->convertPhpToXml($input);
+                },
+            );
+        }
+
+        return $typemap;
     }
 }

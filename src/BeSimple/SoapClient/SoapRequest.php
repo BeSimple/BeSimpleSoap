@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the BeSimpleSoapBundle.
+ * This file is part of the BeSimpleSoapClient.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  * (c) Francis Besset <francis.besset@gmail.com>

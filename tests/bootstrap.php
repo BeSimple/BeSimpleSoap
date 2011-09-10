@@ -11,14 +11,14 @@ spl_autoload_register(function($class) {
 
             return true;
         }
-    } else if (0 === strpos($class, 'BeSimple\SoapClient\\')) {
+    } elseif (0 === strpos($class, 'BeSimple\SoapClient\\')) {
         $path = __DIR__.'/../src/'.($class = strtr($class, '\\', '/')).'.php';
         if (file_exists($path) && is_readable($path)) {
             require_once $path;
 
             return true;
         }
-    } else if (0 === strpos($class, 'BeSimple\SoapCommon\\')) {
+    } elseif (0 === strpos($class, 'BeSimple\SoapCommon\\')) {
         $path = __DIR__.'/../vendor/besimple-soapcommon/src/'.($class = strtr($class, '\\', '/')).'.php';
         if (file_exists($path) && is_readable($path)) {
             require_once $path;
