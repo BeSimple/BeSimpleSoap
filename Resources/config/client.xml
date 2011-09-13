@@ -9,8 +9,8 @@
 
     <services>
         <service id="besimple.soap.client" class="%besimple.soap.client.class%" abstract="true">
-            <argument>wsdl</argument>
-            <argument>null</argument>
+            <argument /> <!-- wsdl URI -->
+            <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
                 <argument key="debug">%kernel.debug%</argument>
                 <argument key="cache_type">null</argument>
