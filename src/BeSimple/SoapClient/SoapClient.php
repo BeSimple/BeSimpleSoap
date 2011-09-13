@@ -173,25 +173,10 @@ class SoapClient
      */
     protected function getTypemap()
     {
-        $typemap = array();
-
         if (!$this->converters) {
-            return $typemap;
+            return array();
         }
 
-        foreach ($this->converters->all() as $typeConverter) {
-            $typemap[] = array(
-                'type_name' => $typeConverter->getTypeName(),
-                'type_ns'   => $typeConverter->getTypeNamespace(),
-                'from_xml'  => function($input) use ($typeConverter) {
-                    return $typeConverter->convertXmlToPhp($input);
-                },
-                'to_xml'    => function($input) use ($typeConverter) {
-                    return $typeConverter->convertPhpToXml($input);
-                },
-            );
-        }
-
-        return $typemap;
+        return $this->converters->getTypemap();
     }
 }
