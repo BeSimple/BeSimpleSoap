@@ -67,31 +67,11 @@ class SoapServerFactory
             $this->wsdlFile,
             array(
                 'classmap'   => $this->classmap,
-                'typemap'    => $this->createSoapServerTypemap($request, $response),
+                'typemap'    => $this->converters->getTypemap(),
                 'features'   => SOAP_SINGLE_ELEMENT_ARRAYS,
                 'cache_wsdl' => null !== $this->options['cache_type'] ? $this->options['cache_type'] : Cache::getType(),
             )
         );
-    }
-
-    private function createSoapServerTypemap($request, $response)
-    {
-        $typemap = array();
-
-        foreach($this->converters->all() as $typeConverter) {
-            $typemap[] = array(
-                'type_name' => $typeConverter->getTypeName(),
-                'type_ns'   => $typeConverter->getTypeNamespace(),
-                'from_xml'  => function($input) use ($typeConverter) {
-                    return $typeConverter->convertXmlToPhp($input);
-                },
-                'to_xml'    => function($input) use ($typeConverter) {
-                    return $typeConverter->convertPhpToXml($input);
-                },
-            );
-        }
-
-        return $typemap;
     }
 
     private function fixSoapServerClassmap($classmap)
