@@ -28,4 +28,27 @@ class TypeConverterCollection
     {
         return $this->typeConverters;
     }
+
+    /**
+     * @return array
+     */
+    public function getTypemap()
+    {
+        $typemap = array();
+
+        foreach ($this->all() as $typeConverter) {
+            $typemap[] = array(
+                'type_name' => $typeConverter->getTypeName(),
+                'type_ns'   => $typeConverter->getTypeNamespace(),
+                'from_xml'  => function($input) use ($typeConverter) {
+                    return $typeConverter->convertXmlToPhp($input);
+                },
+                'to_xml'    => function($input) use ($typeConverter) {
+                    return $typeConverter->convertPhpToXml($input);
+                },
+            );
+        }
+
+        return $typemap;
+    }
 }
