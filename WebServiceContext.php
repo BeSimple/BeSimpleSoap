@@ -10,12 +10,13 @@
 
 namespace BeSimple\SoapBundle;
 
-use BeSimple\SoapBundle\Converter\ConverterRepository;
 use BeSimple\SoapBundle\Converter\TypeRepository;
 use BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface;
 use BeSimple\SoapBundle\ServiceBinding\ServiceBinder;
 use BeSimple\SoapBundle\ServiceDefinition\Dumper\DumperInterface;
 use BeSimple\SoapBundle\Soap\SoapServerFactory;
+
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -38,12 +39,12 @@ class WebServiceContext
     private $serviceBinder;
     private $serverFactory;
 
-    public function __construct(LoaderInterface $loader, DumperInterface $dumper, TypeRepository $typeRepository, ConverterRepository $converterRepository, array $options) {
+    public function __construct(LoaderInterface $loader, DumperInterface $dumper, TypeRepository $typeRepository, TypeConverterCollection $converters, array $options) {
         $this->loader         = $loader;
         $this->wsdlFileDumper = $dumper;
 
-        $this->typeRepository      = $typeRepository;
-        $this->converterRepository = $converterRepository;
+        $this->typeRepository = $typeRepository;
+        $this->converters     = $converters;
 
         $this->options = $options;
     }
@@ -102,7 +103,7 @@ class WebServiceContext
             $this->serverFactory = new SoapServerFactory(
                 $this->getWsdlFile(),
                 $this->serviceDefinition->getDefinitionComplexTypes(),
-                $this->converterRepository,
+                $this->converters,
                 array(
                     'debug'      => $this->options['debug'],
                     'cache_type' => isset($this->options['cache_type']) ? $this->options['cache_type'] : null,

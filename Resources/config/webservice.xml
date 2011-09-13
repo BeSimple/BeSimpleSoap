@@ -24,7 +24,7 @@
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
             <argument type="service" id="besimple.soap.type.repository" />
-            <argument type="service" id="besimple.soap.converter.repository" />
+            <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
@@ -40,7 +40,7 @@
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.documentwrapped" />
             <argument type="service" id="besimple.soap.type.repository" />
-            <argument type="service" id="besimple.soap.converter.repository" />
+            <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>

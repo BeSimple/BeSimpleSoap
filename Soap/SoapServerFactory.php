@@ -10,8 +10,9 @@
 
 namespace BeSimple\SoapBundle\Soap;
 
-use BeSimple\SoapBundle\Converter\ConverterRepository;
 use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
+
 use Zend\Soap\Wsdl;
 
 /**
@@ -24,7 +25,7 @@ class SoapServerFactory
     private $converters;
     private $options;
 
-    public function __construct($wsdlFile, array $classmap, ConverterRepository $converters, array $options = array())
+    public function __construct($wsdlFile, array $classmap, TypeConverterCollection $converters, array $options = array())
     {
         $this->wsdlFile   = $wsdlFile;
         $this->classmap   = $this->fixSoapServerClassmap($classmap);
@@ -77,15 +78,15 @@ class SoapServerFactory
     {
         $typemap = array();
 
-        foreach($this->converters->getTypeConverters() as $typeConverter) {
+        foreach($this->converters->all() as $typeConverter) {
             $typemap[] = array(
                 'type_name' => $typeConverter->getTypeName(),
                 'type_ns'   => $typeConverter->getTypeNamespace(),
-                'from_xml'  => function($input) use ($request, $typeConverter) {
-                    return $typeConverter->convertXmlToPhp($request, $input);
+                'from_xml'  => function($input) use ($typeConverter) {
+                    return $typeConverter->convertXmlToPhp($input);
                 },
-                'to_xml'    => function($input) use ($response, $typeConverter) {
-                    return $typeConverter->convertPhpToXml($response, $input);
+                'to_xml'    => function($input) use ($typeConverter) {
+                    return $typeConverter->convertPhpToXml($input);
                 },
             );
         }
