@@ -136,7 +136,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
         $foo = new Fixtures\FooRecursive('foo', '');
         $bar = new Fixtures\BarRecursive($foo, 10394);
-        $foo->setBar($bar);
+        $foo->bar = $bar;
 
         $result = $messageBinder->processMessage(
             new Definition\Method('prevent_infinite_recursion', null, array(), array(
