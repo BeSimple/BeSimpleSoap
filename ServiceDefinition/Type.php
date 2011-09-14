@@ -30,6 +30,11 @@ class Type
 
     public function setPhpType($phpType)
     {
+        $phpType = $phpType;
+        if ($phpType[0] == '\\') {
+            $phpType = substr($phpType, 1);
+        }
+
         $this->phpType = $phpType;
     }
 

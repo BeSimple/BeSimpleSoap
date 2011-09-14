@@ -67,17 +67,12 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
 
         $this->messageRefs[$hash] = $message;
 
-        $class = $phpType;
-        if ($class[0] == '\\') {
-            $class = substr($class, 1);
-        }
-
-        if (!$message instanceof $class) {
-            throw new \InvalidArgumentException(sprintf('The instance class must be "%s", "%s" given.', get_class($message), $class));
+        if (!$message instanceof $phpType) {
+            throw new \InvalidArgumentException(sprintf('The instance class must be "%s", "%s" given.', get_class($message), $phpType));
         }
 
         $r = new \ReflectionClass($message);
-        foreach ($this->definitionComplexTypes[$class] as $type) {
+        foreach ($this->definitionComplexTypes[$phpType] as $type) {
             $p = $r->getProperty($type->getName());
             if ($p->isPublic()) {
                 $value = $message->{$type->getName()};
@@ -91,7 +86,7 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
             }
 
             if (!$type->isNillable() && null === $value) {
-                throw new \InvalidArgumentException(sprintf('"%s::%s" cannot be null.', $class, $type->getName()));
+                throw new \InvalidArgumentException(sprintf('"%s::%s" cannot be null.', $phpType, $type->getName()));
             }
         }
 
