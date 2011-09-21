@@ -58,15 +58,29 @@ class AnnotationClassLoader implements LoaderInterface
         $class      = new \ReflectionClass($class);
         $definition = new Definition\ServiceDefinition();
 
+        $serviceMethodHeaders = array();
+        foreach ($this->reader->getClassAnnotations($class) as $annotation) {
+            if ($annotation instanceof Annotation\Header) {
+                $serviceMethodHeaders[$annotation->getValue()] = $annotation;
+            }
+        }
+
         foreach ($class->getMethods() as $method) {
             $serviceArguments =
             $serviceHeaders   = array();
             $serviceMethod    =
             $serviceReturn    = null;
 
-            foreach ($this->reader->getMethodAnnotations($method) as $i => $annotation) {
+            foreach ($serviceMethodHeaders as $annotation) {
+                $serviceHeaders[$annotation->getValue()] = new Definition\Header(
+                    $annotation->getValue(),
+                    $this->getArgumentType($method, $annotation)
+                );
+            }
+
+            foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
                 if ($annotation instanceof Annotation\Header) {
-                    $serviceHeaders[] = new Definition\Header(
+                    $serviceHeaders[$annotation->getValue()] = new Definition\Header(
                         $annotation->getValue(),
                         $this->getArgumentType($method, $annotation)
                     );
