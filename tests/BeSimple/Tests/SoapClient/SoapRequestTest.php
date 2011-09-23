@@ -76,7 +76,7 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
     {
         $soapRequest = new SoapRequest();
 
-        $this->assertEquals(array(), $soapRequest->getHeaders());
+        $this->assertEquals(null, $soapRequest->getHeaders());
 
         $header1 = new \SoapHeader('foobar', 'foo', 'bar');
         $header2 = new \SoapHeader('barfoo', 'bar', 'foo');
@@ -95,7 +95,7 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($soapRequest->getFunction());
         $this->assertEquals(array(), $soapRequest->getArguments());
         $this->assertEquals(array(), $soapRequest->getOptions());
-        $this->assertEquals(array(), $soapRequest->getHeaders());
+        $this->assertEquals(null, $soapRequest->getHeaders());
 
         $arguments   = array('bar' => 'foobar');
         $options     = array('soapaction' => 'foobar');

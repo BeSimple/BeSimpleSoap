@@ -146,11 +146,11 @@ class SoapRequest
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getHeaders()
     {
-        return $this->headers;
+        return empty($this->headers) ? null : $this->headers;
     }
 
     /**
