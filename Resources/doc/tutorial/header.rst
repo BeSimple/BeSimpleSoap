@@ -65,7 +65,7 @@ If you want use a header for all actions of your controller you can declare the 
          * @Soap\Param("names", phpType = "string[]")
          * @Soap\Result(phpType = "string")
          */
-        public function welcomeAction()
+        public function welcomeAction($names)
         {
             return $this->container->get('besimple.soap.response')->setReturnValue("Welcome ".implode(', ', $names));
         }
