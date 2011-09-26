@@ -58,7 +58,7 @@ class SimpleSoapClient
         if ($isInvalid) {
             throw new \InvalidArgumentException(sprintf(
                 'The "%s" class does not support the following options: "%s".',
-                get_class($this),
+                __CLASS__,
                 implode('\', \'', $invalid)
             ));
         }
@@ -75,7 +75,7 @@ class SimpleSoapClient
         if (!array_key_exists($name, $this->options)) {
             throw new \InvalidArgumentException(sprintf(
                 'The "%s" class does not support the "%s" option.',
-                get_class($this),
+                __CLASS__,
                 $name
             ));
         }
@@ -100,7 +100,7 @@ class SimpleSoapClient
         if (!array_key_exists($key, $this->options)) {
             throw new \InvalidArgumentException(sprintf(
                 'The "%s" class does not support the "%s" option.',
-                get_class($this),
+                __CLASS__,
                 $key
             ));
         }
