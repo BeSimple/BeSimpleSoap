@@ -18,7 +18,7 @@ use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class SoapClient
+class SimpleSoapClient
 {
     protected $wsdl;
     protected $converters;

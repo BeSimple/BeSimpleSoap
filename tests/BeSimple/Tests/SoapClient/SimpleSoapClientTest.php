@@ -16,13 +16,13 @@ use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
 use BeSimple\SoapCommon\Converter\DateTypeConverter;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
-use BeSimple\SoapClient\SoapClient;
+use BeSimple\SoapClient\SimpleSoapClient;
 
 class SoapClientTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetOptions()
     {
-        $soapClient = new SoapClient('foo.wsdl');
+        $soapClient = new SimpleSoapClient('foo.wsdl');
         $options = array(
             'cache_type' => Cache::TYPE_DISK_MEMORY,
             'debug'      => true,
@@ -35,7 +35,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testSetOptionsThrowsAnExceptionIfOptionsDoesNotExists()
     {
-        $soapClient = new SoapClient('foo.wsdl');
+        $soapClient = new SimpleSoapClient('foo.wsdl');
 
         $this->setExpectedException('InvalidArgumentException');
         $soapClient->setOptions(array('bad_option' => true));
@@ -43,7 +43,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testSetOption()
     {
-        $soapClient = new SoapClient('foo.wsdl');
+        $soapClient = new SimpleSoapClient('foo.wsdl');
         $soapClient->setOption('debug', true);
 
         $this->assertEquals(true, $soapClient->getOption('debug'));
@@ -51,7 +51,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testSetOptionThrowsAnExceptionIfOptionDoesNotExists()
     {
-        $soapClient = new SoapClient('foo.wsdl');
+        $soapClient = new SimpleSoapClient('foo.wsdl');
 
         $this->setExpectedException('InvalidArgumentException');
         $soapClient->setOption('bad_option', 'bar');
@@ -59,7 +59,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOptionThrowsAnExceptionIfOptionDoesNotExists()
     {
-        $soapClient = new SoapClient('foo.wsdl');
+        $soapClient = new SimpleSoapClient('foo.wsdl');
 
         $this->setExpectedException('InvalidArgumentException');
         $soapClient->getOption('bad_option');
@@ -67,7 +67,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSoapHeader()
     {
-        $soapClient = new SoapClient('foo.wsdl', null, array('namespace' => 'http://foobar/soap/User/1.0/'));
+        $soapClient = new SimpleSoapClient('foo.wsdl', null, array('namespace' => 'http://foobar/soap/User/1.0/'));
         $soapHeader = $soapClient->createSoapHeader('foo', 'bar');
 
         $this->assertInstanceOf('SoapHeader', $soapHeader);
@@ -78,7 +78,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSoapHeaderThrowsAnExceptionIfNamespaceIsNull()
     {
-        $soapClient = new SoapClient('foo.wsdl');
+        $soapClient = new SimpleSoapClient('foo.wsdl');
 
         $this->setExpectedException('RuntimeException');
         $soapHeader = $soapClient->createSoapHeader('foo', 'bar');
@@ -87,10 +87,10 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     public function testGetSoapOptions()
     {
         Cache::setType(Cache::TYPE_MEMORY);
-        $soapClient = new SoapClient('foo.wsdl', null, array('debug' => true));
+        $soapClient = new SimpleSoapClient('foo.wsdl', null, array('debug' => true));
         $this->assertEquals(array('cache_wsdl' => Cache::getType(), 'trace' => true, 'typemap' => array()), $soapClient->getSoapOptions());
 
-        $soapClient = new SoapClient('foo.wsdl', null, array('debug' => false, 'cache_type' => Cache::TYPE_NONE));
+        $soapClient = new SimpleSoapClient('foo.wsdl', null, array('debug' => false, 'cache_type' => Cache::TYPE_NONE));
         $this->assertEquals(array('cache_wsdl' => Cache::TYPE_NONE, 'trace' => false, 'typemap' => array()), $soapClient->getSoapOptions());
     }
 
@@ -104,7 +104,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
         $dateTypeConverter = new DateTypeConverter();
         $converters->add($dateTypeConverter);
 
-        $soapClient  = new SoapClient('foo.wsdl', $converters);
+        $soapClient  = new SimpleSoapClient('foo.wsdl', $converters);
         $soapOptions = $soapClient->getSoapOptions();
 
         $this->assertEquals('http://www.w3.org/2001/XMLSchema', $soapOptions['typemap'][0]['type_ns']);
@@ -120,7 +120,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetNativeSoapClient()
     {
-        $soapClient = new SoapClient(__DIR__.'/Fixtures/foobar.wsdl', null, array('debug' => true));
+        $soapClient = new SimpleSoapClient(__DIR__.'/Fixtures/foobar.wsdl', null, array('debug' => true));
 
         $this->assertInstanceOf('SoapClient', $soapClient->getNativeSoapClient());
     }
