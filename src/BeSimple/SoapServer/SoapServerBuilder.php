@@ -161,21 +161,21 @@ class SoapServerBuilder
     
     public function withWsdlDiskCache()
     { 
-        $this->options['cache_wsdl'] = WSDL_CACHE_DISK;
+        $this->options['cache_wsdl'] = Cache::TYPE_DISK;
         
         return $this; 
     }
     
     public function withWsdlMemoryCache()
     { 
-        $this->options['cache_wsdl'] = WSDL_CACHE_MEMORY;
+        $this->options['cache_wsdl'] = Cache::TYPE_MEMORY;
         
         return $this;
     }
     
     public function withWsdlDiskAndMemoryCache()
     { 
-        $this->options['cache_wsdl'] = WSDL_CACHE_BOTH;
+        $this->options['cache_wsdl'] = Cache::TYPE_DISK_MEMORY;
         
         return $this;
     }
