@@ -13,6 +13,8 @@
 namespace BeSimple\SoapServer;
 
 use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Converter\TypeConverterInterface;
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 /**
  * SoapServerBuilder provides a fluent interface to configure and create a SoapServer instance.
@@ -255,6 +257,20 @@ class SoapServerBuilder
         }
         
         throw new \InvalidArgumentException('The handler has to be a class name or an object!');
+    }
+    
+    public function withTypeConverter(TypeConverterInterface $converter)
+    {
+        $this->withTypeMapping($converter->getTypeNamespace(), $converter->getTypeName(), array($converter, 'convertXmlToPhp'), array($converter, 'convertPhpToXml'));
+        
+        return $this;
+    }
+    
+    public function withTypeConverters(TypeConverterCollection $converters, $merge = true)
+    {
+        $this->withTypemap($converters->getTypemap(), $merge);
+        
+        return $this;
     }
     
     /**
