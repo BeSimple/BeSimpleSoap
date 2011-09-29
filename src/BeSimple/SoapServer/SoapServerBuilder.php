@@ -32,6 +32,7 @@ class SoapServerBuilder
         $builder
             ->withSoapVersion12()
             ->withEncoding('UTF-8')
+            ->withNoWsdlCache()
             ->withErrorReporting(false)
             ->withSingleElementArrays()
         ;
@@ -49,7 +50,7 @@ class SoapServerBuilder
     private $optionHandlerObject = null;
     
     /**
-     * Initializes all options with the defaults in the native SoapServer.
+     * Initializes all options with the defaults used in the native SoapServer.
      */
     private function __construct()
     {
@@ -159,6 +160,13 @@ class SoapServerBuilder
         return $this;
     }
     
+    public function withNoWsdlCache()
+    { 
+        $this->options['cache_wsdl'] = Cache::TYPE_NONE;
+        
+        return $this; 
+    }
+    
     public function withWsdlDiskCache()
     { 
         $this->options['cache_wsdl'] = Cache::TYPE_DISK;
@@ -237,7 +245,7 @@ class SoapServerBuilder
         if(is_string($handler) && class_exists($handler))
         {
             $this->optionHandlerClass = $handler;
-            $this->optionHandlerObject =  null;
+            $this->optionHandlerObject = null;
         }
         
         if(is_object($handler))
