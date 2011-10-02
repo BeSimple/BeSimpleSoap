@@ -8,7 +8,7 @@
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
- * 
+ *
  * @link https://github.com/BeSimple/BeSimpleSoapClient
  */
 
@@ -55,11 +55,10 @@ class Curl
      * @param array $options
      * @param int $followLocationMaxRedirects
      */
-    public function __construct( array $options, $followLocationMaxRedirects = 10 )
+    public function __construct(array $options, $followLocationMaxRedirects = 10)
     {
         // set the default HTTP user agent
-        if ( !isset( $options['user_agent'] ) )
-        {
+        if (!isset($options['user_agent'])) {
             $options['user_agent'] = self::USER_AGENT;
         }
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
@@ -75,34 +74,28 @@ class Curl
             CURLOPT_HEADER => true,
             CURLOPT_USERAGENT => $options['user_agent'],
             CURLINFO_HEADER_OUT => true,
-        );
-        curl_setopt_array( $this->ch, $curlOptions );
-        if ( isset( $options['compression'] ) && !( $options['compression'] & SOAP_COMPRESSION_ACCEPT ) )
-        {
-            curl_setopt( $this->ch, CURLOPT_ENCODING, 'identity' );
+       );
+        curl_setopt_array($this->ch, $curlOptions);
+        if (isset($options['compression']) && !($options['compression'] & SOAP_COMPRESSION_ACCEPT)) {
+            curl_setopt($this->ch, CURLOPT_ENCODING, 'identity');
         }
-        if ( isset( $options['connection_timeout'] ) )
-        {
-            curl_setopt( $this->ch, CURLOPT_CONNECTTIMEOUT, $options['connection_timeout'] );
+        if (isset($options['connection_timeout'])) {
+            curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $options['connection_timeout']);
         }
-        if ( isset( $options['proxy_host'] ) )
-        {
-            $port = isset( $options['proxy_port'] ) ? $options['proxy_port'] : 8080;
-            curl_setopt( $this->ch, CURLOPT_PROXY, $options['proxy_host'] . ':' . $port );
+        if (isset($options['proxy_host'])) {
+            $port = isset($options['proxy_port']) ? $options['proxy_port'] : 8080;
+            curl_setopt($this->ch, CURLOPT_PROXY, $options['proxy_host'] . ':' . $port);
         }
-        if ( isset( $options['proxy_user'] ) )
-        {
-            curl_setopt( $this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_user'] . ':' . $options['proxy_password'] );
+        if (isset($options['proxy_user'])) {
+            curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_user'] . ':' . $options['proxy_password']);
         }
-        if ( isset( $options['login'] ) )
-        {
-            curl_setopt( $this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY );
-            curl_setopt( $this->ch, CURLOPT_USERPWD, $options['login'].':'.$options['password'] );
+        if (isset($options['login'])) {
+            curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+            curl_setopt($this->ch, CURLOPT_USERPWD, $options['login'].':'.$options['password']);
         }
-        if ( isset( $options['local_cert'] ) )
-        {
-            curl_setopt( $this->ch, CURLOPT_SSLCERT, $options['local_cert'] );
-            curl_setopt( $this->ch, CURLOPT_SSLCERTPASSWD, $options['passphrase'] );
+        if (isset($options['local_cert'])) {
+            curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
+            curl_setopt($this->ch, CURLOPT_SSLCERTPASSWD, $options['passphrase']);
         }
     }
 
@@ -111,7 +104,7 @@ class Curl
      */
     public function __destruct()
     {
-        curl_close( $this->ch );
+        curl_close($this->ch);
     }
 
     /**
@@ -123,24 +116,22 @@ class Curl
      * @param array $requestHeaders
      * @return bool
      */
-    public function exec( $location, $request = null, $requestHeaders = array() )
+    public function exec($location, $request = null, $requestHeaders = array())
     {
-        curl_setopt( $this->ch, CURLOPT_URL, $location);
+        curl_setopt($this->ch, CURLOPT_URL, $location);
 
-        if ( !is_null( $request ) )
-        {
-            curl_setopt( $this->ch, CURLOPT_POST, true );
-            curl_setopt( $this->ch, CURLOPT_POSTFIELDS, $request );
+        if (!is_null($request)) {
+            curl_setopt($this->ch, CURLOPT_POST, true);
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $request);
         }
 
-        if ( count( $requestHeaders ) > 0 )
-        {
-            curl_setopt( $this->ch, CURLOPT_HTTPHEADER, $requestHeaders );
+        if (count($requestHeaders) > 0) {
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $requestHeaders);
         }
 
-        $this->response = $this->execManualRedirect( $this->followLocationMaxRedirects );
+        $this->response = $this->execManualRedirect($this->followLocationMaxRedirects);
 
-        return ( $this->response === false ) ? false : true;
+        return ($this->response === false) ? false : true;
     }
 
     /**
@@ -152,43 +143,37 @@ class Curl
      * @param int $redirects
      * @return mixed
      */
-    private function execManualRedirect( $redirects = 0 )
+    private function execManualRedirect($redirects = 0)
     {
-        if ( $redirects > $this->followLocationMaxRedirects )
-        {
+        if ($redirects > $this->followLocationMaxRedirects) {
             // TODO Redirection limit reached, aborting
             return false;
         }
-        curl_setopt( $this->ch, CURLOPT_HEADER, true );
-        curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
-        $response = curl_exec( $this->ch );
-        $httpResponseCode = curl_getinfo( $this->ch, CURLINFO_HTTP_CODE );
-        if ( $httpResponseCode == 307 )
-        {
-            $headerSize = curl_getinfo( $this->ch, CURLINFO_HEADER_SIZE );
-            $header = substr( $response, 0, $headerSize );
+        curl_setopt($this->ch, CURLOPT_HEADER, true);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($this->ch);
+        $httpResponseCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
+        if ($httpResponseCode == 307) {
+            $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+            $header = substr($response, 0, $headerSize);
             $matches = array();
-            preg_match( '/Location:(.*?)\n/', $header, $matches );
-            $url = trim( array_pop( $matches ) );
+            preg_match('/Location:(.*?)\n/', $header, $matches);
+            $url = trim(array_pop($matches));
             // @parse_url to suppress E_WARNING for invalid urls
-            if ( ( $url = @parse_url( $url ) ) !== false )
-            {
-                $lastUrl = parse_url( curl_getinfo( $this->ch, CURLINFO_EFFECTIVE_URL ) );
-                if ( !isset( $url['scheme'] ) )
-                {
+            if (($url = @parse_url($url)) !== false) {
+                $lastUrl = parse_url(curl_getinfo($this->ch, CURLINFO_EFFECTIVE_URL));
+                if (!isset($url['scheme'])) {
                     $url['scheme'] = $lastUrl['scheme'];
                 }
-                if ( !isset( $url['host'] ) )
-                {
+                if (!isset($url['host'])) {
                     $url['host'] = $lastUrl['host'];
                 }
-                if ( !isset( $url['path'] ) )
-                {
+                if (!isset($url['path'])) {
                     $url['path'] = $lastUrl['path'];
                 }
-                $newUrl = $url['scheme'] . '://' . $url['host'] . $url['path'] . ( $url['query'] ? '?' . $url['query'] : '' );
-                curl_setopt( $this->ch, CURLOPT_URL, $newUrl );
-                return $this->execManualRedirect( $redirects++ );
+                $newUrl = $url['scheme'] . '://' . $url['host'] . $url['path'] . ($url['query'] ? '?' . $url['query'] : '');
+                curl_setopt($this->ch, CURLOPT_URL, $newUrl);
+                return $this->execManualRedirect($redirects++);
             }
         }
         return $response;
@@ -229,7 +214,7 @@ class Curl
             67 => 'Could not connect to host', //CURLE_LOGIN_DENIED
             77 => 'Could not connect to host', //CURLE_SSL_CACERT_BADFILE
             80 => 'Error Fetching http body, No Content-Length, connection closed or chunked data', //CURLE_SSL_SHUTDOWN_FAILED
-        );
+       );
     }
 
     /**
@@ -240,12 +225,11 @@ class Curl
     public function getErrorMessage()
     {
         $errorCodeMapping = $this->getErrorCodeMapping();
-        $errorNumber = curl_errno( $this->ch );
-        if ( isset( $errorCodeMapping[$errorNumber] ) )
-        {
+        $errorNumber = curl_errno($this->ch);
+        if (isset($errorCodeMapping[$errorNumber])) {
             return $errorCodeMapping[$errorNumber];
         }
-        return curl_error( $this->ch );
+        return curl_error($this->ch);
     }
 
     /**
@@ -255,7 +239,7 @@ class Curl
      */
     public function getRequestHeaders()
     {
-        return curl_getinfo( $this->ch, CURLINFO_HEADER_OUT );
+        return curl_getinfo($this->ch, CURLINFO_HEADER_OUT);
     }
 
     /**
@@ -275,8 +259,8 @@ class Curl
      */
     public function getResponseBody()
     {
-        $headerSize = curl_getinfo( $this->ch, CURLINFO_HEADER_SIZE );
-        return substr( $this->response, $headerSize );
+        $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        return substr($this->response, $headerSize);
     }
 
     /**
@@ -286,7 +270,7 @@ class Curl
      */
     public function getResponseContentType()
     {
-        return curl_getinfo( $this->ch, CURLINFO_CONTENT_TYPE );
+        return curl_getinfo($this->ch, CURLINFO_CONTENT_TYPE);
     }
 
     /**
@@ -296,8 +280,8 @@ class Curl
      */
     public function getResponseHeaders()
     {
-        $headerSize = curl_getinfo( $this->ch, CURLINFO_HEADER_SIZE );
-        return substr( $this->response, 0, $headerSize );
+        $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+        return substr($this->response, 0, $headerSize);
     }
 
     /**
@@ -307,7 +291,7 @@ class Curl
      */
     public function getResponseStatusCode()
     {
-        return curl_getinfo( $this->ch, CURLINFO_HTTP_CODE );
+        return curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
     }
 
     /**
@@ -317,7 +301,7 @@ class Curl
      */
     public function getResponseStatusMessage()
     {
-        preg_match( '/HTTP\/(1\.[0-1]+) ([0-9]{3}) (.*)/', $this->response, $matches );
-        return trim( array_pop( $matches ) );
+        preg_match('/HTTP\/(1\.[0-1]+) ([0-9]{3}) (.*)/', $this->response, $matches);
+        return trim(array_pop($matches));
     }
 }

@@ -8,7 +8,7 @@
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
- * 
+ *
  * @link https://github.com/BeSimple/BeSimpleSoapClient
  */
 
@@ -171,12 +171,11 @@ class Helper
      * @param string $errline
      * @throws ErrorException
      */
-    public static function exceptionErrorHandler( $errno, $errstr, $errfile, $errline )
+    public static function exceptionErrorHandler($errno, $errstr, $errfile, $errline)
     {
         // don't throw exception for errors suppresed with @
-        if ( error_reporting() != 0 )
-        {
-            throw new \ErrorException( $errstr, 0, $errno, $errfile, $errline );
+        if (error_reporting() != 0) {
+            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
         }
     }
 
@@ -191,19 +190,19 @@ class Helper
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
             // 16 bits for "time_mid"
-            mt_rand( 0, 0xffff ),
+            mt_rand(0, 0xffff),
             // 16 bits for "time_hi_and_version",
             // four most significant bits holds version number 4
-            mt_rand( 0, 0x0fff ) | 0x4000,
+            mt_rand(0, 0x0fff) | 0x4000,
             // 16 bits, 8 bits for "clk_seq_hi_res",
             // 8 bits for "clk_seq_low",
             // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand( 0, 0x3fff ) | 0x8000,
+            mt_rand(0, 0x3fff) | 0x8000,
             // 48 bits for "node"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
-        );
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+       );
     }
 
     /**
@@ -214,21 +213,17 @@ class Helper
     public static function getCurrentUrl()
     {
         $url = '';
-        if ( isset( $_SERVER['HTTPS'] ) &&
-             ( strtolower( $_SERVER['HTTPS'] ) === 'on' || $_SERVER['HTTPS'] === '1' ) )
-        {
+        if (isset($_SERVER['HTTPS']) &&
+             (strtolower($_SERVER['HTTPS']) === 'on' || $_SERVER['HTTPS'] === '1')) {
             $url .= 'https://';
-        }
-        else
-        {
+        } else {
             $url .= 'http://';
         }
-        $url .= isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : '';
-        if ( isset( $_SERVER['SERVER_PORT'] ) && $_SERVER['SERVER_PORT'] != 80 )
-        {
+        $url .= isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '';
+        if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80) {
             $url .= ":{$_SERVER['SERVER_PORT']}";
         }
-        $url .= isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
+        $url .= isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
         return $url;
     }
 
@@ -238,14 +233,11 @@ class Helper
      * @param int $version SOAP_1_1|SOAP_1_2
      * @return string
      */
-    public static function getSoapNamespace( $version )
+    public static function getSoapNamespace($version)
     {
-        if ( $version === SOAP_1_2 )
-        {
+        if ($version === SOAP_1_2) {
             return self::NS_SOAP_1_2;
-        }
-        else
-        {
+        } else {
             return self::NS_SOAP_1_1;
         }
     }
@@ -256,14 +248,11 @@ class Helper
      * @param string $namespace NS_SOAP_1_1|NS_SOAP_1_2
      * @return int SOAP_1_1|SOAP_1_2
      */
-    public static function getSoapVersionFromNamespace( $namespace )
+    public static function getSoapVersionFromNamespace($namespace)
     {
-        if ( $namespace === self::NS_SOAP_1_2 )
-        {
+        if ($namespace === self::NS_SOAP_1_2) {
             return SOAP_1_2;
-        }
-        else
-        {
+        } else {
             return SOAP_1_1;
         }
     }
@@ -279,46 +268,38 @@ class Helper
      * @param \ass\Soap\WsdlHandler $wsdlHandler
      * @return string
      */
-    public static function runPlugins( array $plugins, $requestType, $xml, $location = null, $action = null, \ass\Soap\WsdlHandler $wsdlHandler = null )
+    public static function runPlugins(array $plugins, $requestType, $xml, $location = null, $action = null, \ass\Soap\WsdlHandler $wsdlHandler = null)
     {
-        if ( count( $plugins ) > 0 )
-        {
+        if (count($plugins) > 0) {
             // instantiate new dom object
-            $dom = new \DOMDocument( '1.0' );
+            $dom = new \DOMDocument('1.0');
             // format the XML if option is set
             $dom->formatOutput = self::$formatXmlOutput;
-            $dom->loadXML( $xml );
+            $dom->loadXML($xml);
             $params = array(
                 $dom,
                 $location,
                 $action,
                 $wsdlHandler
             );
-            if ( $requestType == self::REQUEST )
-            {
+            if ($requestType == self::REQUEST) {
                 $callMethod = 'modifyRequest';
-            }
-            else
-            {
+            } else {
                 $callMethod = 'modifyResponse';
             }
             // modify dom
-            foreach( $plugins AS $plugin )
-            {
-                if ( $plugin instanceof \ass\Soap\Plugin )
-                {
-                    call_user_func_array( array( $plugin, $callMethod ), $params );
+            foreach($plugins AS $plugin) {
+                if ($plugin instanceof \ass\Soap\Plugin) {
+                    call_user_func_array(array($plugin, $callMethod), $params);
                 }
             }
             // return the modified xml document
             return $dom->saveXML();
-        }
         // format the XML if option is set
-        elseif ( self::$formatXmlOutput === true )
-        {
-            $dom = new \DOMDocument( '1.0' );
+        } elseif (self::$formatXmlOutput === true) {
+            $dom = new \DOMDocument('1.0');
             $dom->formatOutput = true;
-            $dom->loadXML( $xml );
+            $dom->loadXML($xml);
             return $dom->saveXML();
         }
         return $xml;
@@ -329,16 +310,13 @@ class Helper
      *
      * @param boolean $reset
      */
-    public static function setCustomErrorHandler( $reset = false )
+    public static function setCustomErrorHandler($reset = false)
     {
-        if ( $reset === true && !is_null( self::$previousErrorHandler ) )
-        {
-            set_error_handler( self::$previousErrorHandler );
+        if ($reset === true && !is_null(self::$previousErrorHandler)) {
+            set_error_handler(self::$previousErrorHandler);
             self::$previousErrorHandler = null;
-        }
-        else
-        {
-            self::$previousErrorHandler = set_error_handler( 'ass\\Soap\\Helper::exceptionErrorHandler' );
+        } else {
+            self::$previousErrorHandler = set_error_handler('ass\\Soap\\Helper::exceptionErrorHandler');
         }
         return self::$previousErrorHandler;
     }
@@ -351,13 +329,13 @@ class Helper
      * @param string $contentType
      * @return string
      */
-    public static function makeSoapAttachmentDataString( $contentId, $contentType )
+    public static function makeSoapAttachmentDataString($contentId, $contentType)
     {
         $parameter = array(
             'cid' => $contentId,
             'type' => $contentType,
         );
-        return 'SOAP-MIME-ATTACHMENT:' . http_build_query( $parameter, null, '&' );
+        return 'SOAP-MIME-ATTACHMENT:' . http_build_query($parameter, null, '&');
     }
 
     /**
@@ -367,12 +345,12 @@ class Helper
      * @param string $dataString
      * @return array(string=>string)
      */
-    public static function parseSoapAttachmentDataString( $dataString )
+    public static function parseSoapAttachmentDataString($dataString)
     {
-        $dataString = substr( $dataString, 21 );
+        $dataString = substr($dataString, 21);
         // get all data
         $data = array();
-        parse_str( $dataString, $data );
+        parse_str($dataString, $data);
         return $data;
     }
 
@@ -382,15 +360,12 @@ class Helper
      *
      * @param string $header
      */
-    public static function setHttpStatusHeader( $header )
+    public static function setHttpStatusHeader($header)
     {
-        if ( substr( php_sapi_name(), 0, 3 ) == 'cgi' )
-        {
-            header( 'Status: ' . $header );
-        }
-        else
-        {
-            header( $_SERVER['SERVER_PROTOCOL'] . ' ' . $header );
+        if ('cgi' == substr(php_sapi_name(), 0, 3)) {
+            header('Status: ' . $header);
+        } else {
+            header($_SERVER['SERVER_PROTOCOL'] . ' ' . $header);
         }
     }
 }
