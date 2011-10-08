@@ -89,12 +89,12 @@ class BeSimpleSoapExtension extends Extension
 
                 $defOptions = $container
                     ->getDefinition('besimple.soap.client')
-                    ->getArgument(2);
+                    ->getArgument(1);
 
                 $defOptions['cache_type'] = $options['cache_type'];
                 $defOptions['namespace']  = $options['namespace'];
 
-                $definition->replaceArgument(2, $defOptions);
+                $definition->replaceArgument(1, $defOptions);
             }
         }
     }
