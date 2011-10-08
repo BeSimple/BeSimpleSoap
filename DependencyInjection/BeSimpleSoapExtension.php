@@ -96,7 +96,26 @@ class BeSimpleSoapExtension extends Extension
 
                 $definition->replaceArgument(1, $defOptions);
             }
+
+            if (!empty($options['classmap'])) {
+                $classmap = $this->createClientClassmap($client, $options['classmap'], $container);
+                $definition->replaceArgument(2, new Reference($classmap));
+            } else {
+                $definition->replaceArgument(2, null);
+            }
         }
+    }
+
+    private function createClientClassmap($client, array $classmap, ContainerBuilder $container)
+    {
+        $definition = new DefinitionDecorator('besimple.soap.classmap');
+        $context    = $container->setDefinition(sprintf('besimple.soap.classmap.%s', $client), $definition);
+
+        $definition->setMethodCalls(array(
+            array('set', array($classmap)),
+        ));
+
+        return sprintf('besimple.soap.classmap.%s', $client);
     }
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)
