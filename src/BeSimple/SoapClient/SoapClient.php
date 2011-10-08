@@ -45,6 +45,8 @@ class SoapClient
             'debug'      => false,
             'cache_type' => null,
             'namespace'  => null,
+            'exceptions' => true,
+            'user_agent' => 'BeSimpleSoap',
         );
 
         // check option names and live merge, if errors are encountered Exception will be thrown
@@ -167,7 +169,9 @@ class SoapClient
             'cache_wsdl' => $this->options['cache_type'],
             'trace'      => $this->options['debug'],
             'classmap'   => $this->getClassmap(),
+            'exceptions' => $this->options['exceptions'],
             'typemap'    => $this->getTypemap(),
+            'user_agent' => $this->options['user_agent'],
         );
     }
 
