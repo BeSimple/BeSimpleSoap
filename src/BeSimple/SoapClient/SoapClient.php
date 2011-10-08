@@ -13,6 +13,7 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Classmap;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 /**
@@ -21,6 +22,7 @@ use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 class SoapClient
 {
     protected $wsdl;
+    protected $classmap;
     protected $converters;
     protected $soapClient;
 
@@ -28,9 +30,10 @@ class SoapClient
      * @param string $wsdl
      * @param array  $options
      */
-    public function __construct($wsdl, array $options = array(), TypeConverterCollection $converters = null)
+    public function __construct($wsdl, array $options = array(), Classmap $classmap = null, TypeConverterCollection $converters = null)
     {
         $this->wsdl       = $wsdl;
+        $this->classmap   = $classmap;
         $this->converters = $converters;
 
         $this->setOptions($options);
@@ -163,8 +166,21 @@ class SoapClient
         return array(
             'cache_wsdl' => $this->options['cache_type'],
             'trace'      => $this->options['debug'],
+            'classmap'   => $this->getClassmap(),
             'typemap'    => $this->getTypemap(),
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getClassmap()
+    {
+        if (!$this->classmap) {
+            return array();
+        }
+
+        return $this->classmap->all();
     }
 
     /**
