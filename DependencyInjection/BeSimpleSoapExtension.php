@@ -84,18 +84,21 @@ class BeSimpleSoapExtension extends Extension
 
             $definition->replaceArgument(0, $options['wsdl']);
 
-            if (isset($options['cache_type'])) {
-                $options['cache_type'] = $this->getCacheType($options['cache_type']);
-
-                $defOptions = $container
+            $defOptions = $container
                     ->getDefinition('besimple.soap.client')
                     ->getArgument(1);
 
-                $defOptions['cache_type'] = $options['cache_type'];
-                $defOptions['namespace']  = $options['namespace'];
-
-                $definition->replaceArgument(1, $defOptions);
+            foreach (array('cache_type', 'namespace', 'user_agent') as $key) {
+                if (isset($options[$key])) {
+                    $defOptions[$key] = $options[$key];
+                }
             }
+
+            if (isset($defOptions['cache_type'])) {
+                $$defOptions['cache_type'] = $this->getCacheType($defOptions['cache_type']);
+            }
+
+            $definition->replaceArgument(1, $defOptions);
 
             if (!empty($options['classmap'])) {
                 $classmap = $this->createClientClassmap($client, $options['classmap'], $container);
