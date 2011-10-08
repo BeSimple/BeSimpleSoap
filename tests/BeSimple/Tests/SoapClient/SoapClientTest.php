@@ -67,7 +67,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSoapHeader()
     {
-        $soapClient = new SoapClient('foo.wsdl', null, array('namespace' => 'http://foobar/soap/User/1.0/'));
+        $soapClient = new SoapClient('foo.wsdl', array('namespace' => 'http://foobar/soap/User/1.0/'));
         $soapHeader = $soapClient->createSoapHeader('foo', 'bar');
 
         $this->assertInstanceOf('SoapHeader', $soapHeader);
@@ -87,10 +87,10 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     public function testGetSoapOptions()
     {
         Cache::setType(Cache::TYPE_MEMORY);
-        $soapClient = new SoapClient('foo.wsdl', null, array('debug' => true));
+        $soapClient = new SoapClient('foo.wsdl', array('debug' => true));
         $this->assertEquals(array('cache_wsdl' => Cache::getType(), 'trace' => true, 'typemap' => array()), $soapClient->getSoapOptions());
 
-        $soapClient = new SoapClient('foo.wsdl', null, array('debug' => false, 'cache_type' => Cache::TYPE_NONE));
+        $soapClient = new SoapClient('foo.wsdl', array('debug' => false, 'cache_type' => Cache::TYPE_NONE));
         $this->assertEquals(array('cache_wsdl' => Cache::TYPE_NONE, 'trace' => false, 'typemap' => array()), $soapClient->getSoapOptions());
     }
 
@@ -104,7 +104,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
         $dateTypeConverter = new DateTypeConverter();
         $converters->add($dateTypeConverter);
 
-        $soapClient  = new SoapClient('foo.wsdl', $converters);
+        $soapClient  = new SoapClient('foo.wsdl', array(), $converters);
         $soapOptions = $soapClient->getSoapOptions();
 
         $this->assertEquals('http://www.w3.org/2001/XMLSchema', $soapOptions['typemap'][0]['type_ns']);
@@ -120,7 +120,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetNativeSoapClient()
     {
-        $soapClient = new SoapClient(__DIR__.'/Fixtures/foobar.wsdl', null, array('debug' => true));
+        $soapClient = new SoapClient(__DIR__.'/Fixtures/foobar.wsdl', array('debug' => true));
 
         $this->assertInstanceOf('SoapClient', $soapClient->getNativeSoapClient());
     }

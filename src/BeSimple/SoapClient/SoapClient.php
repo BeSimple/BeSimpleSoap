@@ -28,10 +28,11 @@ class SoapClient
      * @param string $wsdl
      * @param array  $options
      */
-    public function __construct($wsdl, TypeConverterCollection $converters = null, array $options = array())
+    public function __construct($wsdl, array $options = array(), TypeConverterCollection $converters = null)
     {
         $this->wsdl       = $wsdl;
         $this->converters = $converters;
+
         $this->setOptions($options);
     }
 
@@ -155,17 +156,15 @@ class SoapClient
      */
     public function getSoapOptions()
     {
-        $options = array();
-
         if (null === $this->options['cache_type']) {
             $this->options['cache_type'] = Cache::getType();
         }
 
-        $options['cache_wsdl'] = $this->options['cache_type'];
-        $options['trace']      = $this->options['debug'];
-        $options['typemap']    = $this->getTypemap();
-
-        return $options;
+        return array(
+            'cache_wsdl' => $this->options['cache_type'],
+            'trace'      => $this->options['debug'],
+            'typemap'    => $this->getTypemap(),
+        );
     }
 
     /**
