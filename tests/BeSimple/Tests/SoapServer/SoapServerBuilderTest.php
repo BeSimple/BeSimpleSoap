@@ -16,39 +16,30 @@ use BeSimple\SoapServer\SoapServerBuilder;
 
 /**
  * UnitTest for \BeSimple\SoapServer\SoapServerBuilder
- * 
+ *
  * @author Christian Kerl
  */
 class SoapServerBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testUnconfiguredWsdl()
     {
-        $builder = SoapServerBuilder::createEmpty();
-        
-        try 
-        {
-            $builder->build();
-            
-            $this->fail('The SoapServer requires a WSDL file.');
-        }
-        catch(\InvalidArgumentException $e)
-        {
-        }
+        $builder = $this->getSoapServerBuilder();
+
+        $this->setExpectedException('InvalidArgumentException');
+        $builder->build();
     }
-    
+
     public function testUnconfiguredHandler()
     {
-        $builder = SoapServerBuilder::createEmpty();
+        $builder = $this->getSoapServerBuilder();
         $builder->withWsdl('my.wsdl');
-        
-        try
-        {
-            $builder->build();
-            
-            $this->fail('The SoapServer requires a handler.');
-        }
-        catch(\InvalidArgumentException $e)
-        {
-        }
+
+        $this->setExpectedException('InvalidArgumentException');
+        $builder->build();
+    }
+
+    public function getSoapServerBuilder()
+    {
+        return new SoapServerBuilder();
     }
 }
