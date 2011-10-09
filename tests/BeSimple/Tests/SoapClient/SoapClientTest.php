@@ -31,7 +31,7 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
         );
         $soapClient->setOptions($options);
 
-        $this->assertEquals($options, $soapClient->getOptions());
+        $this->assertEquals(array_merge($options, array('exceptions' => true, 'user_agent' => 'BeSimpleSoap')), $soapClient->getOptions());
     }
 
     public function testSetOptionsThrowsAnExceptionIfOptionsDoesNotExists()
@@ -89,10 +89,10 @@ class SoapClientTest extends \PHPUnit_Framework_TestCase
     {
         Cache::setType(Cache::TYPE_MEMORY);
         $soapClient = new SoapClient('foo.wsdl', array('debug' => true));
-        $this->assertEquals(array('cache_wsdl' => Cache::getType(), 'trace' => true, 'classmap' => array(), 'typemap' => array()), $soapClient->getSoapOptions());
+        $this->assertEquals(array('cache_wsdl' => Cache::getType(), 'trace' => true, 'classmap' => array(), 'exceptions' => true, 'typemap' => array(), 'user_agent' => 'BeSimpleSoap'), $soapClient->getSoapOptions());
 
         $soapClient = new SoapClient('foo.wsdl', array('debug' => false, 'cache_type' => Cache::TYPE_NONE));
-        $this->assertEquals(array('cache_wsdl' => Cache::TYPE_NONE, 'trace' => false, 'classmap' => array(), 'typemap' => array()), $soapClient->getSoapOptions());
+        $this->assertEquals(array('cache_wsdl' => Cache::TYPE_NONE, 'trace' => false, 'classmap' => array(), 'exceptions' => true, 'typemap' => array(), 'user_agent' => 'BeSimpleSoap'), $soapClient->getSoapOptions());
     }
 
     public function testGetSoapOptionsWithClassmap()
