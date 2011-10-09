@@ -29,6 +29,19 @@ class SoapClientBuilder extends AbstractSoapBuilder
         ;
     }
 
+    /**
+     * @return SoapClient
+     */
+    public function build()
+    {
+        $this->validateOptions();
+
+        return new SoapClient($this->optionWsdl, $this->options);
+    }
+
+    /**
+     * @return SoapClientBuilder
+     */
     public function withTrace($trace = true)
     {
         $this->soapOptions['trace'] = $trace;
@@ -36,6 +49,9 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * @return SoapClientBuilder
+     */
     public function withExceptions($exceptions = true)
     {
         $this->soapOptions['exceptions'] = $exceptions;
@@ -43,10 +59,18 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * @return SoapClientBuilder
+     */
     public function withUserAgent($userAgent)
     {
         $this->soapOptions['user_agent'] = $userAgent;
 
         return $this;
+    }
+
+    protected function validateOptions()
+    {
+        $this->validateWsdl();
     }
 }
