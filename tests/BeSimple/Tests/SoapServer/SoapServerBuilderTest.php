@@ -17,7 +17,7 @@ use BeSimple\SoapServer\SoapServerBuilder;
 /**
  * UnitTest for \BeSimple\SoapServer\SoapServerBuilder
  *
- * @author Christian Kerl
+ * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapServerBuilderTest extends \PHPUnit_Framework_TestCase
 {

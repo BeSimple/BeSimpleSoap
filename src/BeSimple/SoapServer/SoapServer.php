@@ -13,15 +13,15 @@
 namespace BeSimple\SoapServer;
 
 /**
- * @author Christian Kerl
+ * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapServer extends \SoapServer
 {
     public function __construct($wsdl, array $options = array())
-    {        
+    {
         parent::__construct($wsdl, $options);
     }
-    
+
     public function handle($soap_request = null)
     {
         parent::handle($soap_request);
