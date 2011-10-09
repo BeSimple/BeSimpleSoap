@@ -16,9 +16,12 @@ use BeSimple\SoapCommon\AbstractSoapBuilder;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>
+ * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapClientBuilder extends AbstractSoapBuilder
 {
+    protected $soapOptionAuthentication = array();
+
     /**
      * @return SoapClientBuilder
      */
@@ -36,7 +39,7 @@ class SoapClientBuilder extends AbstractSoapBuilder
     {
         $this->validateOptions();
 
-        return new SoapClient($this->optionWsdl, $this->options);
+        return new SoapClient($this->optionWsdl, $this->getSoapOptions() + $this->soapOptionAuthentication);
     }
 
     /**
@@ -65,6 +68,34 @@ class SoapClientBuilder extends AbstractSoapBuilder
     public function withUserAgent($userAgent)
     {
         $this->soapOptions['user_agent'] = $userAgent;
+
+        return $this;
+    }
+
+    /**
+     * @return SoapClientBuilder
+     */
+    public function withBasicAuthentication($username, $password)
+    {
+        $this->soapOptionAuthentication = array(
+            'authentication' => SOAP_AUTHENTICATION_BASIC,
+            'login'          => $username,
+            'password'       => $password
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return SoapClientBuilder
+     */
+    public function withDigestAuthentication($certificate, $password)
+    {
+        $this->soapOptionAuthentication = array(
+            'authentication' => SOAP_AUTHENTICATION_DIGEST,
+            'local_cert'     => $certificate,
+            'passphrase'     => $password
+        );
 
         return $this;
     }
