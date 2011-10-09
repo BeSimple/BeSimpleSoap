@@ -12,7 +12,8 @@
 
 namespace BeSimple\SoapCommon;
 
-use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
+use BeSimple\SoapCommon\Converter\TypeConverterInterface;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
@@ -21,7 +22,7 @@ use BeSimple\SoapCommon\Cache;
 abstract class AbstractSoapBuilder
 {
     protected $wsdl;
-    protected $options;
+    protected $soapOptions;
 
     /**
      * @return AbstractSoapBuilder
@@ -30,19 +31,19 @@ abstract class AbstractSoapBuilder
     {
         $builder = new static();
 
-        $builder
+        return $builder
             ->withSoapVersion12()
             ->withEncoding('UTF-8')
             ->withSingleElementArrays()
         ;
-
-        return $builder;
     }
 
     public function __construct()
     {
-        $this->options = array(
+        $this->soapOptions = array(
             'features' => 0,
+            'classmap' => new Classmap(),
+            'typemap'  => new TypeConverterCollection(),
         );
     }
 
@@ -51,9 +52,14 @@ abstract class AbstractSoapBuilder
         return $this->wsdl;
     }
 
-    public function getOptions()
+    public function getSoapOptions()
     {
-        return $this->options;
+        $options = $this->soapOptions;
+
+        $options['classmap'] = $this->soapOptions['classmap']->all();
+        $options['typemap']  = $this->soapOptions['typemap']->getTypemap();
+
+        return $options;
     }
 
     /**
@@ -71,7 +77,7 @@ abstract class AbstractSoapBuilder
      */
     public function withSoapVersion11()
     {
-        $this->options['soap_version'] = SOAP_1_1;
+        $this->soapOptions['soap_version'] = SOAP_1_1;
 
         return $this;
     }
@@ -81,14 +87,14 @@ abstract class AbstractSoapBuilder
      */
     public function withSoapVersion12()
     {
-        $this->options['soap_version'] = SOAP_1_2;
+        $this->soapOptions['soap_version'] = SOAP_1_2;
 
         return $this;
     }
 
     public function withEncoding($encoding)
     {
-        $this->options['encoding'] = $encoding;
+        $this->soapOptions['encoding'] = $encoding;
 
         return $this;
     }
@@ -98,7 +104,7 @@ abstract class AbstractSoapBuilder
      */
     public function withWsdlCacheNone()
     {
-        $this->options['cache_wsdl'] = Cache::TYPE_NONE;
+        $this->soapOptions['cache_wsdl'] = Cache::TYPE_NONE;
 
         return $this;
     }
@@ -108,7 +114,7 @@ abstract class AbstractSoapBuilder
      */
     public function withWsdlCacheDisk()
     {
-        $this->options['cache_wsdl'] = Cache::TYPE_DISK;
+        $this->soapOptions['cache_wsdl'] = Cache::TYPE_DISK;
 
         return $this;
     }
@@ -118,7 +124,7 @@ abstract class AbstractSoapBuilder
      */
     public function withWsdlCacheMemory()
     {
-        $this->options['cache_wsdl'] = Cache::TYPE_MEMORY;
+        $this->soapOptions['cache_wsdl'] = Cache::TYPE_MEMORY;
 
         return $this;
     }
@@ -128,7 +134,7 @@ abstract class AbstractSoapBuilder
      */
     public function withWsdlCacheDiskAndMemory()
     {
-        $this->options['cache_wsdl'] = Cache::TYPE_DISK_MEMORY;
+        $this->soapOptions['cache_wsdl'] = Cache::TYPE_DISK_MEMORY;
 
         return $this;
     }
@@ -141,7 +147,7 @@ abstract class AbstractSoapBuilder
      */
     public function withSingleElementArrays()
     {
-        $this->options['features'] |= SOAP_SINGLE_ELEMENT_ARRAYS;
+        $this->soapOptions['features'] |= SOAP_SINGLE_ELEMENT_ARRAYS;
 
         return $this;
     }
@@ -153,7 +159,7 @@ abstract class AbstractSoapBuilder
      */
     public function withWaitOneWayCalls()
     {
-        $this->options['features'] |= SOAP_WAIT_ONE_WAY_CALLS;
+        $this->soapOptions['features'] |= SOAP_WAIT_ONE_WAY_CALLS;
 
         return $this;
     }
@@ -165,7 +171,59 @@ abstract class AbstractSoapBuilder
      */
     public function withUseXsiArrayType()
     {
-        $this->options['features'] |= SOAP_USE_XSI_ARRAY_TYPE;
+        $this->soapOptions['features'] |= SOAP_USE_XSI_ARRAY_TYPE;
+
+        return $this;
+    }
+
+    public function withTypeConverter(TypeConverterInterface $converter)
+    {
+        $this->soapOptions['typemap']->add($converter);
+
+        return $this;
+    }
+
+    public function withTypeConverters(TypeConverterCollection $converters, $merge = true)
+    {
+        if ($merge) {
+            $this->soapOptions['typemap']->addCollection($converters);
+        } else {
+            $this->soapOptions['typemap']->set($converters->all());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a class mapping to the classmap.
+     *
+     * @param string $xmlType
+     * @param string $phpType
+     *
+     * @return AbstractSoapBuilder
+     */
+    public function withClassMapping($xmlType, $phpType)
+    {
+        $this->options['classmap']->add($xmlType, $phpType);
+
+        return $this;
+    }
+
+    /**
+     * Sets the classmap.
+     *
+     * @param array   $classmap The classmap.
+     * @param boolean $merge    If true the given classmap is merged into the existing one, otherwise the existing one is overwritten.
+     *
+     * @return AbstractSoapBuilder
+     */
+    public function withClassmap(Classmap $classmap, $merge = true)
+    {
+        if ($merge) {
+            $this->options['classmap']->addClassmap($classmap);
+        } else {
+            $this->options['classmap']->set($classmap->all());
+        }
 
         return $this;
     }
