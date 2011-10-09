@@ -83,4 +83,11 @@ class Classmap
     {
         return isset($this->classmap[$type]);
     }
+
+    public function addClassmap(Classmap $classmap)
+    {
+        foreach ($classmap->all() as $type => $classname) {
+            $this->add($type, $classname);
+        }
+    }
 }

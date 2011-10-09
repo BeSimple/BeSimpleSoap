@@ -64,4 +64,18 @@ class ClassmapTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($map, $classmap->all());
     }
+
+    public function testAddClassmap()
+    {
+        $classmap1 = new Classmap();
+        $classmap2 = new Classmap();
+
+        $classmap2->add('foobar', 'BeSimple\SoapCommon\Classmap');
+        $classmap1->addClassmap($classmap2);
+
+        $this->assertEquals(array('foobar' => 'BeSimple\SoapCommon\Classmap'), $classmap1->all());
+
+        $this->setExpectedException('InvalidArgumentException');
+        $classmap1->addClassmap($classmap2);
+    }
 }
