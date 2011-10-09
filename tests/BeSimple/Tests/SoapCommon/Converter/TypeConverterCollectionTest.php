@@ -62,4 +62,32 @@ class TypeConverterCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Closure', $typemap[1]['from_xml']);
         $this->assertInstanceOf('Closure', $typemap[1]['to_xml']);
     }
+
+    public function testSet()
+    {
+        $converters = new TypeConverterCollection();
+
+        $dateTimeTypeConverter = new DateTimeTypeConverter();
+        $converters->add($dateTimeTypeConverter);
+
+        $converter = array(new DateTypeConverter);
+        $converters->set($converter);
+
+        $this->assertSame($converter, $converters->all());
+    }
+
+    public function testAddCollection()
+    {
+        $converters1 = new TypeConverterCollection();
+        $converters2 = new TypeConverterCollection();
+
+        $dateTimeTypeConverter = new DateTimeTypeConverter();
+        $converters2->add($dateTimeTypeConverter);
+        $converters1->addCollection($converters2);
+
+        $this->assertSame(array($dateTimeTypeConverter), $converters1->all());
+
+        $this->setExpectedException('InvalidArgumentException');
+        $converters1->addCollection($converters2);
+    }
 }

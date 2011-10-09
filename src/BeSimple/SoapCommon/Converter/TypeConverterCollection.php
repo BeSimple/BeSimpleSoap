@@ -17,16 +17,50 @@ namespace BeSimple\SoapCommon\Converter;
  */
 class TypeConverterCollection
 {
-    private $typeConverters = array();
-
-    public function add(TypeConverterInterface $converter)
-    {
-        $this->typeConverters[] = $converter;
-    }
+    private $converters = array();
 
     public function all()
     {
-        return $this->typeConverters;
+        return array_values($this->converters);
+    }
+
+    public function get($namespace, $name)
+    {
+        if (!$this->has($namespace, $name)) {
+            throw new \InvalidArgumentException(sprintf('The converter "%s %s" does not exists', $namespace, $name));
+        }
+
+        return $this->converters[$namespace.':'.$name];
+    }
+
+    public function add(TypeConverterInterface $converter)
+    {
+        if ($this->has($converter->getTypeNamespace(), $converter->getTypeName())) {
+            throw new \InvalidArgumentException(sprintf('The converter "%s %s" already exists', $converter->getTypeNamespace(), $converter->getTypeName()));
+        }
+
+        $this->converters[$converter->getTypeNamespace().':'.$converter->getTypeName()] = $converter;
+    }
+
+    public function set(array $converters)
+    {
+        $this->converters = array();
+
+        foreach ($converters as $converter) {
+            $this->add($converter);
+        }
+    }
+
+    public function has($namespace, $name)
+    {
+        return isset($this->converters[$namespace.':'.$name]);
+    }
+
+    public function addCollection(TypeConverterCollection $converterCollection)
+    {
+        foreach ($converterCollection->all() as $converter) {
+            $this->add($converter);
+        }
     }
 
     /**
@@ -36,15 +70,15 @@ class TypeConverterCollection
     {
         $typemap = array();
 
-        foreach ($this->all() as $typeConverter) {
+        foreach ($this->converters as $converter) {
             $typemap[] = array(
-                'type_name' => $typeConverter->getTypeName(),
-                'type_ns'   => $typeConverter->getTypeNamespace(),
-                'from_xml'  => function($input) use ($typeConverter) {
-                    return $typeConverter->convertXmlToPhp($input);
+                'type_name' => $converter->getTypeName(),
+                'type_ns'   => $converter->getTypeNamespace(),
+                'from_xml'  => function($input) use ($converter) {
+                    return $converter->convertXmlToPhp($input);
                 },
-                'to_xml'    => function($input) use ($typeConverter) {
-                    return $typeConverter->convertPhpToXml($input);
+                'to_xml'    => function($input) use ($converter) {
+                    return $converter->convertPhpToXml($input);
                 },
             );
         }
