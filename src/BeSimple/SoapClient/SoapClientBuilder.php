@@ -19,9 +19,6 @@ use BeSimple\SoapCommon\AbstractSoapBuilder;
  */
 class SoapClientBuilder extends AbstractSoapBuilder
 {
-    protected $wsdl;
-    protected $options;
-
     /**
      * @return SoapClientBuilder
      */
@@ -34,21 +31,21 @@ class SoapClientBuilder extends AbstractSoapBuilder
 
     public function withTrace($trace = true)
     {
-        $this->options['trace'] = $trace;
+        $this->soapOptions['trace'] = $trace;
 
         return $this;
     }
 
     public function withExceptions($exceptions = true)
     {
-        $this->options['exceptions'] = $exceptions;
+        $this->soapOptions['exceptions'] = $exceptions;
 
         return $this;
     }
 
     public function withUserAgent($userAgent)
     {
-        $this->options['user_agent'] = $userAgent;
+        $this->soapOptions['user_agent'] = $userAgent;
 
         return $this;
     }

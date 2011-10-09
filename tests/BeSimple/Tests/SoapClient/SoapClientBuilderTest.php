@@ -18,13 +18,15 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
 {
     private $defaultOptions = array(
         'features' => 0,
+        'classmap' => array(),
+        'typemap'  => array(),
     );
 
     public function testContruct()
     {
         $options = $this
             ->getSoapBuilder()
-            ->getOptions()
+            ->getSoapOptions()
         ;
 
         $this->assertEquals($this->mergeOptions(array()), $options);
@@ -35,10 +37,10 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getSoapBuilder();
 
         $builder->withTrace();
-        $this->assertEquals($this->mergeOptions(array('trace' => true)), $builder->getOptions());
+        $this->assertEquals($this->mergeOptions(array('trace' => true)), $builder->getSoapOptions());
 
         $builder->withTrace(false);
-        $this->assertEquals($this->mergeOptions(array('trace' => false)), $builder->getOptions());
+        $this->assertEquals($this->mergeOptions(array('trace' => false)), $builder->getSoapOptions());
     }
 
     public function testWithExceptions()
@@ -46,10 +48,10 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getSoapBuilder();
 
         $builder->withExceptions();
-        $this->assertEquals($this->mergeOptions(array('exceptions' => true)), $builder->getOptions());
+        $this->assertEquals($this->mergeOptions(array('exceptions' => true)), $builder->getSoapOptions());
 
         $builder->withExceptions(false);
-        $this->assertEquals($this->mergeOptions(array('exceptions' => false)), $builder->getOptions());
+        $this->assertEquals($this->mergeOptions(array('exceptions' => false)), $builder->getSoapOptions());
     }
 
     public function testWithUserAgent()
@@ -57,7 +59,7 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getSoapBuilder();
 
         $builder->withUserAgent('BeSimpleSoap Test');
-        $this->assertEquals($this->mergeOptions(array('user_agent' => 'BeSimpleSoap Test')), $builder->getOptions());
+        $this->assertEquals($this->mergeOptions(array('user_agent' => 'BeSimpleSoap Test')), $builder->getSoapOptions());
     }
 
     public function testCreateWithDefaults()
@@ -66,7 +68,7 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('BeSimple\SoapClient\SoapClientBuilder', $builder);
 
-        $this->assertEquals($this->mergeOptions(array('soap_version' => SOAP_1_2, 'encoding' => 'UTF-8', 'features' => SOAP_SINGLE_ELEMENT_ARRAYS, 'user_agent' => 'BeSimpleSoap')), $builder->getOptions());
+        $this->assertEquals($this->mergeOptions(array('soap_version' => SOAP_1_2, 'encoding' => 'UTF-8', 'features' => SOAP_SINGLE_ELEMENT_ARRAYS, 'user_agent' => 'BeSimpleSoap')), $builder->getSoapOptions());
     }
 
     private function getSoapBuilder()
