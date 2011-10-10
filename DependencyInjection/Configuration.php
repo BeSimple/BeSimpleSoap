@@ -74,7 +74,6 @@ class Configuration
                     ->prototype('array')
                     ->children()
                         ->scalarNode('wsdl')->isRequired()->end()
-                        ->scalarNode('namespace')->end()
                         ->scalarNode('user_agent')->end()
                         ->scalarNode('cache_type')
                             ->validate()
