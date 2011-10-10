@@ -16,7 +16,7 @@ namespace BeSimple\SoapCommon;
  * @author Francis Besset <francis.besset@gmail.com>
  */
 class Cache
-{    
+{
     const DISABLED = 0;
     const ENABLED  = 1;
 
@@ -59,7 +59,7 @@ class Cache
     static public function setType($type)
     {
         if (!in_array($type, self::getTypes())) {
-            throw new \InvalidArgumentException();
+            throw new \InvalidArgumentException('The cache type has to be either Cache::TYPE_NONE, Cache::TYPE_DISK, Cache::TYPE_MEMORY or Cache::TYPE_DISK_MEMORY');
         }
 
         self::iniSet('soap.wsdl_cache', $type);

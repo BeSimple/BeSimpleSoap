@@ -97,6 +97,17 @@ abstract class AbstractSoapBuilder
         return $this;
     }
 
+    public function withWsdlCache($cache)
+    {
+        if (!in_array($cache, Cache::getTypes())) {
+            throw new \InvalidArgument();
+        }
+
+        $this->soapOptions['cache_wsdl'] = $cache;
+
+        return $this;
+    }
+
     /**
      * @return AbstractSoapBuilder
      */
