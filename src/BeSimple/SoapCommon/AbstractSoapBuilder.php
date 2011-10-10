@@ -22,7 +22,7 @@ use BeSimple\SoapCommon\Converter\TypeConverterInterface;
 abstract class AbstractSoapBuilder
 {
     protected $wsdl;
-    protected $soapOptions;
+    protected $soapOptions = array();
 
     /**
      * @return AbstractSoapBuilder
@@ -40,11 +40,9 @@ abstract class AbstractSoapBuilder
 
     public function __construct()
     {
-        $this->soapOptions = array(
-            'features' => 0,
-            'classmap' => new Classmap(),
-            'typemap'  => new TypeConverterCollection(),
-        );
+        $this->soapOptions['features'] = 0;
+        $this->soapOptions['classmap'] = new Classmap();
+        $this->soapOptions['typemap']  = new TypeConverterCollection();
     }
 
     public function getWsdl()
@@ -204,7 +202,7 @@ abstract class AbstractSoapBuilder
      */
     public function withClassMapping($xmlType, $phpType)
     {
-        $this->options['classmap']->add($xmlType, $phpType);
+        $this->soapOptions['classmap']->add($xmlType, $phpType);
 
         return $this;
     }
@@ -220,9 +218,9 @@ abstract class AbstractSoapBuilder
     public function withClassmap(Classmap $classmap, $merge = true)
     {
         if ($merge) {
-            $this->options['classmap']->addClassmap($classmap);
+            $this->soapOptions['classmap']->addClassmap($classmap);
         } else {
-            $this->options['classmap']->set($classmap->all());
+            $this->soapOptions['classmap']->set($classmap->all());
         }
 
         return $this;
