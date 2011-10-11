@@ -42,11 +42,11 @@ class ClassmapTest extends \PHPUnit_Framework_TestCase
     {
         $classmap = new Classmap();
 
-        $this->setExpectedException('InvalidArgumentException');
-        $classmap->get('foobar');
-
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
-        $this->assertSame(array('foobar' => 'BeSimple\SoapCommon\Classmap'), $classmap->get('foobar'));
+        $this->assertSame('BeSimple\SoapCommon\Classmap', $classmap->get('foobar'));
+
+        $this->setExpectedException('InvalidArgumentException');
+        $classmap->get('bar');
     }
 
     public function testSet()

@@ -99,8 +99,8 @@ abstract class AbstractSoapBuilder
 
     public function withWsdlCache($cache)
     {
-        if (!in_array($cache, Cache::getTypes())) {
-            throw new \InvalidArgument();
+        if (!in_array($cache, Cache::getTypes(), true)) {
+            throw new \InvalidArgumentException();
         }
 
         $this->soapOptions['cache_wsdl'] = $cache;

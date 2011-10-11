@@ -12,8 +12,12 @@
 
 namespace BeSimple\Tests\SoapCommon\Soap;
 
-use BeSimple\Tests\SoapCommon\Fixtures\SoapBuilder;
 use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Classmap;
+use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
+use BeSimple\SoapCommon\Converter\DateTypeConverter;
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
+use BeSimple\Tests\SoapCommon\Fixtures\SoapBuilder;
 
 class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,6 +71,9 @@ class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $builder = $this->getSoapBuilder();
 
+        $builder->withWsdlCache(Cache::TYPE_DISK_MEMORY);
+        $this->assertEquals($this->mergeOptions(array('cache_wsdl' => Cache::TYPE_DISK_MEMORY)), $builder->getSoapOptions());
+
         $builder->withWsdlCacheNone();
         $this->assertEquals($this->mergeOptions(array('cache_wsdl' => Cache::TYPE_NONE)), $builder->getSoapOptions());
 
@@ -78,6 +85,14 @@ class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $builder->withWsdlCacheDiskAndMemory();
         $this->assertEquals($this->mergeOptions(array('cache_wsdl' => Cache::TYPE_DISK_MEMORY)), $builder->getSoapOptions());
+    }
+
+    public function testWithWsdlCacheBadValue()
+    {
+        $builder = $this->getSoapBuilder();
+
+        $this->setExpectedException('InvalidArgumentException');
+        $builder->withWsdlCache('foo');
     }
 
     public function testWithSingleElementArrays()
@@ -129,6 +144,50 @@ class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
         $builder->withUseXsiArrayType();
         $features |= SOAP_USE_XSI_ARRAY_TYPE;
         $this->assertEquals($this->mergeOptions(array('features' => $features)), $builder->getSoapOptions());
+    }
+
+    public function testWithTypeConverters()
+    {
+        $builder = $this->getSoapBuilder();
+
+        $builder->withTypeConverter(new DateTypeConverter());
+        $options = $builder->getSoapOptions();
+
+        $this->assertEquals(1, count($options['typemap']));
+
+        $converters = new TypeConverterCollection();
+        $converters->add(new DateTimeTypeConverter());
+        $builder->withTypeConverters($converters);
+        $options = $builder->getSoapOptions();
+
+        $this->assertEquals(2, count($options['typemap']));
+
+        $builder->withTypeConverters($converters, false);
+        $options = $builder->getSoapOptions();
+
+        $this->assertEquals(1, count($options['typemap']));
+    }
+
+    public function testClassmap()
+    {
+        $builder = $this->getSoapBuilder();
+
+        $builder->withClassMapping('foo', __CLASS__);
+        $options = $builder->getSoapOptions();
+
+        $this->assertEquals(1, count($options['classmap']));
+
+        $classmap = new Classmap();
+        $classmap->add('bar', __CLASS__);
+        $builder->withClassmap($classmap);
+        $options = $builder->getSoapOptions();
+
+        $this->assertEquals(2, count($options['classmap']));
+
+        $builder->withClassmap($classmap, false);
+        $options = $builder->getSoapOptions();
+
+        $this->assertEquals(1, count($options['classmap']));
     }
 
     public function testCreateWithDefaults()

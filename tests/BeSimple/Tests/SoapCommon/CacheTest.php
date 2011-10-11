@@ -25,6 +25,12 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Cache::DISABLED, Cache::isEnabled());
     }
 
+    public function testSetEnabledBadValue()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        Cache::setEnabled('foo');
+    }
+
     public function testSetType()
     {
         Cache::setType(Cache::TYPE_DISK);
@@ -32,6 +38,12 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
 
         Cache::setType(Cache::TYPE_NONE);
         $this->assertEquals(Cache::TYPE_NONE, Cache::getType());
+    }
+
+    public function testSetTypeBadValue()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        Cache::setType('foo');
     }
 
     public function testSetDirectory()

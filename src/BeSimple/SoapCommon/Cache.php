@@ -44,7 +44,7 @@ class Cache
 
     static public function setEnabled($enabled)
     {
-        if (!in_array($enabled, array(self::ENABLED, self::DISABLED))) {
+        if (!in_array($enabled, array(self::ENABLED, self::DISABLED), true)) {
             throw new \InvalidArgumentException();
         }
 
@@ -58,7 +58,7 @@ class Cache
 
     static public function setType($type)
     {
-        if (!in_array($type, self::getTypes())) {
+        if (!in_array($type, self::getTypes(), true)) {
             throw new \InvalidArgumentException('The cache type has to be either Cache::TYPE_NONE, Cache::TYPE_DISK, Cache::TYPE_MEMORY or Cache::TYPE_DISK_MEMORY');
         }
 
