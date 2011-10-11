@@ -77,6 +77,16 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    public function withCompressionGzip()
+    {
+        $this->soapOptions['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
+    }
+
+    public function withCompressionDeflate()
+    {
+        $this->soapOptions['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_DEFLATE;
+    }
+
     /**
      * @return SoapClientBuilder
      */

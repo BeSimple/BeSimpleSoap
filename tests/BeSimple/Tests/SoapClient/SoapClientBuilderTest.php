@@ -62,6 +62,17 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->mergeOptions(array('user_agent' => 'BeSimpleSoap Test')), $builder->getSoapOptions());
     }
 
+    public function testWithCompression()
+    {
+        $builder = $this->getSoapBuilder();
+
+        $builder->withCompressionGzip();
+        $this->assertEquals($this->mergeOptions(array('compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP)), $builder->getSoapOptions());
+
+        $builder->withCompressionDeflate();
+        $this->assertEquals($this->mergeOptions(array('compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_DEFLATE)), $builder->getSoapOptions());
+    }
+
     public function testWithAuthentication()
     {
         $builder = $this->getSoapBuilder();
