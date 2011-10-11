@@ -108,6 +108,19 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    public function withProxy($host, $port, $username = null, $password = null)
+    {
+        $this->soapOptions['proxy_host'] = $host;
+        $this->soapOptions['proxy_port'] = $port;
+
+        if ($username) {
+            $this->soapOptions['proxy_login']    = $username;
+            $this->soapOptions['proxy_password'] = $password;
+        }
+
+        return $this;
+    }
+
     protected function validateOptions()
     {
         $this->validateWsdl();
