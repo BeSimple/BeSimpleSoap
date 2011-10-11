@@ -39,7 +39,12 @@ class SoapClientBuilder extends AbstractSoapBuilder
     {
         $this->validateOptions();
 
-        return new SoapClient($this->wsdl, $this->getSoapOptions() + $this->soapOptionAuthentication);
+        return new SoapClient($this->wsdl, $this->getSoapOptions());
+    }
+
+    public function getSoapOptions()
+    {
+        return parent::getSoapOptions() + $this->soapOptionAuthentication;
     }
 
     /**
@@ -80,7 +85,7 @@ class SoapClientBuilder extends AbstractSoapBuilder
         $this->soapOptionAuthentication = array(
             'authentication' => SOAP_AUTHENTICATION_BASIC,
             'login'          => $username,
-            'password'       => $password
+            'password'       => $password,
         );
 
         return $this;
@@ -89,13 +94,16 @@ class SoapClientBuilder extends AbstractSoapBuilder
     /**
      * @return SoapClientBuilder
      */
-    public function withDigestAuthentication($certificate, $password)
+    public function withDigestAuthentication($certificate, $passphrase = null)
     {
         $this->soapOptionAuthentication = array(
             'authentication' => SOAP_AUTHENTICATION_DIGEST,
             'local_cert'     => $certificate,
-            'passphrase'     => $password
         );
+
+        if ($passphrase) {
+            $this->soapOptionAuthentication['passphrase'] = $passphrase;
+        }
 
         return $this;
     }

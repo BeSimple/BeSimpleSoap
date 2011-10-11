@@ -62,6 +62,20 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->mergeOptions(array('user_agent' => 'BeSimpleSoap Test')), $builder->getSoapOptions());
     }
 
+    public function testWithAuthentication()
+    {
+        $builder = $this->getSoapBuilder();
+
+        $builder->withDigestAuthentication(__DIR__.'/Fixtures/cert.pem', 'foobar');
+        $this->assertEquals($this->mergeOptions(array('authentication' => SOAP_AUTHENTICATION_DIGEST, 'local_cert' => __DIR__.'/Fixtures/cert.pem', 'passphrase' => 'foobar')), $builder->getSoapOptions());
+
+        $builder->withDigestAuthentication(__DIR__.'/Fixtures/cert.pem');
+        $this->assertEquals($this->mergeOptions(array('authentication' => SOAP_AUTHENTICATION_DIGEST, 'local_cert' => __DIR__.'/Fixtures/cert.pem')), $builder->getSoapOptions());
+
+        $builder->withBasicAuthentication('foo', 'bar');
+        $this->assertEquals($this->mergeOptions(array('authentication' => SOAP_AUTHENTICATION_BASIC, 'login' => 'foo', 'password' => 'bar')), $builder->getSoapOptions());
+    }
+
     public function testCreateWithDefaults()
     {
         $builder = SoapClientBuilder::createWithDefaults();
