@@ -14,10 +14,10 @@ use BeSimple\SoapBundle\Converter\TypeRepository;
 use BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface;
 use BeSimple\SoapBundle\ServiceBinding\ServiceBinder;
 use BeSimple\SoapBundle\ServiceDefinition\Dumper\DumperInterface;
-use BeSimple\SoapBundle\Soap\SoapServerFactory;
 
 use BeSimple\SoapCommon\Classmap;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
+use BeSimple\SoapServer\SoapServerBuilder;
 
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -38,7 +38,7 @@ class WebServiceContext
 
     private $serviceDefinition;
     private $serviceBinder;
-    private $serverFactory;
+    private $serverBuilder;
 
     public function __construct(LoaderInterface $loader, DumperInterface $dumper, Classmap $classmap, TypeRepository $typeRepository, TypeConverterCollection $converters, array $options) {
         $this->loader         = $loader;
@@ -100,20 +100,22 @@ class WebServiceContext
         return $this->serviceBinder;
     }
 
-    public function getServerFactory()
+    public function getServerBuilder()
     {
-        if (null === $this->serverFactory) {
-            $this->serverFactory = new SoapServerFactory(
-                $this->getWsdlFile(),
-                $this->classmap,
-                $this->converters,
-                array(
-                    'debug'      => $this->options['debug'],
-                    'cache_type' => isset($this->options['cache_type']) ? $this->options['cache_type'] : null,
-                )
-            );
+        if (null === $this->serverBuilder) {
+            $this->serverBuilder = SoapServerBuilder::createWithDefaults()
+                ->withWsdl($this->getWsdlFile())
+                ->withClassmap($this->classmap)
+                ->withTypeConverters($this->converters)
+            ;
+
+            if (!$this->options['debug']) {
+                $this->serverBuilder->withWsdlCacheNone();
+            } elseif (null !== $this->options['cache_type']) {
+                $this->serverBuilder->withWsdlCache($this->options['cache_type']);
+            }
         }
 
-        return $this->serverFactory;
+        return $this->serverBuilder;
     }
 }
