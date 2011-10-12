@@ -11,6 +11,7 @@
 namespace BeSimple\SoapBundle\Soap;
 
 use BeSimple\SoapCommon\Cache;
+use BeSimple\SoapCommon\Classmap;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 use Zend\Soap\Wsdl;
@@ -25,11 +26,12 @@ class SoapServerFactory
     private $converters;
     private $options;
 
-    public function __construct($wsdlFile, array $classmap, TypeConverterCollection $converters, array $options = array())
+    public function __construct($wsdlFile, Classmap $classmap, TypeConverterCollection $converters, array $options = array())
     {
         $this->wsdlFile   = $wsdlFile;
-        $this->classmap   = $this->fixSoapServerClassmap($classmap);
+        $this->classmap   = $classmap;
         $this->converters = $converters;
+
         $this->setOptions($options);
     }
 
@@ -66,22 +68,11 @@ class SoapServerFactory
         return new \SoapServer(
             $this->wsdlFile,
             array(
-                'classmap'   => $this->classmap,
+                'classmap'   => $this->classmap->all(),
                 'typemap'    => $this->converters->getTypemap(),
                 'features'   => SOAP_SINGLE_ELEMENT_ARRAYS,
                 'cache_wsdl' => null !== $this->options['cache_type'] ? $this->options['cache_type'] : Cache::getType(),
             )
         );
-    }
-
-    private function fixSoapServerClassmap($classmap)
-    {
-        $classmapFixed = array();
-
-        foreach ($classmap as $class => $definition) {
-            $classmapFixed[Wsdl::translateType($class)] = $class;
-        }
-
-        return $classmapFixed;
     }
 }

@@ -51,7 +51,7 @@ class BeSimpleSoapExtension extends Extension
 
         $this->registerCacheConfiguration($config['cache'], $container, $loader);
 
-        if (isset($config['clients'])) {
+        if (!empty($config['clients'])) {
             $this->registerClientConfiguration($config['clients'], $container, $loader);
         }
 
@@ -146,9 +146,9 @@ class BeSimpleSoapExtension extends Extension
 
         $options = $container
             ->getDefinition('besimple.soap.context.'.$bindingSuffix)
-            ->getArgument(4);
+            ->getArgument(5);
 
-        $definition->replaceArgument(4, array_merge($options, $config));
+        $definition->replaceArgument(5, array_merge($options, $config));
     }
 
     private function getCacheType($type)

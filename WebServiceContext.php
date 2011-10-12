@@ -16,6 +16,7 @@ use BeSimple\SoapBundle\ServiceBinding\ServiceBinder;
 use BeSimple\SoapBundle\ServiceDefinition\Dumper\DumperInterface;
 use BeSimple\SoapBundle\Soap\SoapServerFactory;
 
+use BeSimple\SoapCommon\Classmap;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 use Symfony\Component\Config\ConfigCache;
@@ -39,9 +40,11 @@ class WebServiceContext
     private $serviceBinder;
     private $serverFactory;
 
-    public function __construct(LoaderInterface $loader, DumperInterface $dumper, TypeRepository $typeRepository, TypeConverterCollection $converters, array $options) {
+    public function __construct(LoaderInterface $loader, DumperInterface $dumper, Classmap $classmap, TypeRepository $typeRepository, TypeConverterCollection $converters, array $options) {
         $this->loader         = $loader;
         $this->wsdlFileDumper = $dumper;
+
+        $this->classmap       = $classmap;
 
         $this->typeRepository = $typeRepository;
         $this->converters     = $converters;
@@ -102,7 +105,7 @@ class WebServiceContext
         if (null === $this->serverFactory) {
             $this->serverFactory = new SoapServerFactory(
                 $this->getWsdlFile(),
-                $this->serviceDefinition->getDefinitionComplexTypes(),
+                $this->classmap,
                 $this->converters,
                 array(
                     'debug'      => $this->options['debug'],
