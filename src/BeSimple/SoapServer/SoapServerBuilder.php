@@ -44,8 +44,6 @@ class SoapServerBuilder extends AbstractSoapBuilder
     {
         parent::__construct();
 
-        $this->persistence = SOAP_PERSISTENCE_REQUEST;
-
         // TODO: this is not the default, but safer
         $this->withErrorReporting(false);
     }
@@ -57,7 +55,10 @@ class SoapServerBuilder extends AbstractSoapBuilder
         use_soap_error_handler($this->errorReporting);
 
         $server = new SoapServer($this->wsdl, $this->getSoapOptions());
-        $server->setPersistence($this->persistence);
+
+        if (null !== $this->persistence) {
+            $server->setPersistence($this->persistence);
+        }
 
         if (null !== $this->handlerClass) {
             $server->setClass($this->handlerClass);
@@ -75,10 +76,17 @@ class SoapServerBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    public function withPersistanceRequest()
+    {
+        $this->persistence = SOAP_PERSISTENCE_REQUEST;
+
+        return $this;
+    }
+
     /**
      * Enables the HTTP session. The handler object is persisted between multiple requests in a session.
      */
-    public function withHttpSession()
+    public function withPersistenceSession()
     {
         $this->persistence = SOAP_PERSISTENCE_SESSION;
 
