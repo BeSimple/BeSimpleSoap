@@ -98,21 +98,21 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $method = $class->getMethod('isRemoteFile');
         $method->setAccessible(true);
 
-        $this->assertEquals(true, $method->invoke($wd, 'http://www.php.net/'));
-        $this->assertEquals(true, $method->invoke($wd, 'http://localhost/'));
-        $this->assertEquals(true, $method->invoke($wd, 'http://mylocaldomain/'));
-        $this->assertEquals(true, $method->invoke($wd, 'http://www.php.net/dir/test.html'));
-        $this->assertEquals(true, $method->invoke($wd, 'http://localhost/dir/test.html'));
-        $this->assertEquals(true, $method->invoke($wd, 'http://mylocaldomain/dir/test.html'));
-        $this->assertEquals(true, $method->invoke($wd, 'https://www.php.net/'));
-        $this->assertEquals(true, $method->invoke($wd, 'https://localhost/'));
-        $this->assertEquals(true, $method->invoke($wd, 'https://mylocaldomain/'));
-        $this->assertEquals(true, $method->invoke($wd, 'https://www.php.net/dir/test.html'));
-        $this->assertEquals(true, $method->invoke($wd, 'https://localhost/dir/test.html'));
-        $this->assertEquals(true, $method->invoke($wd, 'https://mylocaldomain/dir/test.html'));
-        $this->assertEquals(false, $method->invoke($wd, 'c:/dir/test.html'));
-        $this->assertEquals(false, $method->invoke($wd, '/dir/test.html'));
-        $this->assertEquals(false, $method->invoke($wd, '../dir/test.html'));
+        $this->assertTrue($method->invoke($wd, 'http://www.php.net/'));
+        $this->assertTrue($method->invoke($wd, 'http://localhost/'));
+        $this->assertTrue($method->invoke($wd, 'http://mylocaldomain/'));
+        $this->assertTrue($method->invoke($wd, 'http://www.php.net/dir/test.html'));
+        $this->assertTrue($method->invoke($wd, 'http://localhost/dir/test.html'));
+        $this->assertTrue($method->invoke($wd, 'http://mylocaldomain/dir/test.html'));
+        $this->assertTrue($method->invoke($wd, 'https://www.php.net/'));
+        $this->assertTrue($method->invoke($wd, 'https://localhost/'));
+        $this->assertTrue($method->invoke($wd, 'https://mylocaldomain/'));
+        $this->assertTrue($method->invoke($wd, 'https://www.php.net/dir/test.html'));
+        $this->assertTrue($method->invoke($wd, 'https://localhost/dir/test.html'));
+        $this->assertTrue($method->invoke($wd, 'https://mylocaldomain/dir/test.html'));
+        $this->assertFalse($method->invoke($wd, 'c:/dir/test.html'));
+        $this->assertFalse($method->invoke($wd, '/dir/test.html'));
+        $this->assertFalse($method->invoke($wd, '../dir/test.html'));
     }
 
     public function testResolveXsdIncludes()
@@ -181,6 +181,9 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $class = new \ReflectionClass($wd);
         $method = $class->getMethod('resolveRelativePathInUrl');
         $method->setAccessible(true);
+
+        $this->assertEquals('http://localhost:8080/test', $method->invoke($wd, 'http://localhost:8080/sub', '/test'));
+        $this->assertEquals('http://localhost:8080/test', $method->invoke($wd, 'http://localhost:8080/sub/', '/test'));
 
         $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub', '/test'));
         $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/', '/test'));

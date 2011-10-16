@@ -218,6 +218,10 @@ class WsdlDownloader
                 unset($parts[$key]);
             }
         }
-        return $urlParts['scheme'] . '://' . $urlParts['host'] . implode('/', $parts);
+        $hostname = $urlParts['scheme'] . '://' . $urlParts['host'];
+        if (isset($urlParts['port'])) {
+            $hostname .= ':' . $urlParts['port'];
+        }
+        return $hostname . implode('/', $parts);
     }
 }
