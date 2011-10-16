@@ -137,45 +137,11 @@ class Helper
     const PFX_XOP = 'xop';
 
     /**
-     * Constant for a request.
-     */
-    const REQUEST = 0;
-
-    /**
-     * Constant for a response.
-     */
-    const RESPONSE = 1;
-
-    /**
      * Wheather to format the XML output or not.
      *
      * @var boolean
      */
     public static $formatXmlOutput = false;
-
-    /**
-     * Contains previously defined error handler string.
-     *
-     * @var string
-     */
-    private static $previousErrorHandler = null;
-
-    /**
-     * User-defined error handler function to convert errors to exceptions.
-     *
-     * @param string $errno
-     * @param string $errstr
-     * @param string $errfile
-     * @param string $errline
-     * @throws ErrorException
-     */
-    public static function exceptionErrorHandler($errno, $errstr, $errfile, $errline)
-    {
-        // don't throw exception for errors suppresed with @
-        if (error_reporting() != 0) {
-            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-        }
-    }
 
     /**
      * Generate a pseudo-random version 4 UUID.
@@ -201,28 +167,6 @@ class Helper
             // 48 bits for "node"
             mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
        );
-    }
-
-    /**
-     * Builds the current URL from the $_SERVER array.
-     *
-     * @return string
-     */
-    public static function getCurrentUrl()
-    {
-        $url = '';
-        if (isset($_SERVER['HTTPS']) &&
-             (strtolower($_SERVER['HTTPS']) === 'on' || $_SERVER['HTTPS'] === '1')) {
-            $url .= 'https://';
-        } else {
-            $url .= 'http://';
-        }
-        $url .= isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '';
-        if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80) {
-            $url .= ":{$_SERVER['SERVER_PORT']}";
-        }
-        $url .= isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-        return $url;
     }
 
     /**
@@ -252,118 +196,6 @@ class Helper
             return SOAP_1_2;
         } else {
             return SOAP_1_1;
-        }
-    }
-
-    /**
-     * Runs the registered Plugins on the given request $xml.
-     *
-     * @param array(\ass\Soap\Plugin) $plugins
-     * @param int $requestType \ass\Soap\Helper::REQUEST|\ass\Soap\Helper::RESPONSE
-     * @param string $xml
-     * @param string $location
-     * @param string $action
-     * @param \ass\Soap\WsdlHandler $wsdlHandler
-     * @return string
-     */
-    public static function runPlugins(array $plugins, $requestType, $xml, $location = null, $action = null, \ass\Soap\WsdlHandler $wsdlHandler = null)
-    {
-        if (count($plugins) > 0) {
-            // instantiate new dom object
-            $dom = new \DOMDocument('1.0');
-            // format the XML if option is set
-            $dom->formatOutput = self::$formatXmlOutput;
-            $dom->loadXML($xml);
-            $params = array(
-                $dom,
-                $location,
-                $action,
-                $wsdlHandler
-            );
-            if ($requestType == self::REQUEST) {
-                $callMethod = 'modifyRequest';
-            } else {
-                $callMethod = 'modifyResponse';
-            }
-            // modify dom
-            foreach($plugins AS $plugin) {
-                if ($plugin instanceof \ass\Soap\Plugin) {
-                    call_user_func_array(array($plugin, $callMethod), $params);
-                }
-            }
-            // return the modified xml document
-            return $dom->saveXML();
-        // format the XML if option is set
-        } elseif (self::$formatXmlOutput === true) {
-            $dom = new \DOMDocument('1.0');
-            $dom->formatOutput = true;
-            $dom->loadXML($xml);
-            return $dom->saveXML();
-        }
-        return $xml;
-    }
-
-    /**
-     * Set custom error handler that converts all php errors to ErrorExceptions
-     *
-     * @param boolean $reset
-     */
-    public static function setCustomErrorHandler($reset = false)
-    {
-        if ($reset === true && !is_null(self::$previousErrorHandler)) {
-            set_error_handler(self::$previousErrorHandler);
-            self::$previousErrorHandler = null;
-        } else {
-            self::$previousErrorHandler = set_error_handler('ass\\Soap\\Helper::exceptionErrorHandler');
-        }
-        return self::$previousErrorHandler;
-    }
-
-    /**
-     * Build data string to used to bridge ext/soap
-     * 'SOAP_MIME_ATTACHMENT:cid=...&type=...'
-     *
-     * @param string $contentId
-     * @param string $contentType
-     * @return string
-     */
-    public static function makeSoapAttachmentDataString($contentId, $contentType)
-    {
-        $parameter = array(
-            'cid' => $contentId,
-            'type' => $contentType,
-        );
-        return 'SOAP-MIME-ATTACHMENT:' . http_build_query($parameter, null, '&');
-    }
-
-    /**
-     * Parse data string used to bridge ext/soap
-     * 'SOAP_MIME_ATTACHMENT:cid=...&type=...'
-     *
-     * @param string $dataString
-     * @return array(string=>string)
-     */
-    public static function parseSoapAttachmentDataString($dataString)
-    {
-        $dataString = substr($dataString, 21);
-        // get all data
-        $data = array();
-        parse_str($dataString, $data);
-        return $data;
-    }
-
-    /**
-     * Function to set proper http status header.
-     * Neccessary as there is a difference between mod_php and the cgi SAPIs.
-     *
-     * @param string $header
-     */
-    public static function setHttpStatusHeader($header)
-    {
-        if ('cgi' == substr(php_sapi_name(), 0, 3)) {
-            header('Status: ' . $header);
-        } else {
-            header($_SERVER['SERVER_PROTOCOL'] . ' ' . $header);
         }
     }
 }
