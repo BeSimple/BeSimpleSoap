@@ -53,7 +53,7 @@ class Curl
      * @param array $options
      * @param int $followLocationMaxRedirects
      */
-    public function __construct(array $options, $followLocationMaxRedirects = 10)
+    public function __construct(array $options = array(), $followLocationMaxRedirects = 10)
     {
         // set the default HTTP user agent
         if (!isset($options['user_agent'])) {
