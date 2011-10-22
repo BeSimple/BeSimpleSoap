@@ -10,7 +10,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapCommon;
+namespace BeSimple\SoapCommon\Mime;
+
+use BeSimple\SoapCommon\Helper;
 
 /**
  * Mime multi part container.
@@ -174,7 +176,6 @@ class MultiPart extends PartHeader
      */
     protected function generateBoundary()
     {
-        // TODO
-        return 'urn:uuid:' . \ass\Soap\Helper::generateUUID();
+        return 'urn:uuid:' . Helper::generateUUID();
     }
 }

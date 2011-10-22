@@ -10,7 +10,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapCommon;
+namespace BeSimple\SoapCommon\Mime;
+
+use BeSimple\SoapCommon\Helper;
 
 /**
  * Mime part. Everything must be UTF-8. Default charset for text is UTF-8.
@@ -159,7 +161,6 @@ class Part extends PartHeader
      */
     protected function generateContentId()
     {
-        // TODO
-        return 'urn:uuid:' . \ass\Soap\Helper::generateUUID();
+        return 'urn:uuid:' . Helper::generateUUID();
     }
 }
