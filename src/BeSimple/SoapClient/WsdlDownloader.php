@@ -18,7 +18,7 @@ namespace BeSimple\SoapClient;
  * ini settings. Does only file caching as SoapClient only supports a file
  * name parameter. The class also resolves remote XML schema includes.
  *
- * @author Andreas Schamberger
+ * @author Andreas Schamberger <mail@andreass.net>
  */
 class WsdlDownloader
 {

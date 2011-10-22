@@ -17,7 +17,7 @@ namespace BeSimple\SoapClient;
  * server implementations. It also provides namespace and configuration
  * constants.
  *
- * @author Andreas Schamberger
+ * @author Andreas Schamberger <mail@andreass.net>
  */
 class Helper
 {
@@ -135,13 +135,6 @@ class Helper
      * XML-binary Optimized Packaging namespace prefix.
      */
     const PFX_XOP = 'xop';
-
-    /**
-     * Wheather to format the XML output or not.
-     *
-     * @var boolean
-     */
-    public static $formatXmlOutput = false;
 
     /**
      * Generate a pseudo-random version 4 UUID.

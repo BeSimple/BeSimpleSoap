@@ -15,8 +15,8 @@ namespace BeSimple\SoapClient;
 use BeSimple\SoapClient\Curl;
 
 /**
-* @author Andreas Schamberger
-*/
+ * @author Andreas Schamberger <mail@andreass.net>
+ */
 class CurlTest extends \PHPUnit_Framework_TestCase
 {
     protected $webserverProcessId;

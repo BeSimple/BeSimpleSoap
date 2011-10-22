@@ -15,7 +15,7 @@ namespace BeSimple\SoapClient;
 /**
  * cURL wrapper class for doing HTTP requests that uses the soap class options.
  *
- * @author Andreas Schamberger
+ * @author Andreas Schamberger <mail@andreass.net>
  */
 class Curl
 {

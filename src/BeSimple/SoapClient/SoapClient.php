@@ -18,7 +18,7 @@ namespace BeSimple\SoapClient;
  * adds NTLM support. A custom WSDL downloader resolves remote xsd:includes and
  * allows caching of all remote referenced items.
  *
- * @author Andreas Schamberger
+ * @author Andreas Schamberger <mail@andreass.net>
  */
 class SoapClient extends \SoapClient
 {
@@ -75,8 +75,6 @@ class SoapClient extends \SoapClient
     {
         // we want the exceptions option to be set
         $options['exceptions'] = true;
-        // set custom error handler that converts all php errors to ErrorExceptions
-        Helper::setCustomErrorHandler();
         // we want to make sure we have the soap version to rely on it later
         if (!isset($options['soap_version'])) {
             $options['soap_version'] = SOAP_1_1;

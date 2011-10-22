@@ -15,8 +15,8 @@ namespace BeSimple\SoapClient;
 use BeSimple\SoapClient\WsdlDownloader;
 
 /**
-* @author Andreas Schamberger
-*/
+ * @author Andreas Schamberger <mail@andreass.net>
+ */
 class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $webserverProcessId;
