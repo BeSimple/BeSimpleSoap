@@ -49,8 +49,9 @@ class Parser
         $currentPart = $multipart;
         $lines = preg_split("/\r\n|\n/", $mimeMessage);
         foreach ($lines as $line) {
-            // ignore http status code
-            if (substr($line, 0, 5) == 'HTTP/') {
+            // ignore http status code and POST *
+            if ( substr( $line, 0, 5 ) == 'HTTP/' || substr( $line, 0, 4 ) == 'POST')
+            {
                 continue;
             }
             if (isset($currentHeader)) {
@@ -58,14 +59,16 @@ class Parser
                     $currentHeader .= $line;
                     continue;
                 }
-                list($headerName, $headerValue) = explode(':', $currentHeader, 2);
-                $headerValue = iconv_mime_decode($headerValue, 0, 'utf-8');
-                if (strpos($headerValue, ';') !== false) {
-                    self::parseContentTypeHeader($currentPart, $headerName, $headerValue);
-                    $boundary = $multipart->getHeader('Content-Type', 'boundary');
-                    $start = $multipart->getHeader('Content-Type', 'start');
-                } else {
-                    $currentPart->setHeader($headerName, trim($headerValue));
+                if (strpos($currentHeader,':') !== false) {
+                    list($headerName, $headerValue) = explode(':', $currentHeader, 2);
+                    $headerValue = iconv_mime_decode($headerValue, 0, 'utf-8');
+                    if (strpos($headerValue, ';') !== false) {
+                        self::parseContentTypeHeader($currentPart, $headerName, $headerValue);
+                        $boundary = $multipart->getHeader('Content-Type', 'boundary');
+                        $start = $multipart->getHeader('Content-Type', 'start');
+                    } else {
+                        $currentPart->setHeader($headerName, trim($headerValue));
+                    }
                 }
                 unset($currentHeader);
             }
@@ -123,7 +126,7 @@ class Parser
 
     /**
      * Parse a "Content-Type" header with multiple sub values.
-     * e.g. Content-Type: Multipart/Related; boundary=boundary; type=text/xml;
+     * e.g. Content-Type: multipart/related; boundary=boundary; type=text/xml;
      * start="<123@abc>"
      *
      * @see https://labs.omniti.com/alexandria/trunk/OmniTI/Mail/Parser.php
@@ -140,18 +143,17 @@ class Parser
         $part->setHeader($headerName, $value);
         $remainder = trim($remainder);
         while (strlen($remainder) > 0) {
-            if (!preg_match('/^([a-zA-Z0-9_-]+)=(.)/', $remainder, $matches)) {
+            if (!preg_match('/^([a-zA-Z0-9_-]+)=(.{1})/', $remainder, $matches)) {
                 break;
             }
             $name = $matches[1];
             $delimiter = $matches[2];
-            $pattern = '/(\S+)(\s|$)/';
             $remainder = substr($remainder, strlen($name)+1);
-            if (!preg_match($pattern, $remainder, $matches)) {
+            if (!preg_match('/([^;]+)(;)?(\s|$)?/', $remainder, $matches)) {
                 break;
             }
             $value = rtrim($matches[1], ';');
-            if ($delimiter == '\'' || $delimiter == '"') {
+            if ($delimiter == "'" || $delimiter == '"') {
                 $value = trim($value, $delimiter);
             }
             $part->setHeader($headerName, $name, $value);
