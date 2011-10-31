@@ -92,23 +92,51 @@ abstract class PartHeader
         );
         $headers = '';
         foreach ($this->headers as $fieldName => $value) {
-            $fieldValue = '';
-            if (is_array($value)) {
-                if (isset($value['@'])) {
-                    $fieldValue .= $value['@'];
-                }
-                foreach ($value as $subName => $subValue) {
-                    if ($subName != '@') {
-                        $fieldValue .= '; ' . $subName . '=' . $subValue;
-                    }
-                }
-            } else {
-                $fieldValue .= $value;
-            }
+            $fieldValue = $this->generateHeaderFieldValue($value);
             // do not use proper encoding as Apache Axis does not understand this
             // $headers .= iconv_mime_encode($field_name, $field_value, $preferences) . "\r\n";
             $headers .= $fieldName . ': ' . $fieldValue . "\r\n";
         }
         return $headers;
+    }
+
+    /**
+     * Generates a header field value from the given value paramater.
+     *
+     * @param array(string=>string)|string $value
+     * @return string
+     */
+    protected function generateHeaderFieldValue($value)
+    {
+        $fieldValue = '';
+        if (is_array($value)) {
+            if (isset($value['@'])) {
+                $fieldValue .= $value['@'];
+            }
+            foreach ($value as $subName => $subValue) {
+                if ($subName != '@') {
+                    $fieldValue .= '; ' . $subName . '=' . $this->quoteValueString($subValue);
+                }
+            }
+        } else {
+            $fieldValue .= $value;
+        }
+        return $fieldValue;
+    }
+
+    /**
+     * Quote string with '"' if it contains one of the special characters:
+     * "(" / ")" / "<" / ">" / "@" / "," / ";" / ":" / "\" / <"> / "/" / "[" / "]" / "?" / "="
+     *
+     * @param string $string
+     * @return string
+     */
+    private function quoteValueString($string)
+    {
+        if (preg_match('~[()<>@,;:\\"/\[\]?=]~', $string)) {
+            return '"' . $string . '"';
+        } else {
+            return $string;
+        }
     }
 }

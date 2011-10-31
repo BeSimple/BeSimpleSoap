@@ -1,0 +1,16 @@
+
+--uuid:0ca0e16e-feb1-426c-97d8-c4508ada5e82+id=7
+Content-ID: <http://tempuri.org/0>
+Content-Transfer-Encoding: 8bit
+Content-Type: application/xop+xml;charset=utf-8;type="application/soap+xml"
+
+<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"><s:Header><a:Action s:mustUnderstand="1">http://xmlsoap.org/echoBinaryAsString</a:Action><a:MessageID>urn:uuid:1bf061d6-d532-4b0c-930b-8b8202c38b8a</a:MessageID><a:ReplyTo><a:Address>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:Address></a:ReplyTo><a:To s:mustUnderstand="1">http://131.107.72.15/Mtom/svc/service.svc/Soap12MtomUTF8</a:To></s:Header><s:Body><EchoBinaryAsString xmlns="http://xmlsoap.org/Ping"><array><xop:Include href="cid:http%3A%2F%2Ftempuri.org%2F1%2F632618206527087310" xmlns:xop="http://www.w3.org/2004/08/xop/include"/></array></EchoBinaryAsString></s:Body></s:Envelope>
+
+--uuid:0ca0e16e-feb1-426c-97d8-c4508ada5e82+id=7
+Content-ID: <http://tempuri.org/1/632618206527087310>
+Content-Transfer-Encoding: binary
+Content-Type: application/octet-stream
+
+H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d ! H e l l o   W o r l d !
+
+--uuid:0ca0e16e-feb1-426c-97d8-c4508ada5e82+id=7--

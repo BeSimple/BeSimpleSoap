@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Sat, 11 Sep 2010 12:52:57 GMT
+Server: Simple-Server/1.1
+Transfer-Encoding: chunked
+Content-Type: multipart/related; boundary=MIMEBoundaryurn_uuid_2DB7ABF3DC5BED7FA51284209577582; type="application/soap+xml"; start="<0.urn:uuid:2DB7ABF3DC5BED7FA51284209577583@apache.org>"; action="urn:getVersionResponse"
+
+--MIMEBoundaryurn_uuid_2DB7ABF3DC5BED7FA51284209577582
+Content-Type: application/soap+xml; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-ID: <0.urn:uuid:2DB7ABF3DC5BED7FA51284209577583@apache.org>
+
+<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope"><soapenv:Header xmlns:wsa="http://www.w3.org/2005/08/addressing"><wsa:Action>urn:getVersionResponse</wsa:Action><wsa:RelatesTo>uuid:665aab53-4cef-4435-8934-4c10ed24fd42</wsa:RelatesTo></soapenv:Header><soapenv:Body><ns:getVersionResponse xmlns:ns="http://axisversion.sample"><ns:return>Hi - the Axis2 version is 1.5.1</ns:return></ns:getVersionResponse></soapenv:Body></soapenv:Envelope>
+--MIMEBoundaryurn_uuid_2DB7ABF3DC5BED7FA51284209577582--

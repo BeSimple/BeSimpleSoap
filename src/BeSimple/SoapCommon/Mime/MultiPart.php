@@ -80,6 +80,7 @@ class MultiPart extends PartHeader
 
     /**
      * Get string array with MIME headers for usage in HTTP header (with CURL).
+     * Only 'Content-Type' and 'Content-Description' headers are returned.
      *
      * @return arrray(string)
      */
@@ -92,19 +93,7 @@ class MultiPart extends PartHeader
         $headers = array();
         foreach ($this->headers as $fieldName => $value) {
             if (in_array($fieldName, $allowed)) {
-                $fieldValue = '';
-                if (is_array($value)) {
-                    if (isset($value['@'])) {
-                        $fieldValue .= $value['@'];
-                    }
-                    foreach ($value as $subName => $subValue) {
-                        if ($subName != '@') {
-                            $fieldValue .= '; ' . $subName . '="' . $subValue . '"';
-                        }
-                    }
-                } else {
-                    $fieldValue .= $value;
-                }
+                $fieldValue = $this->generateHeaderFieldValue($value);
                 // for http only ISO-8859-1
                 $headers[] = $fieldName . ': '. iconv('utf-8', 'ISO-8859-1//TRANSLIT', $fieldValue);
             }
