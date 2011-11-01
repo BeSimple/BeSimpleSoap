@@ -103,7 +103,7 @@ abstract class PartHeader
     /**
      * Generates a header field value from the given value paramater.
      *
-     * @param array(string=>string)|string $value
+     * @param array(string=>string)|string $value Header value
      * @return string
      */
     protected function generateHeaderFieldValue($value)
@@ -128,7 +128,7 @@ abstract class PartHeader
      * Quote string with '"' if it contains one of the special characters:
      * "(" / ")" / "<" / ">" / "@" / "," / ";" / ":" / "\" / <"> / "/" / "[" / "]" / "?" / "="
      *
-     * @param string $string
+     * @param string $string String to quote
      * @return string
      */
     private function quoteValueString($string)

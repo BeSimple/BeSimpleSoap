@@ -50,8 +50,7 @@ class Parser
         $lines = preg_split("/\r\n|\n/", $mimeMessage);
         foreach ($lines as $line) {
             // ignore http status code and POST *
-            if ( substr( $line, 0, 5 ) == 'HTTP/' || substr( $line, 0, 4 ) == 'POST')
-            {
+            if (substr($line, 0, 5) == 'HTTP/' || substr($line, 0, 4) == 'POST') {
                 continue;
             }
             if (isset($currentHeader)) {
@@ -59,7 +58,7 @@ class Parser
                     $currentHeader .= $line;
                     continue;
                 }
-                if (strpos($currentHeader,':') !== false) {
+                if (strpos($currentHeader, ':') !== false) {
                     list($headerName, $headerValue) = explode(':', $currentHeader, 2);
                     $headerValue = iconv_mime_decode($headerValue, 0, 'utf-8');
                     if (strpos($headerValue, ';') !== false) {
@@ -129,7 +128,7 @@ class Parser
      * e.g. Content-Type: multipart/related; boundary=boundary; type=text/xml;
      * start="<123@abc>"
      *
-     * @see https://labs.omniti.com/alexandria/trunk/OmniTI/Mail/Parser.php
+     * Based on: https://labs.omniti.com/alexandria/trunk/OmniTI/Mail/Parser.php
      *
      * @param \BeSimple\SoapCommon\Mime\PartHeader $part        Header part
      * @param string                               $headerName  Header name

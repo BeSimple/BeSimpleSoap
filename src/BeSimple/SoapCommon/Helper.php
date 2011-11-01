@@ -159,7 +159,7 @@ class Helper
             mt_rand(0, 0x3fff) | 0x8000,
             // 48 bits for "node"
             mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-       );
+        );
     }
 
     /**
