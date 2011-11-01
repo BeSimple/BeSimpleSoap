@@ -99,12 +99,6 @@ class WsdlHandler
         } else {
             $this->wsdlSoapNamespace = self::NS_WSDL_SOAP_1_2;
         }
-        $this->domDocument = new \DOMDocument('1.0', 'utf-8');
-        $this->domDocument->load($this->wsdlFile);
-        $this->domXpath = new \DOMXPath($this->domDocument);
-        $this->domXpath->registerNamespace('wsdl', self::NS_WSDL);
-        $this->domXpath->registerNamespace('mime', self::NS_WSDL_MIME);
-        $this->domXpath->registerNamespace('soap', $this->wsdlSoapNamespace);
     }
 
     /**
@@ -179,6 +173,8 @@ class WsdlHandler
      */
     public function isValidMimeTypeType($soapAction, $operationType, $part, $currentMimeType)
     {
+        // create DOMDocument from WSDL file
+        $this->loadWsdlInDom();
         // load data from WSDL
         if (!isset($this->mimeTypes[$soapAction])) {
             $this->mimeTypes[$soapAction] = $this->getMimeTypesForSoapAction($soapAction);
@@ -202,5 +198,22 @@ class WsdlHandler
             }
         }
         return false;
+    }
+
+    /**
+     * Loads the WSDL file into a DOM
+     *
+     * @return void
+     */
+    private function loadWsdlInDom()
+    {
+        if (is_null($this->domDocument)) {
+            $this->domDocument = new \DOMDocument('1.0', 'utf-8');
+            $this->domDocument->load($this->wsdlFile);
+            $this->domXpath = new \DOMXPath($this->domDocument);
+            $this->domXpath->registerNamespace('wsdl', self::NS_WSDL);
+            $this->domXpath->registerNamespace('mime', self::NS_WSDL_MIME);
+            $this->domXpath->registerNamespace('soap', $this->wsdlSoapNamespace);
+        }
     }
 }
