@@ -23,6 +23,27 @@ namespace BeSimple\SoapClient;
 class SoapClient extends \SoapClient
 {
     /**
+     * Soap version.
+     *
+     * @var int
+     */
+    protected $soapVersion = SOAP_1_1;
+
+    /**
+     * Tracing enabled?
+     *
+     * @var boolean
+     */
+    protected $tracingEnabled = false;
+
+    /**
+     * cURL instance.
+     *
+     * @var \BeSimple\SoapClient\Curl
+     */
+    protected $curl = null;
+
+    /**
      * Last request headers.
      *
      * @var string
@@ -51,62 +72,32 @@ class SoapClient extends \SoapClient
     private $lastResponse = '';
 
     /**
-     * Copy of the parent class' options array
+     * Constructor.
      *
-     * @var array(string=>mixed)
+     * @param string               $wsdl    WSDL file
+     * @param array(string=>mixed) $options Options array
      */
-    protected $options = array();
-
-    /**
-     * Path to WSDL (cache) file.
-     *
-     * @var string
-     */
-    private $wsdlFile = null;
-
-    /**
-     * Extended constructor that saves the options as the parent class'
-     * property is private.
-     *
-     * @param string $wsdl
-     * @param array(string=>mixed) $options
-     */
-    public function __construct($wsdl, array $options = array(), TypeConverterCollection $converters = null)
+    public function __construct($wsdl, array $options = array())
     {
+        // tracing enabled: store last request/response header and body
+        if (isset($options['trace']) && $options['trace'] === true) {
+            $this->tracingEnabled = true;
+        }
+        // store SOAP version
+        if (isset($options['soap_version'])) {
+            $this->soapVersion = $options['soap_version'];
+        }
+        $this->curl = new Curl($options);
+        $wsdlFile = $this->loadWsdl($wsdl, $options);
         // we want the exceptions option to be set
         $options['exceptions'] = true;
-        // we want to make sure we have the soap version to rely on it later
-        if (!isset($options['soap_version'])) {
-            $options['soap_version'] = SOAP_1_1;
-        }
-        // we want to make sure we have the features option
-        if (!isset($options['features'])) {
-            $options['features'] = 0;
-        }
-        // set default option to resolve xsd includes
-        if (!isset($options['resolve_xsd_includes'])) {
-            $options['resolve_xsd_includes'] = true;
-        }
-        // add type converters from TypeConverterCollection
-        if (!is_null($converters)) {
-            $convertersTypemap = $converters->getTypemap();
-            if (isset($options['typemap'])) {
-                $options['typemap'] = array_merge($options['typemap'], $convertersTypemap);
-            } else {
-                $options['typemap'] = $convertersTypemap;
-            }
-        }
-        // store local copy as ext/soap's property is private
-        $this->options = $options;
         // disable obsolete trace option for native SoapClient as we need to do our own tracing anyways
         $options['trace'] = false;
         // disable WSDL caching as we handle WSDL caching for remote URLs ourself
         $options['cache_wsdl'] = WSDL_CACHE_NONE;
-        // load WSDL and run parent constructor
-        // can't be loaded later as we need it already in the parent constructor
-        $this->wsdlFile = $this->loadWsdl($wsdl);
-        parent::__construct($this->wsdlFile, $options);
+        parent::__construct($wsdlFile, $options);
     }
+
 
     /**
      * Perform HTTP request with cURL.
@@ -120,7 +111,7 @@ class SoapClient extends \SoapClient
     {
         // $request is if unmodified from SoapClient not a php string type!
         $request = (string)$request;
-        if ($this->options['soap_version'] == SOAP_1_2) {
+        if ($this->soapVersion == SOAP_1_2) {
             $headers = array(
                 'Content-Type: application/soap+xml; charset=utf-8',
            );
@@ -131,39 +122,35 @@ class SoapClient extends \SoapClient
         }
         // add SOAPAction header
         $headers[] = 'SOAPAction: "' . $action . '"';
-        // new curl object for request
-        $curl = new Curl($this->options);
         // execute request
-        $responseSuccessfull = $curl->exec($location, $request, $headers);
+        $responseSuccessfull = $this->curl->exec($location, $request, $headers);
         // tracing enabled: store last request header and body
-        if (isset($this->options['trace']) && $this->options['trace'] === true) {
+        if ($this->tracingEnabled === true) {
             $this->lastRequestHeaders = $curl->getRequestHeaders();
             $this->lastRequest = $request;
         }
         // in case of an error while making the http request throw a soapFault
         if ($responseSuccessfull === false) {
             // get error message from curl
-            $faultstring = $curl->getErrorMessage();
-            // destruct curl object
-            unset($curl);
+            $faultstring = $this->curl->getErrorMessage();
             throw new \SoapFault('HTTP', $faultstring);
         }
         // tracing enabled: store last response header and body
-        if (isset($this->options['trace']) && $this->options['trace'] === true) {
-            $this->lastResponseHeaders = $curl->getResponseHeaders();
-            $this->lastResponse = $curl->getResponseBody();
+        if ($this->tracingEnabled === true) {
+            $this->lastResponseHeaders = $this->curl->getResponseHeaders();
+            $this->lastResponse = $this->curl->getResponseBody();
         }
-        $response = $curl->getResponseBody();
+        $response = $this->curl->getResponseBody();
         // check if we do have a proper soap status code (if not soapfault)
 //        // TODO
-//        $responseStatusCode = $curl->getResponseStatusCode();
+//        $responseStatusCode = $this->curl->getResponseStatusCode();
 //        if ($responseStatusCode >= 400) {
 //            $isError = 0;
 //            $response = trim($response);
 //            if (strlen($response) == 0) {
 //                $isError = 1;
 //            } else {
-//                $contentType = $curl->getResponseContentType();
+//                $contentType = $this->curl->getResponseContentType();
 //                if ($contentType != 'application/soap+xml'
 //                    && $contentType != 'application/soap+xml') {
 //                    if (strncmp($response , "<?xml", 5)) {
@@ -172,7 +159,7 @@ class SoapClient extends \SoapClient
 //                }
 //            }
 //            if ($isError == 1) {
-//                throw new \SoapFault('HTTP', $curl->getResponseStatusMessage());
+//                throw new \SoapFault('HTTP', $this->curl->getResponseStatusMessage());
 //            }
 //        } elseif ($responseStatusCode != 200 && $responseStatusCode != 202) {
 //            $dom = new \DOMDocument('1.0');
@@ -181,8 +168,6 @@ class SoapClient extends \SoapClient
 //                throw new \SoapFault('HTTP', 'HTTP response status must be 200 or 202');
 //            }
 //        }
-        // destruct curl object
-        unset($curl);
         return $response;
     }
 
@@ -250,12 +235,25 @@ class SoapClient extends \SoapClient
      * ini settings. Does only file caching as SoapClient only supports a file
      * name parameter.
      *
-     * @param string $wsdl
+     * @param string               $wsdl    WSDL file
+     * @param array(string=>mixed) $options Options array
      * @return string
      */
-    private function loadWsdl($wsdl)
+    private function loadWsdl($wsdl, array $options)
     {
-        $wsdlDownloader = new WsdlDownloader($this->options);
+        // option to resolve xsd includes
+        $resolveXsdIncludes = true;
+        if (isset($options['resolve_xsd_includes']))
+        {
+            $resolveXsdIncludes = $options['resolve_xsd_includes'];
+        }
+        // option to enable cache
+        $wsdlCache = WSDL_CACHE_DISK;
+        if (isset($options['cache_wsdl']))
+        {
+            $wsdlCache = $options['cache_wsdl'];
+        }
+        $wsdlDownloader = new WsdlDownloader($this->curl, $resolveXsdIncludes, $wsdlCache);
         try {
             $cacheFileName = $wsdlDownloader->download($wsdl);
         } catch (\RuntimeException $e) {

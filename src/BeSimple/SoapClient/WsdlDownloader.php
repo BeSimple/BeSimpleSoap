@@ -12,11 +12,14 @@
 
 namespace BeSimple\SoapClient;
 
+// TODO
+//use BeSimple\SoapCommon\Helper;
+
 /**
- * Downloads WSDL files with cURL. Uses all SoapClient options for
- * authentication. Uses the WSDL_CACHE_* constants and the 'soap.wsdl_*'
- * ini settings. Does only file caching as SoapClient only supports a file
- * name parameter. The class also resolves remote XML schema includes.
+ * Downloads WSDL files with cURL. Uses the WSDL_CACHE_* constants and the
+ * 'soap.wsdl_*' ini settings. Does only file caching as SoapClient only
+ * supports a file name parameter. The class also resolves remote XML schema
+ * includes.
  *
  * @author Andreas Schamberger <mail@andreass.net>
  */
@@ -44,24 +47,34 @@ class WsdlDownloader
     private $cacheTtl;
 
     /**
-     * Options array
+     * cURL instance for downloads.
      *
-     * @var array(string=>mixed)
+     * @var unknown_type
      */
-    private $options = array();
+    private $curl;
+
+    /**
+     * Resolve XSD includes.
+     *
+     * @var boolean
+     */
+    protected $resolveXsdIncludes = true;
 
     /**
      * Constructor.
      *
-     * @param array $options
+     * @param \BeSimple\SoapClient\Curl $curl               Curl instance
+     * @param boolean                   $resolveXsdIncludes XSD include enabled?
+     * @param boolean                   $cacheWsdl          Cache constant
      */
-    public function __construct(array $options = array())
+    public function __construct(Curl $curl, $resolveXsdIncludes = true, $cacheWsdl = WSDL_CACHE_DISK)
     {
+        $this->curl = $curl;
+        $this->resolveXsdIncludes = $resolveXsdIncludes;
         // get current WSDL caching config
         $this->cacheEnabled = (bool)ini_get('soap.wsdl_cache_enabled');
         if ($this->cacheEnabled === true
-            && isset($options['cache_wsdl'])
-            && $options['cache_wsdl'] === WSDL_CACHE_NONE) {
+            && $cacheWsdl === WSDL_CACHE_NONE) {
             $this->cacheEnabled = false;
         }
         $this->cacheDir = ini_get('soap.wsdl_cache_dir');
@@ -70,10 +83,6 @@ class WsdlDownloader
         }
         $this->cacheDir = rtrim($this->cacheDir, '/\\');
         $this->cacheTtl = ini_get('soap.wsdl_cache_ttl');
-        $this->options = $options;
-        if (!isset($this->options['resolve_xsd_includes'])) {
-            $this->options['resolve_xsd_includes'] = true;
-        }
     }
 
     /**
@@ -87,20 +96,18 @@ class WsdlDownloader
         // download and cache remote WSDL files or local ones where we want to
         // resolve remote XSD includes
         $isRemoteFile = $this->isRemoteFile($wsdl);
-        if ($isRemoteFile === true || $this->options['resolve_xsd_includes'] === true) {
+        if ($isRemoteFile === true || $this->resolveXsdIncludes === true) {
             $cacheFile = $this->cacheDir . DIRECTORY_SEPARATOR . 'wsdl_' . md5($wsdl) . '.cache';
             if ($this->cacheEnabled === false
                 || !file_exists($cacheFile)
                 || (filemtime($cacheFile) + $this->cacheTtl) < time()) {
                 if ($isRemoteFile === true) {
-                    // new curl object for request
-                    $curl = new Curl($this->options);
                     // execute request
-                    $responseSuccessfull = $curl->exec($wsdl);
+                    $responseSuccessfull = $this->curl->exec($wsdl);
                     // get content
                     if ($responseSuccessfull === true) {
-                        $response = $curl->getResponseBody();
-                        if ($this->options['resolve_xsd_includes'] === true) {
+                        $response = $this->curl->getResponseBody();
+                        if ($this->resolveXsdIncludes === true) {
                             $this->resolveXsdIncludes($response, $cacheFile, $wsdl);
                         } else {
                             file_put_contents($cacheFile, $response);

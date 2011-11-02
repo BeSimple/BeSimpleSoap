@@ -13,6 +13,7 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapClient\WsdlDownloader;
+use BeSimple\SoapClient\Curl;
 
 /**
  * @author Andreas Schamberger <mail@andreass.net>
@@ -50,10 +51,8 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->startPhpWebserver();
 
-        $options = array(
-            'resolve_xsd_includes' => true,
-        );
-        $wd = new WsdlDownloader($options);
+        $curl = new Curl();
+        $wd = new WsdlDownloader($curl);
 
         $cacheDir = ini_get('soap.wsdl_cache_dir');
         if (!is_dir($cacheDir)) {
@@ -92,7 +91,8 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsRemoteFile()
     {
-        $wd = new WsdlDownloader();
+        $curl = new Curl();
+        $wd = new WsdlDownloader($curl);
 
         $class = new \ReflectionClass($wd);
         $method = $class->getMethod('isRemoteFile');
@@ -119,10 +119,8 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->startPhpWebserver();
 
-        $options = array(
-            'resolve_xsd_includes' => true,
-        );
-        $wd = new WsdlDownloader($options);
+        $curl = new Curl();
+        $wd = new WsdlDownloader($curl);
 
         $class = new \ReflectionClass($wd);
         $method = $class->getMethod('resolveXsdIncludes');
@@ -176,7 +174,8 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveRelativePathInUrl()
     {
-        $wd = new WsdlDownloader();
+        $curl = new Curl();
+        $wd = new WsdlDownloader($curl);
 
         $class = new \ReflectionClass($wd);
         $method = $class->getMethod('resolveRelativePathInUrl');
