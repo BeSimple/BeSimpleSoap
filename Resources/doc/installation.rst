@@ -4,8 +4,39 @@ Installation
 Requirements
 ------------
 
-Install and enable PHP's SOAP extension
-Download `Zend\\Soap`_ and `Zend\\Mime`_ or add in `deps` file
+Install and enable PHP's SOAP extension.
+
+Download `BeSimple\\SoapCommon`_ and `BeSimple\\SoapServer`_ (only for the server part) and/or `BeSimple\\SoapClient`_ (only for ther client part).
+
+.. code-block:: ini
+
+    ; deps file
+    [BeSimple\SoapCommon]
+        git=http://github.com/BeSimple/SoapCommon
+        target=/besimple-soapcommon
+
+    [BeSimple\SoapClient]
+        git=http://github.com/BeSimple/SoapClient
+        target=/besimple-soapclient
+
+    [BeSimple\SoapServer]
+        git=http://github.com/BeSimple/SoapServer
+        target=/besimple-soapserver
+
+
+Add `BeSimple` libraries in autoload.php
+
+.. code-block:: php
+
+    // app/autoload.php
+    $loader->registerNamespaces(array(
+        'BeSimple\\SoapCommon' => __DIR__.'/../vendor/besimple-soapcommon',
+        'BeSimple\\SoapServer' => __DIR__.'/../vendor/besimple-soapserver',
+        'BeSimple\\SoapClient' => __DIR__.'/../vendor/besimple-soapclient',
+        // your other namespaces
+    ));
+
+Download `Zend\\Soap`_ and `Zend\\Mime`_ or add in `deps` file. `Zend` library is required only for the server part.
 
 .. code-block:: ini
 
@@ -67,4 +98,7 @@ Add `BeSimpleSoapBundle` in your Kernel class
 
 .. _`Zend\\Soap`: http://github.com/BeSimple/zend-soap
 .. _`Zend\\Mime`: http://github.com/BeSimple/zend-mime
+.. _`BeSimple\\SoapCommon`: http://github.com/BeSimple/BeSimpleSoapCommon
+.. _`BeSimple\\SoapServer`: http://github.com/BeSimple/BeSimpleSoapServer
+.. _`BeSimple\\SoapClient`: http://github.com/BeSimple/BeSimpleSoapClient
 .. _`Download`: http://github.com/BeSimple/BeSimpleSoapBundle
