@@ -15,6 +15,7 @@
         <parameter key="besimple.soap.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
         <parameter key="besimple.soap.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
         <parameter key="besimple.soap.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
+        <parameter key="besimple.soap.server.classmap.class">BeSimple\SoapCommon\Classmap</parameter>
     </parameters>
 
     <services>
@@ -23,38 +24,47 @@
         <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
+            <argument type="service" id="besimple.soap.server.classmap" />
             <argument type="service" id="besimple.soap.type.repository" />
-            <argument type="service" id="besimple.soap.converter.repository" />
+            <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="cache_type">null</argument>
                 <argument key="binder_request_header_class">%besimple.soap.binder.request_header.rpcliteral.class%</argument>
                 <argument key="binder_request_class">%besimple.soap.binder.request.rpcliteral.class%</argument>
                 <argument key="binder_response_class">%besimple.soap.binder.response.rpcliteral.class%</argument>
             </argument>
+            <argument type="service" id="besimple.soap.cache" />
         </service>
 
         <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
             <argument type="service" id="besimple.soap.definition.dumper.wsdl.documentwrapped" />
+            <argument type="service" id="besimple.soap.server.classmap" />
             <argument type="service" id="besimple.soap.type.repository" />
-            <argument type="service" id="besimple.soap.converter.repository" />
+            <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
                 <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
+                <argument key="cache_type">null</argument>
                 <argument key="binder_request_header_class">%besimple.soap.binder.request_header.documentwrapped.class%</argument>
                 <argument key="binder_request_class">%besimple.soap.binder.request.documentwrapped.class%</argument>
                 <argument key="binder_response_class">%besimple.soap.binder.response.documentwrapped.class%</argument>
             </argument>
+            <argument type="service" id="besimple.soap.cache" />
         </service>
 
         <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
             <argument type="service" id="besimple.soap.definition.loader.annot_complextype" />
+            <argument type="service" id="besimple.soap.server.classmap" />
             <argument type="service" id="besimple.soap.type.repository" />
             <argument type="collection">
                 <argument key="stylesheet">%besimple.soap.definition.dumper.options.stylesheet%</argument>
             </argument>
         </service>
+
+        <service id="besimple.soap.server.classmap" class="%besimple.soap.server.classmap.class%" public="false" />
 
         <service id="besimple.soap.type.repository" class="%besimple.soap.type.repository.class%">
             <call method="addXmlNamespace">

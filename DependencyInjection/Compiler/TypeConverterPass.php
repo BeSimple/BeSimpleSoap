@@ -23,14 +23,14 @@ class TypeConverterPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition('besimple.soap.converter.repository')) {
+        if (false === $container->hasDefinition('besimple.soap.converter.collection')) {
             return;
         }
 
-        $definition = $container->getDefinition('besimple.soap.converter.repository');
+        $definition = $container->getDefinition('besimple.soap.converter.collection');
 
         foreach ($container->findTaggedServiceIds('besimple.soap.converter') as $id => $attributes) {
-            $definition->addMethodCall('addTypeConverter', array(new Reference($id)));
+            $definition->addMethodCall('add', array(new Reference($id)));
         }
     }
 }

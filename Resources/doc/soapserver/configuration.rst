@@ -51,3 +51,8 @@ Annotations for Controllers
             return $this->container->get('besimple.soap.response')->setReturnValue(sprintf('Hello %s!', $name));
         }
     }
+
+Get your WSDL
+-------------
+
+To access your WSDL go to the following address: http://localhost/app_dev.php/ws/DemoApi?wsdl

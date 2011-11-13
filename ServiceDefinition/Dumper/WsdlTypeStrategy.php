@@ -15,6 +15,8 @@ use BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\ComplexType;
 use BeSimple\SoapBundle\Util\String;
 
+use BeSimple\SoapCommon\Classmap;
+
 use Zend\Soap\Exception;
 use Zend\Soap\Wsdl as BaseWsdl;
 use Zend\Soap\Wsdl\Strategy;
@@ -30,14 +32,16 @@ class WsdlTypeStrategy implements Strategy
     private $context;
 
     private $loader;
+    private $classmap;
     private $definition;
 
     private $typeStrategy;
     private $arrayStrategy;
 
-    public function __construct(AnnotationComplexTypeLoader $loader, ServiceDefinition $definition)
+    public function __construct(AnnotationComplexTypeLoader $loader, Classmap $classmap, ServiceDefinition $definition)
     {
         $this->loader     = $loader;
+        $this->classmap   = $classmap;
         $this->definition = $definition;
     }
 
@@ -86,7 +90,7 @@ class WsdlTypeStrategy implements Strategy
     private function getTypeStrategy()
     {
         if (!$this->typeStrategy) {
-            $this->typeStrategy = new ComplexType($this->loader, $this->definition);
+            $this->typeStrategy = new ComplexType($this->loader, $this->classmap, $this->definition);
             $this->typeStrategy->setContext($this->context);
         }
 
