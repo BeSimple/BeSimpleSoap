@@ -109,9 +109,7 @@ class WebServiceContext
                 ->withTypeConverters($this->converters)
             ;
 
-            if (!$this->options['debug']) {
-                $this->serverBuilder->withWsdlCacheNone();
-            } elseif (null !== $this->options['cache_type']) {
+            if (null !== $this->options['cache_type']) {
                 $this->serverBuilder->withWsdlCache($this->options['cache_type']);
             }
         }
