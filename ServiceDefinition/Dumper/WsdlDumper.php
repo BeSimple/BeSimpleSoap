@@ -82,7 +82,10 @@ class WsdlDumper implements DumperInterface
                 $this->qualify($this->getRequestMessageName($method)),
                 $this->qualify($this->getResponseMessageName($method))
             );
-            $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
+
+            if (!empty($requestParts)) {
+                $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
+            }
 
             $baseBinding = array(
                 'use'           => 'literal',
