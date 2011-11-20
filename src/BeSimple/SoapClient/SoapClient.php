@@ -241,19 +241,17 @@ class SoapClient extends \SoapClient
      */
     private function loadWsdl($wsdl, array $options)
     {
-        // option to resolve xsd includes
-        $resolveXsdIncludes = true;
-        if (isset($options['resolve_xsd_includes']))
-        {
-            $resolveXsdIncludes = $options['resolve_xsd_includes'];
+        // option to resolve wsdl/xsd includes
+        $resolveRemoteIncludes = true;
+        if (isset($options['resolve_wsdl_remote_includes'])) {
+            $resolveRemoteIncludes = $options['resolve_wsdl_remote_includes'];
         }
         // option to enable cache
         $wsdlCache = WSDL_CACHE_DISK;
-        if (isset($options['cache_wsdl']))
-        {
+        if (isset($options['cache_wsdl'])) {
             $wsdlCache = $options['cache_wsdl'];
         }
-        $wsdlDownloader = new WsdlDownloader($this->curl, $resolveXsdIncludes, $wsdlCache);
+        $wsdlDownloader = new WsdlDownloader($this->curl, $resolveRemoteIncludes, $wsdlCache);
         try {
             $cacheFileName = $wsdlDownloader->download($wsdl);
         } catch (\RuntimeException $e) {

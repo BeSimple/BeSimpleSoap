@@ -115,6 +115,63 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($method->invoke($wd, '../dir/test.html'));
     }
 
+    public function testResolveWsdlIncludes()
+    {
+        $this->startPhpWebserver();
+
+        $curl = new Curl();
+        $wd = new WsdlDownloader($curl);
+
+        $class = new \ReflectionClass($wd);
+        $method = $class->getMethod('resolveRemoteIncludes');
+        $method->setAccessible(true);
+
+        $cacheDir = ini_get('soap.wsdl_cache_dir');
+        if (!is_dir($cacheDir)) {
+            $cacheDir = sys_get_temp_dir();
+            $cacheDirForRegExp = preg_quote( $cacheDir );
+        }
+
+        $remoteUrlAbsolute = 'http://localhost:8000/wsdlinclude/wsdlinctest_absolute.xml';
+        $remoteUrlRelative = 'http://localhost:8000/wsdlinclude/wsdlinctest_relative.xml';
+        $tests = array(
+            'localWithAbsolutePath' => array(
+                     'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_absolute.xml',
+                     'cacheFile' => $cacheDir.'/cache_local_absolute.xml',
+                     'remoteParentUrl' => null,
+                     'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            ),
+            'localWithRelativePath' => array(
+                     'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_relative.xml',
+                     'cacheFile' => $cacheDir.'/cache_local_relative.xml',
+                     'remoteParentUrl' => null,
+                     'assertRegExp' => '~.*\.\./wsdl_include\.wsdl.*~',
+            ),
+            'remoteWithAbsolutePath' => array(
+                     'source' => $remoteUrlAbsolute,
+                     'cacheFile' => $cacheDir.'/cache_remote_absolute.xml',
+                     'remoteParentUrl' => $remoteUrlAbsolute,
+                     'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            ),
+            'remoteWithAbsolutePath' => array(
+                     'source' => $remoteUrlRelative,
+                     'cacheFile' => $cacheDir.'/cache_remote_relative.xml',
+                     'remoteParentUrl' => $remoteUrlRelative,
+                     'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            ),
+        );
+
+        foreach ($tests as $name => $values) {
+            $wsdl = file_get_contents( $values['source'] );
+            $method->invoke($wd, $wsdl, $values['cacheFile'],$values['remoteParentUrl']);
+            $result = file_get_contents($values['cacheFile']);
+            $this->assertRegExp($values['assertRegExp'],$result,$name);
+            unlink($values['cacheFile']);
+        }
+
+        $this->stopPhpWebserver();
+    }
+
     public function testResolveXsdIncludes()
     {
         $this->startPhpWebserver();
@@ -123,7 +180,7 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $wd = new WsdlDownloader($curl);
 
         $class = new \ReflectionClass($wd);
-        $method = $class->getMethod('resolveXsdIncludes');
+        $method = $class->getMethod('resolveRemoteIncludes');
         $method->setAccessible(true);
 
         $cacheDir = ini_get('soap.wsdl_cache_dir');

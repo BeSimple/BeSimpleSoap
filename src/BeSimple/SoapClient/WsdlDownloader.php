@@ -54,23 +54,23 @@ class WsdlDownloader
     private $curl;
 
     /**
-     * Resolve XSD includes.
+     * Resolve WSDl/XSD includes.
      *
      * @var boolean
      */
-    protected $resolveXsdIncludes = true;
+    protected $resolveRemoteIncludes = true;
 
     /**
      * Constructor.
      *
-     * @param \BeSimple\SoapClient\Curl $curl               Curl instance
-     * @param boolean                   $resolveXsdIncludes XSD include enabled?
-     * @param boolean                   $cacheWsdl          Cache constant
+     * @param \BeSimple\SoapClient\Curl $curl                  Curl instance
+     * @param boolean                   $resolveRemoteIncludes WSDL/XSD include enabled?
+     * @param boolean                   $cacheWsdl             Cache constant
      */
-    public function __construct(Curl $curl, $resolveXsdIncludes = true, $cacheWsdl = WSDL_CACHE_DISK)
+    public function __construct(Curl $curl, $resolveRemoteIncludes = true, $cacheWsdl = WSDL_CACHE_DISK)
     {
         $this->curl = $curl;
-        $this->resolveXsdIncludes = $resolveXsdIncludes;
+        $this->resolveRemoteIncludes = $resolveRemoteIncludes;
         // get current WSDL caching config
         $this->cacheEnabled = (bool)ini_get('soap.wsdl_cache_enabled');
         if ($this->cacheEnabled === true
@@ -96,7 +96,7 @@ class WsdlDownloader
         // download and cache remote WSDL files or local ones where we want to
         // resolve remote XSD includes
         $isRemoteFile = $this->isRemoteFile($wsdl);
-        if ($isRemoteFile === true || $this->resolveXsdIncludes === true) {
+        if ($isRemoteFile === true || $this->resolveRemoteIncludes === true) {
             $cacheFile = $this->cacheDir . DIRECTORY_SEPARATOR . 'wsdl_' . md5($wsdl) . '.cache';
             if ($this->cacheEnabled === false
                 || !file_exists($cacheFile)
@@ -107,8 +107,8 @@ class WsdlDownloader
                     // get content
                     if ($responseSuccessfull === true) {
                         $response = $this->curl->getResponseBody();
-                        if ($this->resolveXsdIncludes === true) {
-                            $this->resolveXsdIncludes($response, $cacheFile, $wsdl);
+                        if ($this->resolveRemoteIncludes === true) {
+                            $this->resolveRemoteIncludes($response, $cacheFile, $wsdl);
                         } else {
                             file_put_contents($cacheFile, $response);
                         }
@@ -117,7 +117,7 @@ class WsdlDownloader
                     }
                 } elseif (file_exists($wsdl)) {
                     $response = file_get_contents($wsdl);
-                    $this->resolveXsdIncludes($response, $cacheFile);
+                    $this->resolveRemoteIncludes($response, $cacheFile);
                 } else {
                     throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl ."'");
                 }
@@ -149,20 +149,38 @@ class WsdlDownloader
     }
 
     /**
-     * Resolves remote XSD includes within the WSDL files.
+     * Resolves remote WSDL/XSD includes within the WSDL files.
      *
      * @param string $xml
      * @param string $cacheFile
      * @param unknown_type $parentIsRemote
      * @return string
      */
-    private function resolveXsdIncludes($xml, $cacheFile, $parentFile = null)
+    private function resolveRemoteIncludes($xml, $cacheFile, $parentFile = null)
     {
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace(Helper::PFX_XML_SCHEMA, Helper::NS_XML_SCHEMA);
-        $query = './/' . Helper::PFX_XML_SCHEMA . ':include';
+        $xpath->registerNamespace('wsdl', 'http://schemas.xmlsoap.org/wsdl/'); // TODO add to Helper
+        // WSDL include/import
+        $query = './/wsdl:include | .//wsdl:import';
+        $nodes = $xpath->query($query);
+        if ($nodes->length > 0) {
+            foreach ($nodes as $node) {
+                $location = $node->getAttribute('location');
+                if ($this->isRemoteFile($location)) {
+                    $location = $this->download($location);
+                    $node->setAttribute('location', $location);
+                } elseif (!is_null($parentFile)) {
+                    $location = $this->resolveRelativePathInUrl($parentFile, $location);
+                    $location = $this->download($location);
+                    $node->setAttribute('location', $location);
+                }
+            }
+        }
+        // XML schema include/import
+        $query = './/' . Helper::PFX_XML_SCHEMA . ':include | .//' . Helper::PFX_XML_SCHEMA . ':import';
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
