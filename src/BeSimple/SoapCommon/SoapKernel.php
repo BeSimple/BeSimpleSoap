@@ -76,7 +76,7 @@ class SoapKernel
     {
         foreach($this->responseFilters as $filter)
         {
-            $filter->filterRequest($response);
+            $filter->filterResponse($response);
         }
     }
 }
