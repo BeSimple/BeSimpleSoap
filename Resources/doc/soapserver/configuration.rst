@@ -56,3 +56,6 @@ Get your WSDL
 -------------
 
 To access your WSDL go to the following address: http://localhost/app_dev.php/ws/DemoApi?wsdl
+
+To read the WSDL in your browser you can call this address: http://localhost/app_dev.php/ws/DemoApi
+
