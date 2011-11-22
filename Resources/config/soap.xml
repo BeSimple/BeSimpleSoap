@@ -5,14 +5,14 @@
 
     <parameters>
         <parameter key="besimple.soap.cache.class">BeSimple\SoapBundle\Cache</parameter>
-        <parameter key="besimple.soap.cache.directory">%kernel.cache_dir%/besimple/soap</parameter>
+        <parameter key="besimple.soap.cache.dir">%kernel.cache_dir%/besimple/soap</parameter>
     </parameters>
 
     <services>
         <service id="besimple.soap.cache" class="%besimple.soap.cache.class%">
             <argument>%kernel.debug%</argument>
             <argument>%besimple.soap.cache.type%</argument>
-            <argument>%besimple.soap.cache.directory%</argument>
+            <argument>%besimple.soap.cache.dir%/php</argument>
             <argument>%besimple.soap.cache.lifetime%</argument>
             <argument>%besimple.soap.cache.limit%</argument>
         </service>

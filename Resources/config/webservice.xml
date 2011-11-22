@@ -6,7 +6,6 @@
     <parameters>
         <parameter key="besimple.soap.response.class">BeSimple\SoapBundle\Soap\SoapResponse</parameter>
         <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
-        <parameter key="besimple.soap.cache_dir">%kernel.cache_dir%/webservice</parameter>
         <parameter key="besimple.soap.binder.request_header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
         <parameter key="besimple.soap.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
@@ -28,7 +27,7 @@
             <argument type="service" id="besimple.soap.type.repository" />
             <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
-                <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
+                <argument key="cache_dir">%besimple.soap.cache.dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
                 <argument key="cache_type">null</argument>
                 <argument key="binder_request_header_class">%besimple.soap.binder.request_header.rpcliteral.class%</argument>
@@ -45,7 +44,7 @@
             <argument type="service" id="besimple.soap.type.repository" />
             <argument type="service" id="besimple.soap.converter.collection" />
             <argument type="collection">
-                <argument key="cache_dir">%besimple.soap.cache_dir%</argument>
+                <argument key="cache_dir">%besimple.soap.cache.dir%</argument>
                 <argument key="debug">%kernel.debug%</argument>
                 <argument key="cache_type">null</argument>
                 <argument key="binder_request_header_class">%besimple.soap.binder.request_header.documentwrapped.class%</argument>
