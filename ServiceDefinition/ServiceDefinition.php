@@ -11,6 +11,7 @@
 namespace BeSimple\SoapBundle\ServiceDefinition;
 
 use BeSimple\SoapBundle\Util\Collection;
+use BeSimple\SoapCommon\Classmap;
 
 class ServiceDefinition
 {
@@ -29,16 +30,22 @@ class ServiceDefinition
      */
     private $methods;
 
+    /**
+     * @var \BeSimple\SoapCommon\Classmap
+     */
+    private $classmap;
+
     private $complexTypes = array();
 
-    public function __construct($name = null, $namespace = null, array $methods = array())
+    public function __construct($name = null, $namespace = null, array $methods = array(), Classmap $classmap = null)
     {
         $this->setName($name);
         $this->setNamespace($namespace);
 
         $this->methods = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\Method');
-
         $this->setMethods($methods);
+
+        $this->classmap = $classmap;
     }
 
     /**
@@ -109,6 +116,16 @@ class ServiceDefinition
         }
 
         return $types;
+    }
+
+    public function getClassmap()
+    {
+        return $this->classmap ?: array();
+    }
+
+    public function setClassmap(Classmap $classmap)
+    {
+        $this->classmap = $classmap;
     }
 
     public function addDefinitionComplexType($type, Collection $complexType)

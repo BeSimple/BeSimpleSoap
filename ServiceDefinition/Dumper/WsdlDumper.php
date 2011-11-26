@@ -18,25 +18,21 @@ use BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader;
 use BeSimple\SoapBundle\Util\Assert;
 use BeSimple\SoapBundle\Util\QName;
 
-use BeSimple\SoapCommon\Classmap;
-
 /**
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class WsdlDumper implements DumperInterface
 {
     private $loader;
-    private $classmap;
     private $typeRepository;
     private $options;
 
     private $wsdl;
     private $definition;
 
-    public function __construct(AnnotationComplexTypeLoader $loader, Classmap $classmap, TypeRepository $typeRepository, array $options)
+    public function __construct(AnnotationComplexTypeLoader $loader, TypeRepository $typeRepository, array $options)
     {
         $this->loader         = $loader;
-        $this->classmap       = $classmap;
         $this->typeRepository = $typeRepository;
         $this->options        = $options;
     }
@@ -46,7 +42,7 @@ class WsdlDumper implements DumperInterface
         Assert::thatArgumentNotNull('definition', $definition);
 
         $this->definition = $definition;
-        $this->wsdl       = new Wsdl($this->typeRepository, $definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy($this->loader, $this->classmap, $definition));
+        $this->wsdl       = new Wsdl($this->typeRepository, $definition->getName(), $definition->getNamespace(), new WsdlTypeStrategy($this->loader, $definition));
         $port             = $this->wsdl->addPortType($this->getPortTypeName());
         $binding          = $this->wsdl->addBinding($this->getBindingName(), $this->qualify($this->getPortTypeName()));
 

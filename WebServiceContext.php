@@ -69,6 +69,9 @@ class WebServiceContext
                 $this->serviceDefinition->setName($this->options['name']);
                 $this->serviceDefinition->setNamespace($this->options['namespace']);
 
+                $this->serviceDefinition->setClassmap($this->classmap);
+                $this->classmap = null;
+
                 $this->typeRepository->fixTypeInformation($this->serviceDefinition);
             }
         }
@@ -117,7 +120,7 @@ class WebServiceContext
         if (null === $this->serverBuilder) {
             $this->serverBuilder = SoapServerBuilder::createWithDefaults()
                 ->withWsdl($this->getWsdlFile())
-                ->withClassmap($this->classmap)
+                ->withClassmap($this->getServiceDefinition()->getClassmap())
                 ->withTypeConverters($this->converters)
             ;
 

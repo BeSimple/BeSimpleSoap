@@ -56,7 +56,6 @@
 
         <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
             <argument type="service" id="besimple.soap.definition.loader.annot_complextype" />
-            <argument type="service" id="besimple.soap.server.classmap" />
             <argument type="service" id="besimple.soap.type.repository" />
             <argument type="collection">
                 <argument key="stylesheet">%besimple.soap.definition.dumper.options.stylesheet%</argument>
