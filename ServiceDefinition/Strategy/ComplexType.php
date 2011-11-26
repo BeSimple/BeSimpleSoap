@@ -36,6 +36,8 @@ class ComplexType extends AbstractStrategy
      */
     public function addComplexType($type)
     {
+        $classmap = $this->definition->getClassmap();
+
         if (null !== $soapType = $this->scanRegisteredTypes($type)) {
             return $soapType;
         }
@@ -49,7 +51,9 @@ class ComplexType extends AbstractStrategy
         $soapTypeName = Wsdl::translateType($type);
         $soapType     = 'tns:'.$soapTypeName;
 
-        $this->definition->getClassmap()->add($soapTypeName, $type);
+        if (!$classmap->has($soapTypeName)) {
+            $classmap->add($soapTypeName, $type);
+        }
 
         // Register type here to avoid recursion
         $this->getContext()->addType($type, $soapType);
