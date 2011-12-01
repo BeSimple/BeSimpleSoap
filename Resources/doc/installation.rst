@@ -30,9 +30,9 @@ Add `BeSimple` libraries in autoload.php
 
     // app/autoload.php
     $loader->registerNamespaces(array(
-        'BeSimple\\SoapCommon' => __DIR__.'/../vendor/besimple-soapcommon',
-        'BeSimple\\SoapServer' => __DIR__.'/../vendor/besimple-soapserver',
-        'BeSimple\\SoapClient' => __DIR__.'/../vendor/besimple-soapclient',
+        'BeSimple\\SoapCommon' => __DIR__.'/../vendor/besimple-soapcommon/src',
+        'BeSimple\\SoapServer' => __DIR__.'/../vendor/besimple-soapserver/src',
+        'BeSimple\\SoapClient' => __DIR__.'/../vendor/besimple-soapclient/src',
         // your other namespaces
     ));
 
