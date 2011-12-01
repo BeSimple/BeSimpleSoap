@@ -40,4 +40,15 @@ class DateTimeTypeConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('<dateTime>2002-10-10T12:00:00-05:00</dateTime>', $dateXml);
     }
+
+    public function testConvertNullDateTimeXmlToPhp()
+    {
+        $converter = new DateTimeTypeConverter();
+
+        $dateXml = '<sometag xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>';
+        $date = $converter->convertXmlToPhp($dateXml);
+
+        $this->assertNull($date);
+    }
 }
+
