@@ -79,21 +79,29 @@ class WsdlDumper implements DumperInterface
                 $this->qualify($this->getResponseMessageName($method))
             );
 
-            if (!empty($requestParts)) {
-                $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
-            }
-
-            $baseBinding = array(
+            $baseBinding   =
+            $inputBinding  =
+            $outputBinding = array(
                 'use'           => 'literal',
                 'namespace'     => $definition->getNamespace(),
                 'encodingStyle' => 'http://schemas.xmlsoap.org/soap/encoding/',
             );
 
+            if (!empty($requestParts)) {
+                $portOperation->setAttribute('parameterOrder', implode(' ', array_keys($requestParts)));
+
+                $inputBinding['parts'] = implode(' ', array_keys($requestParts));
+            }
+
+            if (!empty($responseParts)) {
+                $outputBinding['parts'] = implode(' ', array_keys($responseParts));
+            }
+
             $bindingOperation = $this->wsdl->addBindingOperation(
                 $binding,
                 $method->getName(),
-                array_merge(array('parts' => implode(' ', array_keys($requestParts))), $baseBinding),
-                array_merge(array('parts' => implode(' ', array_keys($responseParts))), $baseBinding)
+                $inputBinding,
+                $outputBinding
             );
             $bindingOperation = $this->wsdl->addBindingOperationHeader(
                 $bindingOperation,
