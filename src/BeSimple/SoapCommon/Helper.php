@@ -72,6 +72,26 @@ class Helper
     const NS_WSA = 'http://www.w3.org/2005/08/addressing';
 
     /**
+     * WSDL 1.1 namespace.
+     */
+    const NS_WSDL = 'http://schemas.xmlsoap.org/wsdl/';
+
+    /**
+     * WSDL MIME namespace.
+     */
+    const NS_WSDL_MIME = 'http://schemas.xmlsoap.org/wsdl/mime/';
+
+    /**
+     * WSDL SOAP 1.1 namespace.
+     */
+    const NS_WSDL_SOAP_1_1 = 'http://schemas.xmlsoap.org/wsdl/soap/';
+
+    /**
+     * WSDL SOAP 1.2 namespace.
+     */
+    const NS_WSDL_SOAP_1_2 = 'http://schemas.xmlsoap.org/wsdl/soap12/';
+
+    /**
      * Web Services Security Extension namespace.
      */
     const NS_WSS = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
@@ -105,6 +125,11 @@ class Helper
      * Web Services Addressing 1.0 prefix.
      */
     const PFX_WSA = 'wsa';
+
+    /**
+     * WSDL 1.1 namespace. prefix.
+     */
+    const PFX_WSDL = 'wsdl';
 
     /**
      * Web Services Security Extension namespace.

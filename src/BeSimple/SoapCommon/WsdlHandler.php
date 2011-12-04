@@ -12,6 +12,8 @@
 
 namespace BeSimple\SoapCommon;
 
+use BeSimple\SoapCommon\Helper;
+
 /**
  * This class loads the given WSDL file and allows to check MIME binding
  * information.
@@ -29,26 +31,6 @@ class WsdlHandler
      * Binding type 'output' .
      */
     const BINDING_OPERATION_OUTPUT = 'output';
-
-    /**
-     * WSDL 1.1 namespace.
-     */
-    const NS_WSDL = 'http://schemas.xmlsoap.org/wsdl/';
-
-    /**
-     * WSDL MIME namespace.
-     */
-    const NS_WSDL_MIME = 'http://schemas.xmlsoap.org/wsdl/mime/';
-
-    /**
-     * WSDL SOAP 1.1 namespace.
-     */
-    const NS_WSDL_SOAP_1_1 = 'http://schemas.xmlsoap.org/wsdl/soap/';
-
-    /**
-     * WSDL SOAP 1.2 namespace.
-     */
-    const NS_WSDL_SOAP_1_2 = 'http://schemas.xmlsoap.org/wsdl/soap12/';
 
     /**
      * WSDL file name.
@@ -95,9 +77,9 @@ class WsdlHandler
     {
         $this->wsdlFile = $wsdlFile;
         if ($soapVersion == SOAP_1_1) {
-            $this->wsdlSoapNamespace = self::NS_WSDL_SOAP_1_1;
+            $this->wsdlSoapNamespace = Helper::NS_WSDL_SOAP_1_1;
         } else {
-            $this->wsdlSoapNamespace = self::NS_WSDL_SOAP_1_2;
+            $this->wsdlSoapNamespace = Helper::NS_WSDL_SOAP_1_2;
         }
     }
 
@@ -119,7 +101,7 @@ class WsdlHandler
                 if ($soapOperationChild->localName == 'input' || $soapOperationChild->localName == 'output') {
                     $operationType = $soapOperationChild->localName;
                     // mime:multipartRelated/mime:part
-                    $mimeParts = $soapOperationChild->getElementsByTagNameNS(self::NS_WSDL_MIME, 'part');
+                    $mimeParts = $soapOperationChild->getElementsByTagNameNS(Helper::NS_WSDL_MIME, 'part');
                     if ($mimeParts->length > 0) {
                         foreach ($mimeParts as $mimePart) {
                             foreach ($mimePart->childNodes as $child) {
@@ -211,8 +193,8 @@ class WsdlHandler
             $this->domDocument = new \DOMDocument('1.0', 'utf-8');
             $this->domDocument->load($this->wsdlFile);
             $this->domXpath = new \DOMXPath($this->domDocument);
-            $this->domXpath->registerNamespace('wsdl', self::NS_WSDL);
-            $this->domXpath->registerNamespace('mime', self::NS_WSDL_MIME);
+            $this->domXpath->registerNamespace('wsdl', Helper::NS_WSDL);
+            $this->domXpath->registerNamespace('mime', Helper::NS_WSDL_MIME);
             $this->domXpath->registerNamespace('soap', $this->wsdlSoapNamespace);
         }
     }
