@@ -94,7 +94,7 @@ class WsdlHandler
         $query = '/wsdl:definitions/wsdl:binding/wsdl:operation/soap:operation[@soapAction="'.$soapAction.'"]/..';
         $nodes = $this->domXpath->query($query);
         $mimeTypes = array();
-        if (($wsdlOperation = $nodes->item(0)) !== null) {
+        if (null !== $wsdlOperation = $nodes->item(0)) {
             //$wsdlOperationName = $wsdlOperation->getAttribute('name');
             foreach ($wsdlOperation->childNodes as $soapOperationChild) {
                 // wsdl:input or wsdl:output
@@ -132,7 +132,7 @@ class WsdlHandler
                         }
                     } else {
                         $child = $soapOperationChild->getElementsByTagNameNS($this->wsdlSoapNamespace, 'body')->item(0);
-                        if (!is_null($child)) {
+                        if (null !== $child) {
                             $parts = $child->getAttribute('parts');
                             $parts = ($parts == '') ? '[body]' : $parts;
                             $mimeTypes[$operationType][$parts] = array('text/xml');
@@ -141,6 +141,7 @@ class WsdlHandler
                 }
             }
         }
+
         return $mimeTypes;
     }
 
@@ -179,6 +180,7 @@ class WsdlHandler
                 }
             }
         }
+
         return false;
     }
 
@@ -189,7 +191,7 @@ class WsdlHandler
      */
     private function loadWsdlInDom()
     {
-        if (is_null($this->domDocument)) {
+        if (null === $this->domDocument) {
             $this->domDocument = new \DOMDocument('1.0', 'utf-8');
             $this->domDocument->load($this->wsdlFile);
             $this->domXpath = new \DOMXPath($this->domDocument);

@@ -89,7 +89,7 @@ class WsSecurityKey
      */
     public function hasKeys()
     {
-        return !is_null($this->privateKey) && !is_null($this->publicKey);
+        return null !== $this->privateKey && null !== $this->publicKey;
     }
 
     /**
@@ -99,7 +99,7 @@ class WsSecurityKey
      */
     public function hasPrivateKey()
     {
-        return !is_null($this->privateKey);
+        return null !== $this->privateKey;
     }
 
     /**
@@ -109,6 +109,6 @@ class WsSecurityKey
      */
     public function hasPublicKey()
     {
-        return !is_null($this->publicKey);
+        return null !== $this->publicKey;
     }
 }
