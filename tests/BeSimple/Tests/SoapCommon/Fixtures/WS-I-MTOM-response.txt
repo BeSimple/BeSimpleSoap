@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Proxy-Connection: Keep-Alive
+Connection: Keep-Alive
+Content-Length: 1166
+Via: 1.1 RED-PRXY-03
+Date: Fri, 09 Sep 2005 06:57:22 GMT
+Content-Type: multipart/related; type="application/xop+xml";start="<http://tempuri.org/0>";boundary="uuid:b71dc628-ec8f-4422-8a4a-992f041cb94c+id=46";start-info="application/soap+xml"
+
+
+
+--uuid:b71dc628-ec8f-4422-8a4a-992f041cb94c+id=46
+Content-ID: <http://tempuri.org/0>
+Content-Transfer-Encoding: 8bit
+Content-Type: application/xop+xml;charset=utf-8;type="application/soap+xml"
+
+<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"><s:Header><a:Action s:mustUnderstand="1">*</a:Action><a:RelatesTo>urn:uuid:1bf061d6-d532-4b0c-930b-8b8202c38b8a</a:RelatesTo><a:To s:mustUnderstand="1">http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</a:To></s:Header><s:Body><EchoBinaryAsStringResponse xmlns="http://xmlsoap.org/Ping"><EchoBinaryAsStringResult>Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!Hello World!</EchoBinaryAsStringResult></EchoBinaryAsStringResponse></s:Body></s:Envelope>
+--uuid:b71dc628-ec8f-4422-8a4a-992f041cb94c+id=46--
