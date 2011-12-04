@@ -32,6 +32,10 @@ class DateTypeConverter implements TypeConverterInterface
         $doc = new \DOMDocument();
         $doc->loadXML($data);
 
+        if ('' === $doc->textContent) {
+            return null;
+        }
+
         return new \DateTime($doc->textContent);
     }
 
@@ -40,3 +44,4 @@ class DateTypeConverter implements TypeConverterInterface
         return sprintf('<%1$s>%2$s</%1$s>', $this->getTypeName(), $data->format('Y-m-d'));
     }
 }
+
