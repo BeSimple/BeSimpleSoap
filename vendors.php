@@ -25,6 +25,7 @@ if (!is_dir($vendorDir = dirname(__FILE__).'/vendor')) {
 
 $deps = array(
     array('besimple-soapcommon', 'http://github.com/BeSimple/BeSimpleSoapCommon.git', 'origin/HEAD'),
+    array('XmlSecurity', 'https://github.com/aschamberger/XmlSecurity.git', 'origin/HEAD'),
 );
 
 foreach ($deps as $dep) {

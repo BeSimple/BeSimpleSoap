@@ -12,8 +12,7 @@
 
 namespace BeSimple\SoapClient;
 
-// TODO
-//use BeSimple\SoapCommon\Helper;
+use BeSimple\SoapCommon\Helper;
 
 /**
  * Downloads WSDL files with cURL. Uses the WSDL_CACHE_* constants and the
@@ -30,28 +29,28 @@ class WsdlDownloader
      *
      * @var bool
      */
-    private $cacheEnabled;
+    protected $cacheEnabled;
 
     /**
      * Cache dir.
      *
      * @var string
      */
-    private $cacheDir;
+    protected $cacheDir;
 
     /**
      * Cache TTL.
      *
      * @var int
      */
-    private $cacheTtl;
+    protected $cacheTtl;
 
     /**
      * cURL instance for downloads.
      *
      * @var unknown_type
      */
-    private $curl;
+    protected $curl;
 
     /**
      * Resolve WSDl/XSD includes.
@@ -122,8 +121,10 @@ class WsdlDownloader
                     throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl ."'");
                 }
             }
+
             return $cacheFile;
         } elseif (file_exists($wsdl)) {
+
             return realpath($wsdl);
         } else {
             throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl ."'");
@@ -145,6 +146,7 @@ class WsdlDownloader
                 $isRemoteFile = true;
             }
         }
+
         return $isRemoteFile;
     }
 
@@ -154,7 +156,7 @@ class WsdlDownloader
      * @param string $xml
      * @param string $cacheFile
      * @param unknown_type $parentIsRemote
-     * @return string
+     * @return void
      */
     private function resolveRemoteIncludes($xml, $cacheFile, $parentFile = null)
     {
@@ -164,7 +166,7 @@ class WsdlDownloader
         $xpath->registerNamespace(Helper::PFX_XML_SCHEMA, Helper::NS_XML_SCHEMA);
         $xpath->registerNamespace('wsdl', 'http://schemas.xmlsoap.org/wsdl/'); // TODO add to Helper
         // WSDL include/import
-        $query = './/wsdl:include | .//wsdl:import';
+        $query = './/wsdl:include | .//wsdl:import'; // TODO
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
@@ -247,6 +249,7 @@ class WsdlDownloader
         if (isset($urlParts['port'])) {
             $hostname .= ':' . $urlParts['port'];
         }
+
         return $hostname . implode('/', $parts);
     }
 }

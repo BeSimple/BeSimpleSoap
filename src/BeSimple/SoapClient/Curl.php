@@ -144,6 +144,7 @@ class Curl
     private function execManualRedirect($redirects = 0)
     {
         if ($redirects > $this->followLocationMaxRedirects) {
+
             // TODO Redirection limit reached, aborting
             return false;
         }
@@ -171,9 +172,11 @@ class Curl
                 }
                 $newUrl = $url['scheme'] . '://' . $url['host'] . $url['path'] . ($url['query'] ? '?' . $url['query'] : '');
                 curl_setopt($this->ch, CURLOPT_URL, $newUrl);
+
                 return $this->execManualRedirect($redirects++);
             }
         }
+
         return $response;
     }
 
@@ -225,8 +228,10 @@ class Curl
         $errorCodeMapping = $this->getErrorCodeMapping();
         $errorNumber = curl_errno($this->ch);
         if (isset($errorCodeMapping[$errorNumber])) {
+
             return $errorCodeMapping[$errorNumber];
         }
+
         return curl_error($this->ch);
     }
 
@@ -258,6 +263,7 @@ class Curl
     public function getResponseBody()
     {
         $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+
         return substr($this->response, $headerSize);
     }
 
@@ -279,6 +285,7 @@ class Curl
     public function getResponseHeaders()
     {
         $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
+
         return substr($this->response, 0, $headerSize);
     }
 
@@ -300,6 +307,7 @@ class Curl
     public function getResponseStatusMessage()
     {
         preg_match('/HTTP\/(1\.[0-1]+) ([0-9]{3}) (.*)/', $this->response, $matches);
+
         return trim(array_pop($matches));
     }
 }

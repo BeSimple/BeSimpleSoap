@@ -12,6 +12,8 @@
 
 namespace BeSimple\SoapClient;
 
+use BeSimple\SoapCommon\SoapKernel;
+
 /**
  * Extended SoapClient that uses a a cURL wrapper for all underlying HTTP
  * requests in order to use proper authentication for all requests. This also
@@ -72,6 +74,13 @@ class SoapClient extends \SoapClient
     private $lastResponse = '';
 
     /**
+     * Last response.
+     *
+     * @var \BeSimple\SoapCommon\SoapKernel
+     */
+    protected $soapKernel = null;
+
+    /**
      * Constructor.
      *
      * @param string               $wsdl    WSDL file
@@ -89,6 +98,8 @@ class SoapClient extends \SoapClient
         }
         $this->curl = new Curl($options);
         $wsdlFile = $this->loadWsdl($wsdl, $options);
+        // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
+        $this->soapKernel = new SoapKernel();
         // we want the exceptions option to be set
         $options['exceptions'] = true;
         // disable obsolete trace option for native SoapClient as we need to do our own tracing anyways
@@ -102,91 +113,88 @@ class SoapClient extends \SoapClient
     /**
      * Perform HTTP request with cURL.
      *
-     * @param string $request
-     * @param string $location
-     * @param string $action
-     * @return string
+     * @param SoapRequest $soapRequest
+     * @return SoapResponse
      */
-    private function __doHttpRequest($request, $location, $action)
+    private function __doHttpRequest(SoapRequest $soapRequest)
     {
-        // $request is if unmodified from SoapClient not a php string type!
-        $request = (string)$request;
-        if ($this->soapVersion == SOAP_1_2) {
-            $headers = array(
-                'Content-Type: application/soap+xml; charset=utf-8',
-           );
-        } else {
-            $headers = array(
-                'Content-Type: text/xml; charset=utf-8',
-           );
-        }
-        // add SOAPAction header
-        $headers[] = 'SOAPAction: "' . $action . '"';
-        // execute request
-        $responseSuccessfull = $this->curl->exec($location, $request, $headers);
+        // HTTP headers
+        $headers = array(
+            'Content-Type:' . $soapRequest->getContentType(),
+            'SOAPAction: "' . $soapRequest->getAction() . '"',
+        );
+        // execute HTTP request with cURL
+        $responseSuccessfull = $this->curl->exec($soapRequest->getLocation(),
+            $soapRequest->getContent(),
+            $headers);
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
-            $this->lastRequestHeaders = $curl->getRequestHeaders();
-            $this->lastRequest = $request;
+            $this->lastRequestHeaders = $this->curl->getRequestHeaders();
+            $this->lastRequest = $soapRequest->getContent();
         }
         // in case of an error while making the http request throw a soapFault
         if ($responseSuccessfull === false) {
             // get error message from curl
             $faultstring = $this->curl->getErrorMessage();
-            throw new \SoapFault('HTTP', $faultstring);
+            throw new \SoapFault( 'HTTP', $faultstring );
         }
         // tracing enabled: store last response header and body
         if ($this->tracingEnabled === true) {
             $this->lastResponseHeaders = $this->curl->getResponseHeaders();
             $this->lastResponse = $this->curl->getResponseBody();
         }
-        $response = $this->curl->getResponseBody();
-        // check if we do have a proper soap status code (if not soapfault)
-//        // TODO
-//        $responseStatusCode = $this->curl->getResponseStatusCode();
-//        if ($responseStatusCode >= 400) {
-//            $isError = 0;
-//            $response = trim($response);
-//            if (strlen($response) == 0) {
-//                $isError = 1;
-//            } else {
-//                $contentType = $this->curl->getResponseContentType();
-//                if ($contentType != 'application/soap+xml'
-//                    && $contentType != 'application/soap+xml') {
-//                    if (strncmp($response , "<?xml", 5)) {
-//                        $isError = 1;
-//                    }
-//                }
-//            }
-//            if ($isError == 1) {
-//                throw new \SoapFault('HTTP', $this->curl->getResponseStatusMessage());
-//            }
-//        } elseif ($responseStatusCode != 200 && $responseStatusCode != 202) {
-//            $dom = new \DOMDocument('1.0');
-//            $dom->loadXML($response);
-//            if ($dom->getElementsByTagNameNS($dom->documentElement->namespaceURI, 'Fault')->length == 0) {
-//                throw new \SoapFault('HTTP', 'HTTP response status must be 200 or 202');
-//            }
-//        }
-        return $response;
-    }
+        // wrap response data in SoapResponse object
+        $soapResponse = SoapResponse::create($this->curl->getResponseBody(),
+            $soapRequest->getLocation(),
+            $soapRequest->getAction(),
+            $soapRequest->getVersion(),
+            $this->curl->getResponseContentType());
+
+        return $soapResponse;
+   }
 
    /**
      * Custom request method to be able to modify the SOAP messages.
+     * $oneWay parameter is not used at the moment.
      *
      * @param string $request
      * @param string $location
      * @param string $action
      * @param int $version
-     * @param int $one_way 0|1
+     * @param int $oneWay 0|1
      * @return string
      */
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
+    public function __doRequest($request, $location, $action, $version, $oneWay = 0)
     {
-        // http request
-        $response = $this->__doHttpRequest($request, $location, $action);
+        // wrap request data in SoapRequest object
+        $soapRequest = SoapRequest::create($request, $location, $action, $version);
+
+        // do actual SOAP request
+        $soapResponse = $this->__doRequest2($soapRequest);
+
         // return SOAP response to ext/soap
-        return $response;
+        return $soapResponse->getContent();
+    }
+
+    /**
+     * Runs the currently registered request filters on the request, performs
+     * the HTTP request and runs the response filters.
+     *
+     * @param SoapRequest $soapRequest
+     * @return SoapResponse
+     */
+    protected function __doRequest2(SoapRequest $soapRequest)
+    {
+        // run SoapKernel on SoapRequest
+        $soapRequest = $this->soapKernel->filterRequest($soapRequest);
+
+        // perform HTTP request with cURL
+        $soapResponse = $this->__doHttpRequest($soapRequest);
+
+        // run SoapKernel on SoapResponse
+        $soapResponse = $this->soapKernel->filterResponse($soapResponse);
+
+        return $soapResponse;
     }
 
     /**
@@ -230,6 +238,48 @@ class SoapClient extends \SoapClient
     }
 
     /**
+     * Get SoapKernel instance.
+     *
+     * @return \BeSimple\SoapCommon\SoapKernel
+     */
+    public function getSoapKernel()
+    {
+        return $this->soapKernel;
+    }
+
+    // TODO finish
+    protected function isValidSoapResponse()
+    {
+        //check if we do have a proper soap status code (if not soapfault)
+        $responseStatusCode = $this->curl->getResponseStatusCode();
+        $response = $this->curl->getResponseBody();
+        if ($responseStatusCode >= 400) {
+           $isError = 0;
+           $response = trim($response);
+           if (strlen($response) == 0) {
+               $isError = 1;
+           } else {
+               $contentType = $this->curl->getResponseContentType();
+               if ($contentType != 'application/soap+xml'
+                   && $contentType != 'application/soap+xml') {
+                   if (strncmp($response , "<?xml", 5)) {
+                       $isError = 1;
+                   }
+               }
+           }
+           if ($isError == 1) {
+               throw new \SoapFault('HTTP', $this->curl->getResponseStatusMessage());
+           }
+        } elseif ($responseStatusCode != 200 && $responseStatusCode != 202) {
+           $dom = new \DOMDocument('1.0');
+           $dom->loadXML($response);
+           if ($dom->getElementsByTagNameNS($dom->documentElement->namespaceURI, 'Fault')->length == 0) {
+               throw new \SoapFault('HTTP', 'HTTP response status must be 200 or 202');
+           }
+        }
+    }
+
+    /**
      * Downloads WSDL files with cURL. Uses all SoapClient options for
      * authentication. Uses the WSDL_CACHE_* constants and the 'soap.wsdl_*'
      * ini settings. Does only file caching as SoapClient only supports a file
@@ -257,6 +307,7 @@ class SoapClient extends \SoapClient
         } catch (\RuntimeException $e) {
             throw new \SoapFault('WSDL', "SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl . "' : failed to load external entity \"" . $wsdl . "\"");
         }
+
         return $cacheFileName;
     }
 }
