@@ -12,7 +12,14 @@ spl_autoload_register(function($class) {
             return true;
         }
     } elseif (0 === strpos($class, 'BeSimple\SoapCommon\\')) {
-        $path = __DIR__.'/../src/'.($class = strtr($class, '\\', '/')).'.php';
+        $path = __DIR__.'/../src/'.strtr($class, '\\', '/').'.php';
+        if (file_exists($path) && is_readable($path)) {
+            require_once $path;
+
+            return true;
+        }
+    } elseif (0 === strpos($class, 'ass\XmlSecurity\\')) {
+            $path = __DIR__.'/../vendor/XmlSecurity/src/'.strtr($class, '\\', '/').'.php';
         if (file_exists($path) && is_readable($path)) {
             require_once $path;
 

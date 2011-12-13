@@ -25,6 +25,7 @@ if (!is_dir($vendorDir = dirname(__FILE__).'/vendor')) {
 
 $deps = array(
     array('vfsStream', 'https://github.com/mikey179/vfsStream.git', 'RELEASE-0.10.1'),
+    array('XmlSecurity', 'https://github.com/aschamberger/XmlSecurity.git', 'origin/HEAD'),
 );
 
 foreach ($deps as $dep) {
