@@ -14,46 +14,119 @@
 namespace BeSimple\SoapCommon;
 
 /**
+ * Base class for SoapRequest and SoapResponse.
+ *
  * @author Christian Kerl <christian-kerl@web.de>
+ * @author Andreas Schamberger <mail@andreass.net>
  */
 abstract class SoapMessage
 {
+    /**
+     * $_SERVER key for 'Content-Type' header.
+     *
+     * @var string
+     */
     const CONTENT_TYPE_HEADER = 'CONTENT_TYPE';
-    const ACTION_HEADER = 'HTTP_SOAPACTION';
 
+    /**
+     * $_SERVER key for 'SOAPAction' header.
+     *
+     * @var string
+     */
+    const SOAP_ACTION_HEADER = 'HTTP_SOAPACTION';
+
+    /**
+     * Content types for SOAP versions.
+     *
+     * @var array(string=>string)
+     */
     static protected $versionToContentTypeMap = array(
         SOAP_1_1 => 'text/xml; charset=utf-8',
         SOAP_1_2 => 'application/soap+xml; charset=utf-8'
     );
 
-    static public function getContentTypeForVersion($version)
+    /**
+     * SOAP action.
+     *
+     * @var string
+     */
+    protected $action;
+
+    /**
+     * Message content (MIME Message or SOAP Envelope).
+     *
+     * @var string
+     */
+    protected $content;
+
+    /**
+     *
+     * Enter description here ...
+     * @var \DOMDocument
+     */
+    protected $contentDomDocument = null;
+
+    /**
+     * Message content type.
+     *
+     * @var string
+     */
+    protected $contentType;
+
+    /**
+     * Service location.
+     *
+     * @var string
+     */
+    protected $location;
+
+    /**
+     * SOAP version (SOAP_1_1|SOAP_1_2)
+     *
+     * @var string
+     */
+    protected $version;
+
+    /**
+    * Get content type for given SOAP version.
+    *
+    * @param string $version SOAP version constant SOAP_1_1|SOAP_1_2
+    * @throws \InvalidArgumentException
+    */
+    public static function getContentTypeForVersion($version)
     {
-        if(!in_array($soapVersion, array(SOAP_1_1, SOAP_1_2))) {
+        if (!in_array($soapVersion, array(SOAP_1_1, SOAP_1_2))) {
             throw new \InvalidArgumentException("The 'version' argument has to be either 'SOAP_1_1' or 'SOAP_1_2'!");
         }
 
         return self::$versionToContentTypeMap[$version];
     }
 
-    protected $contentType;
-    protected $content;
-
-    protected $contentDomDocument = null;
-
-    protected $version;
-    protected $action;
-    protected $location;
-
-    public function getContentType()
+    /**
+     * Get SOAP action.
+     *
+     * @return string
+     */
+    public function getAction()
     {
-        return $this->contentType;
+        return $this->action;
     }
 
-    public function setContentType($contentType)
+    /**
+     * Set SOAP action.
+     *
+     * @param string $action
+     */
+    public function setAction($action)
     {
-        $this->contentType = $contentType;
+        $this->action = $action;
     }
 
+    /**
+     * Get message content (MIME Message or SOAP Envelope).
+     *
+     * @return string
+     */
     public function getContent()
     {
         if (null !== $this->contentDomDocument) {
@@ -62,6 +135,11 @@ abstract class SoapMessage
         return $this->content;
     }
 
+    /**
+     * Set message content (MIME Message or SOAP Envelope).
+     *
+     * @param string $content
+     */
     public function setContent($content)
     {
         $this->content = $content;
@@ -70,6 +148,11 @@ abstract class SoapMessage
         }
     }
 
+    /**
+     * Get SOAP message as \DOMDocument
+     *
+     * @return \DOMDocument
+     */
     public function getContentDocument()
     {
         if (null === $this->contentDomDocument) {
@@ -80,33 +163,63 @@ abstract class SoapMessage
         return $this->contentDomDocument;
     }
 
-    public function getVersion()
+    /**
+     * Get content type.
+     *
+     * @return string
+     */
+    public function getContentType()
     {
-        return $this->version;
+        return $this->contentType;
     }
 
-    public function setVersion($version)
+    /**
+     * Set content type.
+     *
+     * @param string $contentType
+     */
+    public function setContentType($contentType)
     {
-        $this->version = $version;
+        $this->contentType = $contentType;
     }
 
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    public function setAction($action)
-    {
-        $this->action = $action;
-    }
-
+    /**
+     * Get location.
+     *
+     * @return string
+     */
     public function getLocation()
     {
         return $this->location;
     }
 
+    /**
+     * Set location.
+     *
+     * @param string $location
+     */
     public function setLocation($location)
     {
         $this->location = $location;
+    }
+
+    /**
+     * Get version.
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Set version.
+     *
+     * @param string $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
     }
 }
