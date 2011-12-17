@@ -20,78 +20,93 @@ abstract class SoapMessage
 {
     const CONTENT_TYPE_HEADER = 'CONTENT_TYPE';
     const ACTION_HEADER = 'HTTP_SOAPACTION';
-    
+
     static protected $versionToContentTypeMap = array(
-        SOAP_1_1 => 'text/xml; charset=%s',
-        SOAP_1_2 => 'application/soap+xml; charset=%s'
+        SOAP_1_1 => 'text/xml; charset=utf-8',
+        SOAP_1_2 => 'application/soap+xml; charset=utf-8'
     );
-    
-    static public function getContentTypeForVersion($version, $encoding = 'utf-8')
+
+    static public function getContentTypeForVersion($version)
     {
-        if(!in_array($soapVersion, array(SOAP_1_1, SOAP_1_2)))
-        {
+        if(!in_array($soapVersion, array(SOAP_1_1, SOAP_1_2))) {
             throw new \InvalidArgumentException("The 'version' argument has to be either 'SOAP_1_1' or 'SOAP_1_2'!");
         }
-        
-        return sprintf(self::$versionToContentTypeMap[$version], $encoding);
+
+        return self::$versionToContentTypeMap[$version];
     }
-    
+
     protected $contentType;
     protected $content;
-    
+
     protected $contentDomDocument = null;
-    
+
     protected $version;
     protected $action;
+    protected $location;
 
     public function getContentType()
     {
         return $this->contentType;
     }
-    
+
     public function setContentType($contentType)
     {
         $this->contentType = $contentType;
     }
-    
+
     public function getContent()
     {
+        if (null !== $this->contentDomDocument) {
+            $this->content = $this->contentDomDocument->saveXML();
+        }
         return $this->content;
     }
-    
+
     public function setContent($content)
     {
         $this->content = $content;
+        if (null !== $this->contentDomDocument) {
+            $this->contentDomDocument->loadXML($this->content);
+        }
     }
-    
+
     public function getContentDocument()
     {
-        if(null === $this->contentDomDocument)
-        {
+        if (null === $this->contentDomDocument) {
             $this->contentDomDocument = new \DOMDocument();
             $this->contentDomDocument->loadXML($this->content);
         }
-        
+
         return $this->contentDomDocument;
     }
-    
+
     public function getVersion()
     {
         return $this->version;
     }
-    
+
     public function setVersion($version)
     {
         $this->version = $version;
     }
-    
+
     public function getAction()
     {
         return $this->action;
     }
-    
+
     public function setAction($action)
     {
         $this->action = $action;
+    }
+
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    public function setLocation($location)
+    {
+        $this->location = $location;
     }
 }
