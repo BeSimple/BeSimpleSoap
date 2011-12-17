@@ -97,7 +97,7 @@ abstract class SoapMessage
     */
     public static function getContentTypeForVersion($version)
     {
-        if (!in_array($soapVersion, array(SOAP_1_1, SOAP_1_2))) {
+        if (!in_array($version, array(SOAP_1_1, SOAP_1_2))) {
             throw new \InvalidArgumentException("The 'version' argument has to be either 'SOAP_1_1' or 'SOAP_1_2'!");
         }
 
