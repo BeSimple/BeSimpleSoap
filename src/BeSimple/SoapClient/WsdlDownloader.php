@@ -164,9 +164,9 @@ class WsdlDownloader
         $doc->loadXML($xml);
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace(Helper::PFX_XML_SCHEMA, Helper::NS_XML_SCHEMA);
-        $xpath->registerNamespace('wsdl', 'http://schemas.xmlsoap.org/wsdl/'); // TODO add to Helper
+        $xpath->registerNamespace(Helper::PFX_WSDL, Helper::NS_WSDL);
         // WSDL include/import
-        $query = './/wsdl:include | .//wsdl:import'; // TODO
+        $query = './/' . Helper::PFX_WSDL . ':include | .//' . Helper::PFX_WSDL . ':import';
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
