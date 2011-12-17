@@ -21,61 +21,68 @@ use BeSimple\SoapCommon\SoapResponseFilter;
 
 /**
  * SoapKernel provides methods to pre- and post-process SoapRequests and SoapResponses using
- * chains of SoapRequestFilter and SoapResponseFilter objects (roughly following 
+ * chains of SoapRequestFilter and SoapResponseFilter objects (roughly following
  * the chain-of-responsibility pattern).
- * 
+ *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapKernel
 {
-    private $requestFilters = array();
-    private $responseFilters = array();
-    
     /**
-     * Registers the given object either as filter for SoapRequests or as filter for SoapResponses 
+     * Request filters.
+     *
+     * @var array(SoapRequestFilter)
+     */
+    private $requestFilters = array();
+
+    /**
+     * Response filters.
+     *
+     * @var array(SoapResponseFilter)
+     */
+    private $responseFilters = array();
+
+    /**
+     * Registers the given object either as filter for SoapRequests or as filter for SoapResponses
      * or as filter for both depending on the implemented interfaces. Inner filters have to be registered
-     * before outer filters. This means the order is as follows: RequestFilter2->RequestFilter1 and 
+     * before outer filters. This means the order is as follows: RequestFilter2->RequestFilter1 and
      * ResponseFilter1->ResponseFilter2.
-     * 
+     *
      * TODO: add priority mechanism to ensure correct order of filters
-     * 
-     * @param SoapRequestFilter|SoapResponseFilter $filter
+     *
+     * @param SoapRequestFilter|SoapResponseFilter $filter Filter to register
      */
     public function registerFilter($filter)
-    {   
-        if($filter instanceof SoapRequestFilter)
-        {
+    {
+        if ($filter instanceof SoapRequestFilter) {
             array_unshift($this->requestFilters, $filter);
         }
-        
-        if($filter instanceof SoapResponseFilter)
-        {
+
+        if ($filter instanceof SoapResponseFilter) {
             array_push($this->responseFilters, $filter);
         }
     }
-    
+
     /**
-     * Applies all registered SoapRequestFilter to the given SoapRequest. 
-     * 
-     * @param SoapRequest $request
+     * Applies all registered SoapRequestFilter to the given SoapRequest.
+     *
+     * @param SoapRequest $request Soap request
      */
     public function filterRequest(SoapRequest $request)
     {
-        foreach($this->requestFilters as $filter)
-        {
+        foreach ($this->requestFilters as $filter) {
             $filter->filterRequest($request);
         }
     }
-    
+
     /**
-     * Applies all registered SoapResponseFilter to the given SoapResponse. 
-     * 
-     * @param SoapResponse $response
+     * Applies all registered SoapResponseFilter to the given SoapResponse.
+     *
+     * @param SoapResponse $response SOAP response
      */
     public function filterResponse(SoapResponse $response)
     {
-        foreach($this->responseFilters as $filter)
-        {
+        foreach ($this->responseFilters as $filter) {
             $filter->filterResponse($response);
         }
     }

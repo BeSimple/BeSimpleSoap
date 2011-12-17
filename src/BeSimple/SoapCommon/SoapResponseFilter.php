@@ -16,9 +16,16 @@ namespace BeSimple\SoapCommon;
 use BeSimple\SoapCommon\SoapResponse;
 
 /**
+ * SOAP response filter interface.
+ *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 interface SoapResponseFilter
 {
+    /**
+     * Modify SOAP response.
+     *
+     * @param SoapResponse $response SOAP response
+     */
     public function filterResponse(SoapResponse $response);
 }

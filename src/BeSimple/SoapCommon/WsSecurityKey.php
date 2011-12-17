@@ -42,6 +42,7 @@ class WsSecurityKey
      * @param string  $key            Private key
      * @param boolean $keyIsFile      Given key parameter is path to key file
      * @param string  $passphrase     Passphrase for key
+     *
      * @return void
      */
     public function addPrivateKey($encryptionType, $key = null, $keyIsFile = true, $passphrase = null)
@@ -55,6 +56,7 @@ class WsSecurityKey
      * @param string  $encryptionType Encryption type
      * @param string  $key            Public key
      * @param boolean $keyIsFile      Given key parameter is path to key file
+     *
      * @return void
      */
     public function addPublicKey($encryptionType, $key = null, $keyIsFile = true)

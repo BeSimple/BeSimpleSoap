@@ -191,6 +191,7 @@ class Helper
      * Get SOAP namespace for the given $version.
      *
      * @param int $version SOAP_1_1|SOAP_1_2
+     *
      * @return string
      */
     public static function getSoapNamespace($version)
@@ -206,6 +207,7 @@ class Helper
      * Get SOAP version from namespace URI.
      *
      * @param string $namespace NS_SOAP_1_1|NS_SOAP_1_2
+     *
      * @return int SOAP_1_1|SOAP_1_2
      */
     public static function getSoapVersionFromNamespace($namespace)

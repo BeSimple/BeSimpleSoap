@@ -16,9 +16,11 @@ namespace BeSimple\SoapCommon;
 use BeSimple\SoapCommon\SoapMessage;
 
 /**
+ * SOAP request message.
+ *
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapRequest extends SoapMessage
 {
-    
+
 }

@@ -24,6 +24,7 @@ class Parser
      *
      * @param string                $mimeMessage Mime message string
      * @param array(string=>string) $headers     Array of header elements (e.g. coming from http request)
+     *
      * @return \BeSimple\SoapCommon\Mime\MultiPart
      */
     public static function parseMimeMessage($mimeMessage, array $headers = array())
@@ -133,6 +134,7 @@ class Parser
      * @param \BeSimple\SoapCommon\Mime\PartHeader $part        Header part
      * @param string                               $headerName  Header name
      * @param string                               $headerValue Header value
+     *
      * @return null
      */
     private static function parseContentTypeHeader(PartHeader $part, $headerName, $headerValue)
@@ -165,6 +167,7 @@ class Parser
      *
      * @param \BeSimple\SoapCommon\Mime\Part $part    Part to add content
      * @param string                         $content Content to decode
+     *
      * @return null
      */
     private static function decodeContent(Part $part, $content)

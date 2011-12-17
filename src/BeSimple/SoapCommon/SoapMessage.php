@@ -91,6 +91,8 @@ abstract class SoapMessage
     * Get content type for given SOAP version.
     *
     * @param string $version SOAP version constant SOAP_1_1|SOAP_1_2
+    *
+    * @return string
     * @throws \InvalidArgumentException
     */
     public static function getContentTypeForVersion($version)
@@ -115,7 +117,7 @@ abstract class SoapMessage
     /**
      * Set SOAP action.
      *
-     * @param string $action
+     * @param string $action SOAP action
      */
     public function setAction($action)
     {
@@ -138,7 +140,7 @@ abstract class SoapMessage
     /**
      * Set message content (MIME Message or SOAP Envelope).
      *
-     * @param string $content
+     * @param string $content SOAP message
      */
     public function setContent($content)
     {
@@ -176,7 +178,7 @@ abstract class SoapMessage
     /**
      * Set content type.
      *
-     * @param string $contentType
+     * @param string $contentType Content type header
      */
     public function setContentType($contentType)
     {
@@ -196,7 +198,7 @@ abstract class SoapMessage
     /**
      * Set location.
      *
-     * @param string $location
+     * @param string $location Location string
      */
     public function setLocation($location)
     {
@@ -216,7 +218,7 @@ abstract class SoapMessage
     /**
      * Set version.
      *
-     * @param string $version
+     * @param string $version SOAP version SOAP_1_1|SOAP_1_2
      */
     public function setVersion($version)
     {
