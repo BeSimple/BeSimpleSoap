@@ -126,10 +126,11 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Add additional reference parameters
      *
-     * @param string $ns
-     * @param string $pfx
-     * @param string $parameter
-     * @param string $value
+     * @param string $ns        Namespace URI
+     * @param string $pfx       Namespace prefix
+     * @param string $parameter Parameter name
+     * @param string $value     Parameter value
+     *
      * @return void
      */
     public function addReferenceParameter($ns, $pfx, $parameter, $value)
@@ -145,8 +146,9 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Get additional reference parameters.
      *
-     * @param string $ns
-     * @param string $parameter
+     * @param string $ns        Namespace URI
+     * @param string $parameter Parameter name
+     *
      * @return string|null
      */
     public function getReferenceParameter($ns, $parameter)
@@ -162,7 +164,8 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Set FaultTo address of type xs:anyURI.
      *
-     * @param string $action
+     * @param string $faultTo xs:anyURI
+     *
      * @return void
      */
     public function setFaultTo($faultTo)
@@ -173,7 +176,8 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Set From address of type xs:anyURI.
      *
-     * @param string $action
+     * @param string $from xs:anyURI
+     *
      * @return void
      */
     public function setFrom($from)
@@ -185,7 +189,8 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
      * Set MessageId of type xs:anyURI.
      * Default: UUID v4 e.g. 'uuid:550e8400-e29b-11d4-a716-446655440000'
      *
-     * @param string $messageId
+     * @param string $messageId xs:anyURI
+     *
      * @return void
      */
     public function setMessageId($messageId = null)
@@ -200,8 +205,9 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
      * Set RelatesTo of type xs:anyURI with the optional relationType
      * (of type xs:anyURI).
      *
-     * @param string $relatesTo
-     * @param string $relationType
+     * @param string $relatesTo    xs:anyURI
+     * @param string $relationType xs:anyURI
+     *
      * @return void
      */
     public function setRelatesTo($relatesTo, $relationType = null)
@@ -216,7 +222,8 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
      * Set ReplyTo address of type xs:anyURI
      * Default: self::ENDPOINT_REFERENCE_ANONYMOUS
      *
-     * @param string $replyTo
+     * @param string $replyTo xs:anyURI
+     *
      * @return void
      */
     public function setReplyTo($replyTo = null)
@@ -230,7 +237,8 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given request XML.
      *
-     * @param SoapRequest $dom
+     * @param SoapRequest $request SOAP request
+     *
      * @return void
      */
     public function filterRequest(SoapRequest $request)
@@ -298,7 +306,8 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given response XML.
      *
-     * @param SoapResponse $response
+     * @param SoapResponse $response SOAP response
+     *
      * @return void
      */
     public function filterResponse(SoapResponse $response)

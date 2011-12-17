@@ -25,11 +25,12 @@ class SoapResponse extends CommonSoapResponse
     /**
      * Factory function for SoapResponse.
      *
-     * @param string $content
-     * @param string $location
-     * @param string $action
-     * @param string $version
-     * @param string $contentType
+     * @param string $content     Content
+     * @param string $location    Location
+     * @param string $action      SOAP action
+     * @param string $version     SOAP version
+     * @param string $contentType Content type header
+     *
      * @return BeSimple\SoapClient\SoapResponse
      */
     public static function create($content, $location, $action, $version, $contentType)

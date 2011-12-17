@@ -36,7 +36,7 @@ class FilterHelper
     /**
      * Constructor.
      *
-     * @param \DOMDocument $domDocument
+     * @param \DOMDocument $domDocument SOAP document
      */
     public function __construct(\DOMDocument $domDocument)
     {
@@ -46,10 +46,11 @@ class FilterHelper
     /**
      * Add new soap header.
      *
-     * @param \DOMElement $node
-     * @param boolean     $mustUnderstand
-     * @param string      $actor
-     * @param string      $soapVersion
+     * @param \DOMElement $node           DOMElement to add
+     * @param boolean     $mustUnderstand SOAP header mustUnderstand attribute
+     * @param string      $actor          SOAP actor/role
+     * @param string      $soapVersion    SOAP version SOAP_1_1|SOAP_1_2
+     *
      * @return void
      */
     public function addHeaderElement(\DOMElement $node, $mustUnderstand = null, $actor = null, $soapVersion = SOAP_1_1)
@@ -58,7 +59,7 @@ class FilterHelper
         $namespace = $root->namespaceURI;
         $prefix = $root->prefix;
         if (null !== $mustUnderstand) {
-            $node->appendChild(new \DOMAttr($prefix . ':mustUnderstand', (int)$mustUnderstand));
+            $node->appendChild(new \DOMAttr($prefix . ':mustUnderstand', (int) $mustUnderstand));
         }
         if (null !== $actor) {
             $attributeName = ($soapVersion == SOAP_1_1) ? 'actor' : 'role';
@@ -86,7 +87,8 @@ class FilterHelper
     /**
      * Add new soap body element.
      *
-     * @param \DOMElement $node
+     * @param \DOMElement $node DOMElement to add
+     *
      * @return void
      */
     public function addBodyElement(\DOMElement $node)
@@ -109,8 +111,9 @@ class FilterHelper
     /**
      * Add new namespace to root tag.
      *
-     * @param string $prefix
-     * @param string $namespaceURI
+     * @param string $prefix       Namespace prefix
+     * @param string $namespaceURI Namespace URI
+     *
      * @return void
      */
     public function addNamespace($prefix, $namespaceURI)
@@ -125,9 +128,10 @@ class FilterHelper
     /**
      * Create new element for given namespace.
      *
-     * @param string $namespaceURI
-     * @param string $name
-     * @param string $value
+     * @param string $namespaceURI Namespace URI
+     * @param string $name         Element name
+     * @param string $value        Element value
+     *
      * @return \DOMElement
      */
     public function createElement($namespaceURI, $name, $value = null)
@@ -140,13 +144,14 @@ class FilterHelper
     /**
      * Add new attribute to element with given namespace.
      *
-     * @param \DOMElement $element
-     * @param string      $namespaceURI
-     * @param string      $name
-     * @param string      $value
+     * @param \DOMElement $element      DOMElement to edit
+     * @param string      $namespaceURI Namespace URI
+     * @param string      $name         Attribute name
+     * @param string      $value        Attribute value
+     *
      * @return void
      */
-    public function setAttribute(\DOMElement $element, $namespaceURI = null, $name, $value)
+    public function setAttribute(\DOMElement $element, $namespaceURI, $name, $value)
     {
         if (null !== $namespaceURI) {
             $prefix = $this->namespaces[$namespaceURI];
@@ -159,8 +164,9 @@ class FilterHelper
     /**
      * Register namespace.
      *
-     * @param string $prefix
-     * @param string $namespaceURI
+     * @param string $prefix       Namespace prefix
+     * @param string $namespaceURI Namespace URI
+     *
      * @return void
      */
     public function registerNamespace($prefix, $namespaceURI)

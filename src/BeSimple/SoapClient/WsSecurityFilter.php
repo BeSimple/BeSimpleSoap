@@ -152,8 +152,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
      * Constructor.
      *
      * @param boolean $addTimestamp (SMS 10) Add security timestamp.
-     * @param int $expires (SMS 10) Security timestamp expires time in seconds.
-     * @param string $actor
+     * @param int     $expires      (SMS 10) Security timestamp expires time in seconds.
+     * @param string  $actor        SOAP actor
      */
     public function __construct($addTimestamp = true, $expires = 300, $actor = null)
     {
@@ -165,9 +165,10 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Add user data.
      *
-     * @param string $username
-     * @param string $password
-     * @param int $passwordType self::PASSWORD_TYPE_DIGEST | self::PASSWORD_TYPE_TEXT
+     * @param string $username     Username
+     * @param string $password     Password
+     * @param int    $passwordType self::PASSWORD_TYPE_DIGEST | self::PASSWORD_TYPE_TEXT
+     *
      * @return void
      */
     public function addUserData($username, $password = null, $passwordType = self::PASSWORD_TYPE_DIGEST)
@@ -180,7 +181,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Get service security key.
      *
-     * @param \BeSimple\SoapCommon\WsSecurityKey $serviceSecurityKey
+     * @param \BeSimple\SoapCommon\WsSecurityKey $serviceSecurityKey Service security key
+     *
      * @return void
      */
     public function setServiceSecurityKeyObject(WsSecurityKey $serviceSecurityKey)
@@ -191,7 +193,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Get user security key.
      *
-     * @param \BeSimple\SoapCommon\WsSecurityKey $userSecurityKey
+     * @param \BeSimple\SoapCommon\WsSecurityKey $userSecurityKey User security key
+     *
      * @return void
      */
     public function setUserSecurityKeyObject(WsSecurityKey $userSecurityKey)
@@ -202,8 +205,9 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Set security options.
      *
-     * @param int $tokenReference self::TOKEN_REFERENCE_SUBJECT_KEY_IDENTIFIER | self::TOKEN_REFERENCE_SECURITY_TOKEN | self::TOKEN_REFERENCE_THUMBPRINT_SHA1
-     * @param boolean $encryptSignature
+     * @param int     $tokenReference   self::TOKEN_REFERENCE_SUBJECT_KEY_IDENTIFIER | self::TOKEN_REFERENCE_SECURITY_TOKEN | self::TOKEN_REFERENCE_THUMBPRINT_SHA1
+     * @param boolean $encryptSignature Encrypt signature
+     *
      * @return void
      */
     public function setSecurityOptionsEncryption($tokenReference, $encryptSignature = false)
@@ -215,8 +219,9 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Set security options.
      *
-     * @param int $tokenReference self::TOKEN_REFERENCE_SUBJECT_KEY_IDENTIFIER | self::TOKEN_REFERENCE_SECURITY_TOKEN | self::TOKEN_REFERENCE_THUMBPRINT_SHA1
-     * @param boolean $signAllHeaders
+     * @param int     $tokenReference self::TOKEN_REFERENCE_SUBJECT_KEY_IDENTIFIER | self::TOKEN_REFERENCE_SECURITY_TOKEN | self::TOKEN_REFERENCE_THUMBPRINT_SHA1
+     * @param boolean $signAllHeaders Sign all headers?
+     *
      * @return void
      */
     public function setSecurityOptionsSignature($tokenReference, $signAllHeaders = false)
@@ -228,7 +233,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given request XML.
      *
-     * @param SoapRequest $dom
+     * @param SoapRequest $request SOAP request to modify
+     *
      * @return void
      */
     public function filterRequest(SoapRequest $request)
@@ -278,7 +284,7 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
 
                 if (self::PASSWORD_TYPE_DIGEST === $this->passwordType) {
                     $nonce = mt_rand();
-                    $password = base64_encode(sha1($nonce . $createdTimestamp . $this->password , true));
+                    $password = base64_encode(sha1($nonce . $createdTimestamp . $this->password, true));
                     $passwordType = Helper::NAME_WSS_UTP . '#PasswordDigest';
                 } else {
                     $password = $this->password;
@@ -349,7 +355,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given request XML.
      *
-     * @param SoapResponse $response
+     * @param SoapResponse $response SOAP response to modify
+     *
      * @return void
      */
     public function filterResponse(SoapResponse $response)
@@ -397,12 +404,11 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Adds the configured KeyInfo to the parentNode.
      *
-     * @param FilterHelper $filterHelper
-     * @param int $tokenReference
-     * @param \DOMNode $parentNode
-     * @param string $guid
-     * @param \ass\XmlSecurity\Key $xmlSecurityKey
-     * @param \DOMNode $insertBefore
+     * @param FilterHelper         $filterHelper   Filter helper object
+     * @param int                  $tokenReference Token reference type
+     * @param string               $guid           Unique ID
+     * @param \ass\XmlSecurity\Key $xmlSecurityKey XML security key
+     *
      * @return \DOMElement
      */
     protected function createKeyInfo(FilterHelper $filterHelper, $tokenReference, $guid, XmlSecurityKey $xmlSecurityKey = null)
@@ -444,8 +450,9 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Create a list of \DOMNodes that should be encrypted.
      *
-     * @param \DOMDocument $dom
-     * @param \DOMElement $security
+     * @param \DOMDocument $dom      DOMDocument to query
+     * @param \DOMElement  $security Security element
+     *
      * @return \DOMNodeList
      */
     protected function createNodeListForEncryption(\DOMDocument $dom, \DOMElement $security)
@@ -465,8 +472,9 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Create a list of \DOMNodes that should be signed.
      *
-     * @param \DOMDocument $dom
-     * @param \DOMElement $security
+     * @param \DOMDocument $dom      DOMDocument to query
+     * @param \DOMElement  $security Security element
+     *
      * @return array(\DOMNode)
      */
     protected function createNodeListForSigning(\DOMDocument $dom, \DOMElement $security)
@@ -496,8 +504,9 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Gets the referenced node for the given URI.
      *
-     * @param \DOMElement $node
-     * @param string $uri
+     * @param \DOMElement $node Node
+     * @param string      $uri  URI
+     *
      * @return \DOMElement
      */
     protected function getReferenceNodeForUri(\DOMElement $node, $uri)
@@ -514,8 +523,9 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Tries to resolve a key from the given \DOMElement.
      *
-     * @param \DOMElement $node
-     * @param string $algorithm
+     * @param \DOMElement $node      Node where to resolve the key
+     * @param string      $algorithm XML security key algorithm
+     *
      * @return \ass\XmlSecurity\Key|null
      */
     public function keyInfoSecurityTokenReferenceResolver(\DOMElement $node, $algorithm)

@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 /*
  * This file is part of the BeSimpleSoapClient.
@@ -71,7 +71,7 @@ class WsdlDownloader
         $this->curl = $curl;
         $this->resolveRemoteIncludes = $resolveRemoteIncludes;
         // get current WSDL caching config
-        $this->cacheEnabled = (bool)ini_get('soap.wsdl_cache_enabled');
+        $this->cacheEnabled = (bool) ini_get('soap.wsdl_cache_enabled');
         if ($this->cacheEnabled === true
             && $cacheWsdl === WSDL_CACHE_NONE) {
             $this->cacheEnabled = false;
@@ -87,7 +87,8 @@ class WsdlDownloader
     /**
      * Download given WSDL file and return name of cache file.
      *
-     * @param string $wsdl
+     * @param string $wsdl WSDL file URL/path
+     *
      * @return string
      */
     public function download($wsdl)
@@ -134,7 +135,8 @@ class WsdlDownloader
     /**
      * Do we have a remote file?
      *
-     * @param string $file
+     * @param string $file File URL/path
+     *
      * @return boolean
      */
     private function isRemoteFile($file)
@@ -153,9 +155,10 @@ class WsdlDownloader
     /**
      * Resolves remote WSDL/XSD includes within the WSDL files.
      *
-     * @param string $xml
-     * @param string $cacheFile
-     * @param unknown_type $parentIsRemote
+     * @param string  $xml        XML file
+     * @param string  $cacheFile  Cache file name
+     * @param boolean $parentFile Parent file name
+     *
      * @return void
      */
     private function resolveRemoteIncludes($xml, $cacheFile, $parentFile = null)
@@ -203,8 +206,9 @@ class WsdlDownloader
     /**
      * Resolves the relative path to base into an absolute.
      *
-     * @param string $base
-     * @param string $relative
+     * @param string $base     Base path
+     * @param string $relative Relative path
+     *
      * @return string
      */
     private function resolveRelativePathInUrl($base, $relative)

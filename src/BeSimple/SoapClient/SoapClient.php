@@ -113,7 +113,8 @@ class SoapClient extends \SoapClient
     /**
      * Perform HTTP request with cURL.
      *
-     * @param SoapRequest $soapRequest
+     * @param SoapRequest $soapRequest SoapRequest object
+     *
      * @return SoapResponse
      */
     private function __doHttpRequest(SoapRequest $soapRequest)
@@ -126,7 +127,7 @@ class SoapClient extends \SoapClient
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec($soapRequest->getLocation(),
             $soapRequest->getContent(),
-            $headers);
+        $headers);
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
             $this->lastRequestHeaders = $this->curl->getRequestHeaders();
@@ -136,7 +137,7 @@ class SoapClient extends \SoapClient
         if ($responseSuccessfull === false) {
             // get error message from curl
             $faultstring = $this->curl->getErrorMessage();
-            throw new \SoapFault( 'HTTP', $faultstring );
+            throw new \SoapFault('HTTP', $faultstring);
         }
         // tracing enabled: store last response header and body
         if ($this->tracingEnabled === true) {
@@ -144,24 +145,27 @@ class SoapClient extends \SoapClient
             $this->lastResponse = $this->curl->getResponseBody();
         }
         // wrap response data in SoapResponse object
-        $soapResponse = SoapResponse::create($this->curl->getResponseBody(),
+        $soapResponse = SoapResponse::create(
+            $this->curl->getResponseBody(),
             $soapRequest->getLocation(),
             $soapRequest->getAction(),
             $soapRequest->getVersion(),
-            $this->curl->getResponseContentType());
+            $this->curl->getResponseContentType()
+        );
 
         return $soapResponse;
-   }
+    }
 
-   /**
+    /**
      * Custom request method to be able to modify the SOAP messages.
      * $oneWay parameter is not used at the moment.
      *
-     * @param string $request
-     * @param string $location
-     * @param string $action
-     * @param int $version
-     * @param int $oneWay 0|1
+     * @param string $request  Request string
+     * @param string $location Location
+     * @param string $action   SOAP action
+     * @param int    $version  SOAP version
+     * @param int    $oneWay   0|1
+     *
      * @return string
      */
     public function __doRequest($request, $location, $action, $version, $oneWay = 0)
@@ -180,7 +184,8 @@ class SoapClient extends \SoapClient
      * Runs the currently registered request filters on the request, performs
      * the HTTP request and runs the response filters.
      *
-     * @param SoapRequest $soapRequest
+     * @param SoapRequest $soapRequest SOAP request object
+     *
      * @return SoapResponse
      */
     protected function __doRequest2(SoapRequest $soapRequest)
@@ -262,7 +267,7 @@ class SoapClient extends \SoapClient
                $contentType = $this->curl->getResponseContentType();
                if ($contentType != 'application/soap+xml'
                    && $contentType != 'application/soap+xml') {
-                   if (strncmp($response , "<?xml", 5)) {
+                   if (strncmp($response, "<?xml", 5)) {
                        $isError = 1;
                    }
                }
@@ -287,6 +292,7 @@ class SoapClient extends \SoapClient
      *
      * @param string               $wsdl    WSDL file
      * @param array(string=>mixed) $options Options array
+     *
      * @return string
      */
     private function loadWsdl($wsdl, array $options)

@@ -50,8 +50,8 @@ class Curl
     /**
      * Constructor.
      *
-     * @param array $options
-     * @param int $followLocationMaxRedirects
+     * @param array $options                    Options array from SoapClient constructor
+     * @param int   $followLocationMaxRedirects Redirection limit for Location header
      */
     public function __construct(array $options = array(), $followLocationMaxRedirects = 10)
     {
@@ -109,9 +109,10 @@ class Curl
      * Execute HTTP request.
      * Returns true if request was successfull.
      *
-     * @param string $location
-     * @param string $request
-     * @param array $requestHeaders
+     * @param string $location       HTTP location
+     * @param string $request        Request body
+     * @param array  $requestHeaders Request header strings
+     *
      * @return bool
      */
     public function exec($location, $request = null, $requestHeaders = array())
@@ -136,9 +137,8 @@ class Curl
      * Custom curl_exec wrapper that allows to follow redirects when specific
      * http response code is set. SOAP only allows 307.
      *
-     * @param resource $ch
-     * @param int $maxRedirects
-     * @param int $redirects
+     * @param int $redirects Current redirection count
+     *
      * @return mixed
      */
     private function execManualRedirect($redirects = 0)
@@ -186,7 +186,7 @@ class Curl
      *
      * http://curl.haxx.se/libcurl/c/libcurl-errors.html
      *
-     * @var array(int=>string)
+     * @return array(int=>string)
      */
     protected function getErrorCodeMapping()
     {
