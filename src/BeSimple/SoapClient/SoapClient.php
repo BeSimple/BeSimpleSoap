@@ -191,13 +191,13 @@ class SoapClient extends \SoapClient
     protected function __doRequest2(SoapRequest $soapRequest)
     {
         // run SoapKernel on SoapRequest
-        $soapRequest = $this->soapKernel->filterRequest($soapRequest);
+        $this->soapKernel->filterRequest($soapRequest);
 
         // perform HTTP request with cURL
         $soapResponse = $this->__doHttpRequest($soapRequest);
 
         // run SoapKernel on SoapResponse
-        $soapResponse = $this->soapKernel->filterResponse($soapResponse);
+        $this->soapKernel->filterResponse($soapResponse);
 
         return $soapResponse;
     }

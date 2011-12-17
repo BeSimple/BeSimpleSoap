@@ -17,7 +17,9 @@ use ass\XmlSecurity\Enc as XmlSecurityEnc;
 use ass\XmlSecurity\Key as XmlSecurityKey;
 
 use BeSimple\SoapCommon\Helper;
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;
+use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
 use BeSimple\SoapCommon\SoapResponseFilter;
 use BeSimple\SoapCommon\WsSecurityKey;
 
@@ -179,6 +181,25 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     }
 
     /**
+     * Reset all properties to default values.
+     */
+    public function resetFilter()
+    {
+        $this->actor                    = null;
+        $this->addTimestamp             = null;
+        $this->encryptSignature         = null;
+        $this->expires                  = null;
+        $this->password                 = null;
+        $this->passwordType             = null;
+        $this->serviceSecurityKey       = null;
+        $this->signAllHeaders           = null;
+        $this->tokenReferenceEncryption = null;
+        $this->tokenReferenceSignature  = null;
+        $this->username                 = null;
+        $this->userSecurityKey          = null;
+    }
+
+    /**
      * Get service security key.
      *
      * @param \BeSimple\SoapCommon\WsSecurityKey $serviceSecurityKey Service security key
@@ -233,11 +254,11 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given request XML.
      *
-     * @param SoapRequest $request SOAP request to modify
+     * @param \BeSimple\SoapCommon\SoapRequest $request SOAP request
      *
      * @return void
      */
-    public function filterRequest(SoapRequest $request)
+    public function filterRequest(CommonSoapRequest $request)
     {
         // get \DOMDocument from SOAP request
         $dom = $request->getContentDocument();
@@ -256,7 +277,7 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
 
         // create security header
         $security = $filterHelper->createElement(Helper::NS_WSS, 'Security');
-        $filterHelper->addHeaderElement($security, true, $this->actor, $request->getSoapVersion());
+        $filterHelper->addHeaderElement($security, true, $this->actor, $request->getVersion());
 
         if (true === $this->addTimestamp || null !== $this->expires) {
             $timestamp = $filterHelper->createElement(Helper::NS_WSU, 'Timestamp');
@@ -355,11 +376,11 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given request XML.
      *
-     * @param SoapResponse $response SOAP response to modify
+     * @param \BeSimple\SoapCommon\SoapResponse $response SOAP response
      *
      * @return void
      */
-    public function filterResponse(SoapResponse $response)
+    public function filterResponse(CommonSoapResponse $response)
     {
         // get \DOMDocument from SOAP response
         $dom = $response->getContentDocument();

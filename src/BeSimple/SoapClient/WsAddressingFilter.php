@@ -13,7 +13,9 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Helper;
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;
+use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
 use BeSimple\SoapCommon\SoapResponseFilter;
 
 /**
@@ -162,6 +164,21 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     }
 
     /**
+     * Reset all properties to default values.
+     */
+    public function resetFilter()
+    {
+        $this->faultTo                     = null;
+        $this->from                        = null;
+        $this->messageId                   = null;
+        $this->referenceParametersRecieved = array();
+        $this->referenceParametersSet      = array();
+        $this->relatesTo                   = null;
+        $this->relatesToRelationshipType   = null;
+        $this->replyTo                     = null;
+    }
+
+    /**
      * Set FaultTo address of type xs:anyURI.
      *
      * @param string $faultTo xs:anyURI
@@ -237,11 +254,11 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given request XML.
      *
-     * @param SoapRequest $request SOAP request
+     * @param \BeSimple\SoapCommon\SoapRequest $request SOAP request
      *
      * @return void
      */
-    public function filterRequest(SoapRequest $request)
+    public function filterRequest(CommonSoapRequest $request)
     {
         // get \DOMDocument from SOAP request
         $dom = $request->getContentDocument();
@@ -306,11 +323,11 @@ class WsAddressingFilter implements SoapRequestFilter, SoapResponseFilter
     /**
      * Modify the given response XML.
      *
-     * @param SoapResponse $response SOAP response
+     * @param \BeSimple\SoapCommon\SoapResponse $response SOAP response
      *
      * @return void
      */
-    public function filterResponse(SoapResponse $response)
+    public function filterResponse(CommonSoapResponse $response)
     {
         // get \DOMDocument from SOAP response
         $dom = $response->getContentDocument();
