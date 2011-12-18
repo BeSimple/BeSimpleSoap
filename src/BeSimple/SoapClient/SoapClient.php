@@ -125,9 +125,11 @@ class SoapClient extends \SoapClient
             'SOAPAction: "' . $soapRequest->getAction() . '"',
         );
         // execute HTTP request with cURL
-        $responseSuccessfull = $this->curl->exec($soapRequest->getLocation(),
+        $responseSuccessfull = $this->curl->exec(
+            $soapRequest->getLocation(),
             $soapRequest->getContent(),
-        $headers);
+            $headers
+        );
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
             $this->lastRequestHeaders = $this->curl->getRequestHeaders();
@@ -250,38 +252,6 @@ class SoapClient extends \SoapClient
     public function getSoapKernel()
     {
         return $this->soapKernel;
-    }
-
-    // TODO finish
-    protected function isValidSoapResponse()
-    {
-        //check if we do have a proper soap status code (if not soapfault)
-        $responseStatusCode = $this->curl->getResponseStatusCode();
-        $response = $this->curl->getResponseBody();
-        if ($responseStatusCode >= 400) {
-           $isError = 0;
-           $response = trim($response);
-           if (strlen($response) == 0) {
-               $isError = 1;
-           } else {
-               $contentType = $this->curl->getResponseContentType();
-               if ($contentType != 'application/soap+xml'
-                   && $contentType != 'application/soap+xml') {
-                   if (strncmp($response, "<?xml", 5)) {
-                       $isError = 1;
-                   }
-               }
-           }
-           if ($isError == 1) {
-               throw new \SoapFault('HTTP', $this->curl->getResponseStatusMessage());
-           }
-        } elseif ($responseStatusCode != 200 && $responseStatusCode != 202) {
-           $dom = new \DOMDocument('1.0');
-           $dom->loadXML($response);
-           if ($dom->getElementsByTagNameNS($dom->documentElement->namespaceURI, 'Fault')->length == 0) {
-               throw new \SoapFault('HTTP', 'HTTP response status must be 200 or 202');
-           }
-        }
     }
 
     /**
