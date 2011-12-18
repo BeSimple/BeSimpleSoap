@@ -15,25 +15,35 @@ namespace BeSimple\SoapClient;
 use BeSimple\SoapCommon\AbstractSoapBuilder;
 
 /**
+ * Fluent interface builder for SoapClient instance.
+ *
  * @author Francis Besset <francis.besset@gmail.com>
  * @author Christian Kerl <christian-kerl@web.de>
  */
 class SoapClientBuilder extends AbstractSoapBuilder
 {
+    /**
+     * Authentication options.
+     *
+     * @var array(string=>mixed)
+     */
     protected $soapOptionAuthentication = array();
 
     /**
-     * @return SoapClientBuilder
+     * Create new instance with default options.
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
      */
-    static public function createWithDefaults()
+    public static function createWithDefaults()
     {
         return parent::createWithDefaults()
-            ->withUserAgent('BeSimpleSoap')
-        ;
+            ->withUserAgent('BeSimpleSoap');
     }
 
     /**
-     * @return SoapClient
+     * Finally returns a SoapClient instance.
+     *
+     * @return \BeSimple\SoapClient\SoapClient
      */
     public function build()
     {
@@ -42,13 +52,22 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return new SoapClient($this->wsdl, $this->getSoapOptions());
     }
 
+    /**
+     * Get final array of SOAP options.
+     *
+     * @return array(string=>mixed)
+     */
     public function getSoapOptions()
     {
         return parent::getSoapOptions() + $this->soapOptionAuthentication;
     }
 
     /**
-     * @return SoapClientBuilder
+     * Configure option 'trace'.
+     *
+     * @param boolean $trace Enable/Disable
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
      */
     public function withTrace($trace = true)
     {
@@ -58,7 +77,11 @@ class SoapClientBuilder extends AbstractSoapBuilder
     }
 
     /**
-     * @return SoapClientBuilder
+     * Configure option 'exceptions'.
+     *
+     * @param boolean $exceptions Enable/Disable
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
      */
     public function withExceptions($exceptions = true)
     {
@@ -68,7 +91,11 @@ class SoapClientBuilder extends AbstractSoapBuilder
     }
 
     /**
-     * @return SoapClientBuilder
+     * Configure option 'user_agent'.
+     *
+     * @param string $userAgent User agent string
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
      */
     public function withUserAgent($userAgent)
     {
@@ -77,18 +104,37 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * Enable gzip compression.
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
+     */
     public function withCompressionGzip()
     {
         $this->soapOptions['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP;
-    }
 
-    public function withCompressionDeflate()
-    {
-        $this->soapOptions['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_DEFLATE;
+        return $this;
     }
 
     /**
-     * @return SoapClientBuilder
+     * Enable deflate compression.
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
+     */
+    public function withCompressionDeflate()
+    {
+        $this->soapOptions['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_DEFLATE;
+
+        return $this;
+    }
+
+    /**
+     * Configure basic authentication
+     *
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
      */
     public function withBasicAuthentication($username, $password)
     {
@@ -102,7 +148,12 @@ class SoapClientBuilder extends AbstractSoapBuilder
     }
 
     /**
-     * @return SoapClientBuilder
+     * Configure digest authentication.
+     *
+     * @param string $certificate Certificate
+     * @param string $passphrase  Passphrase
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
      */
     public function withDigestAuthentication($certificate, $passphrase = null)
     {
@@ -118,6 +169,16 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * Configure proxy.
+     *
+     * @param string $host     Host
+     * @param int    $port     Port
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * @return \BeSimple\SoapClient\SoapClientBuilder
+     */
     public function withProxy($host, $port, $username = null, $password = null)
     {
         $this->soapOptions['proxy_host'] = $host;
@@ -131,6 +192,9 @@ class SoapClientBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * Validate options.
+     */
     protected function validateOptions()
     {
         $this->validateWsdl();
