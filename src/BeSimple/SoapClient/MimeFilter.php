@@ -29,10 +29,28 @@ use BeSimple\SoapCommon\SoapResponseFilter;
 class MimeFilter implements SoapRequestFilter, SoapResponseFilter
 {
     /**
+     * Attachment type.
+     *
+     * @var int Helper::ATTACHMENTS_TYPE_SWA | Helper::ATTACHMENTS_TYPE_MTOM
+     */
+    protected $attachmentType = Helper::ATTACHMENTS_TYPE_SWA;
+
+    /**
+     * Constructor.
+     *
+     * @param int $attachmentType Helper::ATTACHMENTS_TYPE_SWA | Helper::ATTACHMENTS_TYPE_MTOM
+     */
+    public function __construct($attachmentType)
+    {
+        $this->attachmentType = $attachmentType;
+    }
+
+    /**
      * Reset all properties to default values.
      */
     public function resetFilter()
     {
+        $this->attachmentType = Helper::ATTACHMENTS_TYPE_SWA;
     }
 
     /**
@@ -44,8 +62,8 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
      */
     public function filterRequest(CommonSoapRequest $request)
     {
-        // TODO get from request object
-        $attachmentsToSend = array();
+        // get attachments from request object
+        $attachmentsToSend = $request->getAttachments();
 
         // build mime message if we have attachments
         if (count($attachmentsToSend) > 0) {
@@ -53,8 +71,7 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
             $soapPart = new MimePart($request->getContent(), 'text/xml', 'utf-8', MimePart::ENCODING_EIGHT_BIT);
             $soapVersion = $request->getVersion();
             // change content type headers for MTOM with SOAP 1.1
-            // TODO attachment type option!!!!!!!!!1
-            if ($soapVersion == SOAP_1_1 && $this->options['features_mime'] & Helper::ATTACHMENTS_TYPE_MTOM) {
+            if ($soapVersion == SOAP_1_1 && $this->attachmentType & Helper::ATTACHMENTS_TYPE_MTOM) {
                 $multipart->setHeader('Content-Type', 'type', 'application/xop+xml');
                 $multipart->setHeader('Content-Type', 'start-info', 'text/xml');
                 $soapPart->setHeader('Content-Type', 'application/xop+xml');
@@ -69,8 +86,13 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
             foreach ($attachmentsToSend as $cid => $attachment) {
                 $multipart->addPart($attachment, false);
             }
-            $request = $multipart->getMimeMessage();
+            $request->setContent($multipart->getMimeMessage());
+
+            // TODO
             $headers = $multipart->getHeadersForHttp();
+            list($name, $contentType) = explode(': ', $headers[0]);
+
+            $request->setContentType($contentType);
         }
     }
 
@@ -83,6 +105,7 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
      */
     public function filterResponse(CommonSoapResponse $response)
     {
+        // array to store attachments
         $attachmentsRecieved = array();
 
         // check content type if it is a multipart mime message
@@ -90,12 +113,15 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
         if (false !== stripos($responseContentType, 'multipart/related')) {
             // parse mime message
             $headers = array(
-                'Content-Type' => $responseContentType,
+                'Content-Type' => trim($responseContentType),
             );
             $multipart = MimeParser::parseMimeMessage($response->getContent(), $headers);
             // get soap payload and update SoapResponse object
             $soapPart = $multipart->getPart();
-            $response->setContent($soapPart->getContent());
+            // convert href -> myhref for external references as PHP throws exception in this case
+            // http://svn.php.net/viewvc/php/php-src/branches/PHP_5_4/ext/soap/php_encoding.c?view=markup#l3436
+            $content = preg_replace('/href=(?!#)/', 'myhref=', $soapPart->getContent());
+            $response->setContent($content);
             $response->setContentType($soapPart->getHeader('Content-Type'));
             // store attachments
             $attachments = $multipart->getParts(false);
@@ -104,9 +130,9 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
             }
         }
 
-        // add attachment to request object
+        // add attachments to response object
         if (count($attachmentsRecieved) > 0) {
-            // TODO add to response object
+            $response->setAttachments($attachmentsRecieved);
         }
     }
 }

@@ -12,6 +12,7 @@
 
 namespace BeSimple\SoapClient;
 
+use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\SoapKernel;
 
 /**
@@ -24,6 +25,13 @@ use BeSimple\SoapCommon\SoapKernel;
  */
 class SoapClient extends \SoapClient
 {
+    /**
+     * SOAP attachment type.
+     *
+     * @var int
+     */
+    protected $attachmentType = Helper::ATTACHMENTS_TYPE_BASE64;
+
     /**
      * Soap version.
      *
@@ -96,10 +104,16 @@ class SoapClient extends \SoapClient
         if (isset($options['soap_version'])) {
             $this->soapVersion = $options['soap_version'];
         }
+        // attachment handling
+        if (isset($options['attachment_type'])) {
+            $this->attachmentType = $options['attachment_type'];
+        }
         $this->curl = new Curl($options);
         $wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new SoapKernel();
+        // set up type converter and mime filter
+        $this->configureMime($options);
         // we want the exceptions option to be set
         $options['exceptions'] = true;
         // disable obsolete trace option for native SoapClient as we need to do our own tracing anyways
@@ -242,6 +256,43 @@ class SoapClient extends \SoapClient
     public function __getLastResponse()
     {
         return $this->lastResponse;
+    }
+
+    /**
+     * Configure filter and type converter for SwA/MTOM.
+     *
+     * @param array &$options SOAP constructor options array.
+     *
+     * @return void
+     */
+    private function configureMime(array &$options)
+    {
+        if (Helper::ATTACHMENTS_TYPE_BASE64 !== $this->attachmentType) {
+            // register mime filter in SoapKernel
+            $mimeFilter = new MimeFilter($this->attachmentType);
+            $this->soapKernel->registerFilter($mimeFilter);
+            // configure type converter
+            if (Helper::ATTACHMENTS_TYPE_SWA === $this->attachmentType) {
+                $converter = new SwaTypeConverter();
+            } elseif (Helper::ATTACHMENTS_TYPE_MTOM === $this->attachmentType) {
+                $converter = new MtomTypeConverter();
+            }
+            // configure typemap
+            if (!isset($options['typemap'])) {
+                $options['typemap'] = array();
+            }
+            $soapKernel = $this->soapKernel;
+            $options['typemap'][] = array(
+                'type_name' => $converter->getTypeName(),
+                'type_ns'   => $converter->getTypeNamespace(),
+                'from_xml'  => function($input) use ($converter, $soapKernel) {
+                    return $converter->convertXmlToPhp($input, $soapKernel);
+                },
+                'to_xml'    => function($input) use ($converter, $soapKernel) {
+                    return $converter->convertPhpToXml($input, $soapKernel);
+                },
+            );
+        }
     }
 
     /**
