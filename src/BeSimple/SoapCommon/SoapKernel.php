@@ -60,7 +60,7 @@ class SoapKernel
     */
     public function addAttachment(MimePart $attachment)
     {
-        $contentId = trim($part->getHeader('Content-ID'), '<>');
+        $contentId = trim($attachment->getHeader('Content-ID'), '<>');
 
         $this->attachments[$contentId] = $attachment;
     }
