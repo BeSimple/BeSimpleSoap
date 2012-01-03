@@ -32,6 +32,8 @@ class Parser
         $boundary = null;
         $start = null;
         $multipart = new MultiPart();
+        $hitFirstBoundary = false;
+        $inHeader = true;
         // add given headers, e.g. coming from HTTP headers
         if (count($headers) > 0) {
             foreach ($headers as $name => $value) {
@@ -43,9 +45,8 @@ class Parser
                     $multipart->setHeader($name, $value);
                 }
             }
+            $inHeader = false;
         }
-        $hitFirstBoundary = false;
-        $inHeader = true;
         $content = '';
         $currentPart = $multipart;
         $lines = preg_split("/\r\n|\n/", $mimeMessage);
