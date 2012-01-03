@@ -49,7 +49,7 @@ class Parser
         }
         $content = '';
         $currentPart = $multipart;
-        $lines = preg_split("/\r\n|\n/", $mimeMessage);
+        $lines = preg_split("/(\r\n)/", $mimeMessage);
         foreach ($lines as $line) {
             // ignore http status code and POST *
             if (substr($line, 0, 5) == 'HTTP/' || substr($line, 0, 4) == 'POST') {
@@ -74,7 +74,7 @@ class Parser
                 unset($currentHeader);
             }
             if ($inHeader) {
-                if ($line == '') {
+                if (trim($line) == '') {
                     $inHeader = false;
                     continue;
                 }
@@ -111,7 +111,7 @@ class Parser
                     }
                 } else {
                     if ($hitFirstBoundary === false) {
-                        if ($line != '') {
+                        if (trim($line) != '') {
                             $inHeader = true;
                             $currentHeader = $line;
                             continue;
@@ -120,7 +120,6 @@ class Parser
                     $content .= $line . "\r\n";
                 }
             }
-
         }
         return $multipart;
     }

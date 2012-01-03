@@ -13,6 +13,8 @@
 
 namespace BeSimple\SoapCommon;
 
+use BeSimple\SoapCommon\Mime\Part as MimePart;
+
 use BeSimple\SoapCommon\SoapRequest;
 use BeSimple\SoapCommon\SoapResponse;
 
@@ -29,6 +31,13 @@ use BeSimple\SoapCommon\SoapResponseFilter;
 class SoapKernel
 {
     /**
+    * Mime attachments.
+    *
+    * @var array(\BeSimple\SoapCommon\Mime\Part)
+    */
+    protected $attachments = array();
+
+    /**
      * Request filters.
      *
      * @var array(SoapRequestFilter)
@@ -41,6 +50,39 @@ class SoapKernel
      * @var array(SoapResponseFilter)
      */
     private $responseFilters = array();
+
+    /**
+    * Add attachment.
+    *
+    * @param \BeSimple\SoapCommon\Mime\Part $attachment New attachment
+    *
+    * @return void
+    */
+    public function addAttachment(MimePart $attachment)
+    {
+        $contentId = trim($part->getHeader('Content-ID'), '<>');
+
+        $this->attachments[$contentId] = $attachment;
+    }
+
+    /**
+     * Get attachment and remove from array.
+     *
+     * @param string $contentId Content ID of attachment
+     *
+     * @return \BeSimple\SoapCommon\Mime\Part|null
+     */
+    public function getAttachment($contentId)
+    {
+        if (isset($this->attachments[$contentId])) {
+            $part = $this->attachments[$contentId];
+            unset($this->attachments[$contentId]);
+
+            return $part;
+        }
+
+        return null;
+    }
 
     /**
      * Registers the given object either as filter for SoapRequests or as filter for SoapResponses
@@ -70,6 +112,9 @@ class SoapKernel
      */
     public function filterRequest(SoapRequest $request)
     {
+        $request->setAttachments($this->attachments);
+        $this->attachments = array();
+
         foreach ($this->requestFilters as $filter) {
             $filter->filterRequest($request);
         }
@@ -85,5 +130,7 @@ class SoapKernel
         foreach ($this->responseFilters as $filter) {
             $filter->filterResponse($response);
         }
+
+        $this->attachments = $response->getAttachments();
     }
 }

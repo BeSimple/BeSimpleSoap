@@ -52,7 +52,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $p2 = $mp->getPart('0x9d6ad00-0xa19ef48-0x9de7500-0xa4fae78-0xa382698');
         $this->assertEquals('binary', $p2->getHeader('Content-Transfer-Encoding'));
         $this->assertEquals('application/binary', $p2->getHeader('Content-Type'));
-        $this->assertEquals(81, strlen($p2->getContent()));
+        $this->assertEquals(79, strlen($p2->getContent()));
     }
 
     public function testParserResponseAxis()

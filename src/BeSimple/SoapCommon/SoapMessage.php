@@ -13,6 +13,8 @@
 
 namespace BeSimple\SoapCommon;
 
+use BeSimple\SoapCommon\Mime\Part as MimePart;
+
 /**
  * Base class for SoapRequest and SoapResponse.
  *
@@ -51,6 +53,13 @@ abstract class SoapMessage
      * @var string
      */
     protected $action;
+
+    /**
+     * Mime attachments.
+     *
+     * @var array(\BeSimple\SoapCommon\Mime\Part)
+     */
+    protected $attachments = array();
 
     /**
      * Message content (MIME Message or SOAP Envelope).
@@ -122,6 +131,26 @@ abstract class SoapMessage
     public function setAction($action)
     {
         $this->action = $action;
+    }
+
+    /**
+     * Get attachments.
+     *
+     * @return array(\BeSimple\SoapCommon\Mime\Part)
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * Set SOAP action.
+     *
+     * @param array(\BeSimple\SoapCommon\Mime\Part) $attachments Attachment array
+     */
+    public function setAttachments(array $attachments)
+    {
+        $this->attachments = $attachments;
     }
 
     /**
