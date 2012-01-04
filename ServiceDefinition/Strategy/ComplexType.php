@@ -48,7 +48,7 @@ class ComplexType extends AbstractStrategy
 
         $dom   = $this->getContext()->toDomDocument();
 
-        $soapTypeName = Wsdl::translateType($type);
+        $soapTypeName = $this->getContext()->translateType($type);
         $soapType     = 'tns:'.$soapTypeName;
 
         if (!$classmap->has($soapTypeName)) {

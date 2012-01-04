@@ -99,7 +99,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             $value = $this->processType($type->getValue(), $value);
 
             if (!$type->isNillable() && null === $value) {
-                throw new \SoapFault('SOAP_ERROR_COMPLEX_TYPE', sprintf('"%s:%s" cannot be null.', ucfirst(Wsdl::translateType($phpType)), $type->getName()));
+                throw new \SoapFault('SOAP_ERROR_COMPLEX_TYPE', sprintf('"%s:%s" cannot be null.', ucfirst($phpType), $type->getName()));
             }
         }
 
