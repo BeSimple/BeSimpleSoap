@@ -149,6 +149,7 @@ class Part extends PartHeader
             case self::ENCODING_QUOTED_PRINTABLE:
                 return quoted_printable_encode($content);
             case self::ENCODING_BINARY:
+                return $content;
             case self::ENCODING_SEVEN_BIT:
             case self::ENCODING_EIGHT_BIT:
             default:

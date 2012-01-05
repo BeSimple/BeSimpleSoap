@@ -85,7 +85,7 @@ class Parser
                 if (strlen($line) > 0 && $line[0] == "-") {
                     if (strcmp(trim($line), '--' . $boundary) === 0) {
                         if ($currentPart instanceof Part) {
-                            $content = iconv_substr($content, 0, -2, 'utf-8');
+                            $content = substr($content, 0, -2);
                             self::decodeContent($currentPart, $content);
                             // check if there is a start parameter given, if not set first part
                             $isMain = (is_null($start) || $start == $currentPart->getHeader('Content-ID')) ? true : false;
@@ -99,7 +99,7 @@ class Parser
                         $inHeader = true;
                         $content = '';
                     } elseif (strcmp(trim($line), '--' . $boundary . '--') === 0) {
-                        $content = iconv_substr($content, 0, -2, 'utf-8');
+                        $content = substr($content, 0, -2);
                         self::decodeContent($currentPart, $content);
                         // check if there is a start parameter given, if not set first part
                         $isMain = (is_null($start) || $start == $currentPart->getHeader('Content-ID')) ? true : false;
