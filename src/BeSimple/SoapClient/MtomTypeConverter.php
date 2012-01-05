@@ -82,6 +82,7 @@ class MtomTypeConverter
 
         $doc = new \DOMDocument();
         $node = $doc->createElement($this->getTypeName());
+        $doc->appendChild($node);
 
         // add xop:Include element
         $xinclude = $doc->createElementNS(Helper::NS_XOP, Helper::PFX_XOP . ':Include');
