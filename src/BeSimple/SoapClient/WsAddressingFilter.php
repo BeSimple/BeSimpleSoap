@@ -12,6 +12,7 @@
 
 namespace BeSimple\SoapClient;
 
+use BeSimple\SoapCommon\FilterHelper;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;

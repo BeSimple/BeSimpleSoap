@@ -16,6 +16,7 @@ use ass\XmlSecurity\DSig as XmlSecurityDSig;
 use ass\XmlSecurity\Enc as XmlSecurityEnc;
 use ass\XmlSecurity\Key as XmlSecurityKey;
 
+use BeSimple\SoapCommon\FilterHelper;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;
