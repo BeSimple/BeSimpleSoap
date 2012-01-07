@@ -12,12 +12,15 @@
 
 namespace BeSimple\SoapCommon\Converter;
 
+use BeSimple\SoapCommon\SoapKernel;
+
 /**
- * Type converter interface.
+ * Internal type converter interface.
  *
+ * @author Andreas Schamberger <mail@andreass.net>
  * @author Christian Kerl <christian-kerl@web.de>
  */
-interface TypeConverterInterface
+interface InternalTypeConverterInterface
 {
     /**
      * Get type namespace.
@@ -36,18 +39,20 @@ interface TypeConverterInterface
     /**
      * Convert given XML string to PHP type.
      *
-     * @param string $data XML string
+     * @param string                          $data       XML string
+     * @param \BeSimple\SoapCommon\SoapKernel $soapKernel SoapKernel instance
      *
      * @return mixed
      */
-    function convertXmlToPhp($data);
+    function convertXmlToPhp($data, SoapKernel $soapKernel);
 
     /**
      * Convert PHP type to XML string.
      *
-     * @param mixed $data PHP type
+     * @param mixed                           $data       PHP type
+     * @param \BeSimple\SoapCommon\SoapKernel $soapKernel SoapKernel instance
      *
      * @return string
      */
-    function convertPhpToXml($data);
+    function convertPhpToXml($data, SoapKernel $soapKernel);
 }
