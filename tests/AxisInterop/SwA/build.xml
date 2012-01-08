@@ -1,0 +1,38 @@
+<project name="BeSimpleSwaService" default="generate.service">
+    <property environment="env" />
+    <property name="axis2.home" value="C:/axis2" />
+    <property name="axis2.repo" value="${axis2.home}/repository" />
+    <property name="build.dir" value="build" />
+    <property name="filename" value="besimple-swa.aar" />
+
+    <path id="axis.classpath">
+        <fileset dir="${axis2.home}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="generate.service" depends="compile">
+        <jar destfile="${build.dir}/${filename}">
+            <fileset dir="resources/">
+                <include name="META-INF/services.xml" />
+            </fileset>
+            <fileset dir="${build.dir}/classes">
+                <include name="besimple/service/**/*.class" />
+            </fileset>
+        </jar>
+        <copy file="${build.dir}/${filename}" tofile="../axis_services/${filename}" overwrite="true" />
+        <copy file="${build.dir}/${filename}" tofile="${axis2.repo}/services/${filename}" overwrite="true" />
+        <antcall target="clean" />
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${build.dir}/classes" />
+        <javac debug="on" srcdir="src" destdir="${build.dir}/classes">
+            <classpath refid="axis.classpath" />
+        </javac>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}" />
+    </target>
+</project>

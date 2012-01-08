@@ -12,186 +12,37 @@
 
 namespace BeSimple\SoapClient;
 
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
+use BeSimple\SoapCommon\SoapMessage;
+
 /**
- * @author Francis Besset <francis.besset@gmail.com>
+ * SoapRequest class for SoapClient. Provides factory function for request object.
+ *
+ * @author Andreas Schamberger <mail@andreass.net>
  */
-class SoapRequest
+class SoapRequest extends CommonSoapRequest
 {
-    protected $function;
-    protected $arguments;
-    protected $options;
-    protected $headers;
-
-    public function __construct($function = null, array $arguments = array(), array $options = array(), array $headers = array())
-    {
-        $this->function  = $function;
-        $this->arguments = $arguments;
-        $this->options   = $options;
-        $this->setHeaders($headers);
-    }
-
     /**
-     * @return string The function name
-     */
-    public function getFunction()
-    {
-        return $this->function;
-    }
-
-    /**
-     * @param string The function name
+     * Factory function for SoapRequest.
      *
-     * @return SoapRequest
-     */
-    public function setFunction($function)
-    {
-        $this->function = $function;
-
-        return $this;
-    }
-
-    /**
-     * @return array An array with all arguments
-     */
-    public function getArguments()
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * @param string The name of the argument
-     * @param mixed  The default value returned if the argument is not exists
+     * @param string $content  Content
+     * @param string $location Location
+     * @param string $action   SOAP action
+     * @param string $version  SOAP version
      *
-     * @return mixed
+     * @return BeSimple\SoapClient\SoapRequest
      */
-    public function getArgument($name, $default = null)
+    public static function create($content, $location, $action, $version)
     {
-        return $this->hasArgument($name) ? $this->arguments[$name] : $default;
+        $request = new SoapRequest();
+        // $content is if unmodified from SoapClient not a php string type!
+        $request->setContent((string) $content);
+        $request->setLocation($location);
+        $request->setAction($action);
+        $request->setVersion($version);
+        $contentType = SoapMessage::getContentTypeForVersion($version);
+        $request->setContentType($contentType);
+
+        return $request;
     }
-
-    /**
-     * @param string The name of the argument
-     *
-     * @return boolean
-     */
-    public function hasArgument($name)
-    {
-        return isset($this->arguments[$name]);
-    }
-
-    /**
-     * @param array An array with arguments
-     *
-     * @return SoapRequest
-     */
-    public function setArguments(array $arguments)
-    {
-        $this->arguments = $arguments;
-
-        return $this;
-    }
-
-    /**
-     * @param string The name of argument
-     * @param mixed  The value of argument
-     *
-     * @return SoapRequest
-     */
-    public function addArgument($name, $value)
-    {
-        $this->arguments[$name] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return array An array with all options
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string The name of the option
-     * @param mixed  The default value returned if the option is not exists
-     *
-     * @return mixed
-     */
-    public function getOption($name, $default = null)
-    {
-        return $this->hasOption($name) ? $this->options[$name] : $default;
-    }
-
-    /**
-     * @param string The name of the option
-     *
-     * @return boolean
-     */
-    public function hasOption($name)
-    {
-        return isset($this->options[$name]);
-    }
-
-    /**
-     * @param array An array with options
-     *
-     * @return SoapRequest
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getHeaders()
-    {
-        return empty($this->headers) ? null : $this->headers;
-    }
-
-    /**
-     * @param array $headers
-     *
-     * @return SoapRequest
-     */
-    public function setHeaders(array $headers)
-    {
-        $this->headers = array();
-
-        foreach ($headers as $header) {
-            $this->addHeader($header);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param \SoapHeader $header
-     *
-     * @return SoapRequest
-     */
-    public function addHeader(\SoapHeader $header)
-    {
-        $this->headers[] = $header;
-
-        return $this;
-    }
-
-    /**
-     * @param string The name of option
-     * @param mixed  The value of option
-     *
-     * @return SoapRequest
-     */
-    public function addOption($name, $value)
-    {
-        $this->options[$name] = $value;
-
-        return $this;
-    }
-    
 }

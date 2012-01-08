@@ -1,0 +1,15 @@
+<serviceGroup>
+    <service name="BeSimpleSwaService">
+        <description>BeSimple test service for SwA.</description>
+        <parameter name="enableSwA">true</parameter>
+        <parameter name="ServiceClass" locked="false">besimple.service.BeSimpleSwaService</parameter>
+        <operation name="uploadFile">
+            <actionMapping>urn:uploadFile</actionMapping>
+            <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+        </operation>
+        <operation name="downloadFile">
+            <actionMapping>urn:downloadFile</actionMapping>
+            <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+        </operation>
+    </service>
+</serviceGroup>

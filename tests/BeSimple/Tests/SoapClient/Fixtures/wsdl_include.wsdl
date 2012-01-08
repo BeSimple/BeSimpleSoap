@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<wsdl:types xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://test.sample">
+        <xs:element name="note">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="to" type="xs:string"/>
+              <xs:element name="from" type="xs:string"/>
+              <xs:element name="heading" type="xs:string"/>
+              <xs:element name="body" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+    </xs:schema>
+</wsdl:types>
