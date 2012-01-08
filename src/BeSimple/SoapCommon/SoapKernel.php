@@ -134,41 +134,4 @@ class SoapKernel
 
         $this->attachments = $response->getAttachments();
     }
-
-    /**
-    * Configure filter and type converter for SwA/MTOM.
-    *
-    * @param array &$options SOAP constructor options array.
-    *
-    * @return void
-    */
-    public function configureMime(array &$options)
-    {
-        if (isset($options['attachment_type']) && Helper::ATTACHMENTS_TYPE_BASE64 !== $options['attachment_type']) {
-            // register mime filter in SoapKernel
-            $mimeFilter = new MimeFilter($options['attachment_type']);
-            $this->registerFilter($mimeFilter);
-            // configure type converter
-            if (Helper::ATTACHMENTS_TYPE_SWA === $options['attachment_type']) {
-                $converter = new SwaTypeConverter();
-            } elseif (Helper::ATTACHMENTS_TYPE_MTOM === $options['attachment_type']) {
-                $converter = new MtomTypeConverter();
-            }
-            // configure typemap
-            if (!isset($options['typemap'])) {
-                $options['typemap'] = array();
-            }
-            $soapKernel = $this;
-            $options['typemap'][] = array(
-                'type_name' => $converter->getTypeName(),
-                'type_ns'   => $converter->getTypeNamespace(),
-                'from_xml'  => function($input) use ($converter, $soapKernel) {
-                    return $converter->convertXmlToPhp($input, $soapKernel);
-                },
-                'to_xml'    => function($input) use ($converter, $soapKernel) {
-                    return $converter->convertPhpToXml($input, $soapKernel);
-                },
-            );
-        }
-    }
 }

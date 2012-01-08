@@ -15,17 +15,21 @@ namespace BeSimple\SoapCommon\Converter;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Mime\Part as MimePart;
 use BeSimple\SoapCommon\SoapKernel;
-use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
-use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
-use BeSimple\SoapCommon\Converter\InternalTypeConverterInterface;
+use BeSimple\SoapCommon\Converter\SoapKernelAwareInterface;
+use BeSimple\SoapCommon\Converter\TypeConverterInterface;
 
 /**
  * MTOM type converter.
  *
  * @author Andreas Schamberger <mail@andreass.net>
  */
-class MtomTypeConverter implements InternalTypeConverterInterface
+class MtomTypeConverter implements TypeConverterInterface, SoapKernelAwareInterface
 {
+    /**
+     * @var \BeSimple\SoapCommon\SoapKernel $soapKernel SoapKernel instance
+     */
+    protected $soapKernel = null;
+
     /**
      * {@inheritDoc}
      */
@@ -45,7 +49,7 @@ class MtomTypeConverter implements InternalTypeConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convertXmlToPhp($data, SoapKernel $soapKernel)
+    public function convertXmlToPhp($data)
     {
         $doc = new \DOMDocument();
         $doc->loadXML($data);
@@ -60,7 +64,7 @@ class MtomTypeConverter implements InternalTypeConverterInterface
         if ('cid:' === substr($ref, 0, 4)) {
             $contentId = urldecode(substr($ref, 4));
 
-            if (null !== ($part = $soapKernel->getAttachment($contentId))) {
+            if (null !== ($part = $this->soapKernel->getAttachment($contentId))) {
 
                 return $part->getContent();
             } else {
@@ -75,12 +79,12 @@ class MtomTypeConverter implements InternalTypeConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convertPhpToXml($data, SoapKernel $soapKernel)
+    public function convertPhpToXml($data)
     {
         $part = new MimePart($data);
         $contentId = trim($part->getHeader('Content-ID'), '<>');
 
-        $soapKernel->addAttachment($part);
+        $this->soapKernel->addAttachment($part);
 
         $doc = new \DOMDocument();
         $node = $doc->createElement($this->getTypeName());
@@ -92,5 +96,13 @@ class MtomTypeConverter implements InternalTypeConverterInterface
         $node->appendChild($xinclude);
 
         return $doc->saveXML();
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    public function setKernel(SoapKernel $soapKernel)
+    {
+        $this->soapKernel = $soapKernel;
     }
 }

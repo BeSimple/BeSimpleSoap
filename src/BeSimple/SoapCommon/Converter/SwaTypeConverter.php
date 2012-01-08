@@ -15,15 +15,21 @@ namespace BeSimple\SoapCommon\Converter;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Mime\Part as MimePart;
 use BeSimple\SoapCommon\SoapKernel;
-use BeSimple\SoapCommon\Converter\InternalTypeConverterInterface;
+use BeSimple\SoapCommon\Converter\SoapKernelAwareInterface;
+use BeSimple\SoapCommon\Converter\TypeConverterInterface;
 
 /**
  * SwA type converter.
  *
  * @author Andreas Schamberger <mail@andreass.net>
  */
-class SwaTypeConverter implements InternalTypeConverterInterface
+class SwaTypeConverter implements TypeConverterInterface, SoapKernelAwareInterface
 {
+    /**
+    * @var \BeSimple\SoapCommon\SoapKernel $soapKernel SoapKernel instance
+    */
+    protected $soapKernel = null;
+
     /**
      * {@inheritDoc}
      */
@@ -43,7 +49,7 @@ class SwaTypeConverter implements InternalTypeConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convertXmlToPhp($data, SoapKernel $soapKernel)
+    public function convertXmlToPhp($data)
     {
         $doc = new \DOMDocument();
         $doc->loadXML($data);
@@ -55,7 +61,7 @@ class SwaTypeConverter implements InternalTypeConverterInterface
         if ('cid:' === substr($ref, 0, 4)) {
             $contentId = urldecode(substr($ref, 4));
 
-            if (null !== ($part = $soapKernel->getAttachment($contentId))) {
+            if (null !== ($part = $this->soapKernel->getAttachment($contentId))) {
 
                 return $part->getContent();
             } else {
@@ -70,13 +76,21 @@ class SwaTypeConverter implements InternalTypeConverterInterface
     /**
      * {@inheritDoc}
      */
-    public function convertPhpToXml($data, SoapKernel $soapKernel)
+    public function convertPhpToXml($data)
     {
         $part = new MimePart($data);
         $contentId = trim($part->getHeader('Content-ID'), '<>');
 
-        $soapKernel->addAttachment($part);
+        $this->soapKernel->addAttachment($part);
 
         return sprintf('<%s href="%s"/>', $this->getTypeName(), $contentId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setKernel(SoapKernel $soapKernel)
+    {
+        $this->soapKernel = $soapKernel;
     }
 }
