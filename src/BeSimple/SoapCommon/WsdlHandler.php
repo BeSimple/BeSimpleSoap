@@ -87,6 +87,7 @@ class WsdlHandler
      * Gets the mime type information from the WSDL file.
      *
      * @param string $soapAction Soap action to analyse
+     *
      * @return array(string=>array(string=>array(string)))
      */
     private function getMimeTypesForSoapAction($soapAction)
@@ -152,6 +153,7 @@ class WsdlHandler
      * @param string $operationType   Operation type
      * @param string $part            Part name
      * @param string $currentMimeType Current mime type
+     *
      * @return boolean
      */
     public function isValidMimeTypeType($soapAction, $operationType, $part, $currentMimeType)

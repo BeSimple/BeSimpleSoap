@@ -68,6 +68,7 @@ class Part extends PartHeader
      * @param string $charset     Charset
      * @param string $encoding    Encoding
      * @param string $contentId   Content id
+     *
      * @return void
      */
     public function __construct($content = null, $contentType = 'application/octet-stream', $charset = null, $encoding = self::ENCODING_BINARY, $contentId = null)
@@ -76,7 +77,7 @@ class Part extends PartHeader
         $this->setHeader('Content-Type', $contentType);
         if (!is_null($charset)) {
             $this->setHeader('Content-Type', 'charset', $charset);
-        } else { // if (substr($contentType, 0, 4) == 'text') {
+        } else {
             $this->setHeader('Content-Type', 'charset', 'utf-8');
         }
         $this->setHeader('Content-Transfer-Encoding', $encoding);
@@ -110,6 +111,7 @@ class Part extends PartHeader
      * Set mime content.
      *
      * @param mixed $content Content to set
+     *
      * @return void
      */
     public function setContent($content)
@@ -147,6 +149,7 @@ class Part extends PartHeader
             case self::ENCODING_QUOTED_PRINTABLE:
                 return quoted_printable_encode($content);
             case self::ENCODING_BINARY:
+                return $content;
             case self::ENCODING_SEVEN_BIT:
             case self::ENCODING_EIGHT_BIT:
             default:

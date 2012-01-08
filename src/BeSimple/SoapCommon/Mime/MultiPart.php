@@ -46,6 +46,7 @@ class MultiPart extends PartHeader
      * Construct new mime object.
      *
      * @param string $boundary Boundary string
+     *
      * @return void
      */
     public function __construct($boundary = null)
@@ -64,6 +65,7 @@ class MultiPart extends PartHeader
      * Get mime message of this object (without headers).
      *
      * @param boolean $withHeaders Returned mime message contains headers
+     *
      * @return string
      */
     public function getMimeMessage($withHeaders = false)
@@ -106,6 +108,7 @@ class MultiPart extends PartHeader
      *
      * @param \BeSimple\SoapCommon\Mime\Part $part   Part that is added
      * @param boolean                        $isMain Is the given part the main part of mime message
+     *
      * @return void
      */
     public function addPart(Part $part, $isMain = false)
@@ -124,6 +127,7 @@ class MultiPart extends PartHeader
      * parameter.
      *
      * @param string $contentId Content id of desired part
+     *
      * @return \BeSimple\SoapCommon\Mime\Part|null
      */
     public function getPart($contentId = null)
@@ -141,6 +145,7 @@ class MultiPart extends PartHeader
      * Get all parts.
      *
      * @param boolean $includeMainPart Should main part be in result set
+     *
      * @return array(\BeSimple\SoapCommon\Mime\Part)
      */
     public function getParts($includeMainPart = false)

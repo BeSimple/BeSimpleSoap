@@ -32,6 +32,7 @@ abstract class PartHeader
      * @param string $name     Header name
      * @param string $value    Header value
      * @param string $subValue Is sub value?
+     *
      * @return void
      */
     public function setHeader($name, $value, $subValue = null)
@@ -57,6 +58,7 @@ abstract class PartHeader
      *
      * @param string $name     Header name
      * @param string $subValue Sub value name
+     *
      * @return mixed|array(mixed)
      */
     public function getHeader($name, $subValue = null)
@@ -104,6 +106,7 @@ abstract class PartHeader
      * Generates a header field value from the given value paramater.
      *
      * @param array(string=>string)|string $value Header value
+     *
      * @return string
      */
     protected function generateHeaderFieldValue($value)
@@ -129,6 +132,7 @@ abstract class PartHeader
      * "(" / ")" / "<" / ">" / "@" / "," / ";" / ":" / "\" / <"> / "/" / "[" / "]" / "?" / "="
      *
      * @param string $string String to quote
+     *
      * @return string
      */
     private function quoteValueString($string)
