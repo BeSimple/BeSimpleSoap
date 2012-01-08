@@ -14,6 +14,8 @@ namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\SoapKernel;
+use BeSimple\SoapCommon\Converter\MtomTypeConverter;
+use BeSimple\SoapCommon\Converter\SwaTypeConverter;
 
 /**
  * Extended SoapClient that uses a a cURL wrapper for all underlying HTTP
@@ -102,7 +104,7 @@ class SoapClient extends \SoapClient
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new SoapKernel();
         // set up type converter and mime filter
-        $this->soapKernel->configureMime($options);
+        $this->configureMime($options);
         // we want the exceptions option to be set
         $options['exceptions'] = true;
         // disable obsolete trace option for native SoapClient as we need to do our own tracing anyways
@@ -255,6 +257,45 @@ class SoapClient extends \SoapClient
     public function getSoapKernel()
     {
         return $this->soapKernel;
+    }
+
+    /**
+    * Configure filter and type converter for SwA/MTOM.
+    *
+    * @param array &$options SOAP constructor options array.
+    *
+    * @return void
+    */
+    private function configureMime(array &$options)
+    {
+        if (isset($options['attachment_type']) && Helper::ATTACHMENTS_TYPE_BASE64 !== $options['attachment_type']) {
+            // register mime filter in SoapKernel
+            $mimeFilter = new MimeFilter($options['attachment_type']);
+            $this->soapKernel->registerFilter($mimeFilter);
+            // configure type converter
+            if (Helper::ATTACHMENTS_TYPE_SWA === $options['attachment_type']) {
+                $converter = new SwaTypeConverter();
+                $converter->setKernel($this->soapKernel);
+            } elseif (Helper::ATTACHMENTS_TYPE_MTOM === $options['attachment_type']) {
+                $converter = new MtomTypeConverter();
+                $converter->setKernel($this->soapKernel);
+            }
+            // configure typemap
+            if (!isset($options['typemap'])) {
+                $options['typemap'] = array();
+            }
+            $soapKernel = $this->soapKernel;
+            $options['typemap'][] = array(
+                'type_name' => $converter->getTypeName(),
+                'type_ns'   => $converter->getTypeNamespace(),
+                'from_xml'  => function($input) use ($converter) {
+                    return $converter->convertXmlToPhp($input);
+                },
+                'to_xml'    => function($input) use ($converter) {
+                    return $converter->convertPhpToXml($input);
+                },
+            );
+        }
     }
 
     /**
