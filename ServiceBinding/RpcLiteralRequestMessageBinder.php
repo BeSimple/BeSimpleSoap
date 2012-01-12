@@ -98,6 +98,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
 
             if ($value !== null) {
                 $value = $this->processType($type->getValue(), $value);
+                $p->setValue($message, $value);
             }
 
             if (!$type->isNillable() && null === $value) {
