@@ -115,6 +115,29 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('fooBar' => $fooBar), $result);
     }
 
+    public function testProcessMessageComplexTypeWithArrays()
+    {
+        $messageBinder = new RpcLiteralRequestMessageBinder();
+
+        $array          = array(1, 2, 3, 4);
+        $stdClass       = new \stdClass();
+        $stdClass->item = $array;
+        $simpleArrays   = new Fixtures\SimpleArrays(null, new \stdClass(), $stdClass);
+
+        $result = $messageBinder->processMessage(
+            new Definition\Method('complextype_with_array', null, array(), array(
+                new Definition\Argument('simple_arrays', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\SimpleArrays')),
+            )),
+            array($simpleArrays),
+            $this->getDefinitionComplexTypes()
+        );
+
+        $result = $result['simple_arrays'];
+        $this->assertEquals(array(), $result->array1);
+        $this->assertEquals(array(), $result->getArray2());
+        $this->assertEquals($array, $result->getArray3());
+    }
+
     public function testProcessMessageWithEmptyArrayComplexType()
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
@@ -215,6 +238,12 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar'] = $this->createComplexTypeCollection(array(
             array('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo'),
             array('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar'),
+        ));
+
+        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\SimpleArrays'] = $this->createComplexTypeCollection(array(
+            array('array1', 'string[]', true),
+            array('array2', 'string[]'),
+            array('array3', 'string[]'),
         ));
 
         $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive'] = $this->createComplexTypeCollection(array(
