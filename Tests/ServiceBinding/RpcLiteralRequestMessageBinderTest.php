@@ -133,7 +133,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         );
 
         $result = $result['simple_arrays'];
-        $this->assertEquals(array(), $result->array1);
+        $this->assertEquals(null, $result->array1);
         $this->assertEquals(array(), $result->getArray2());
         $this->assertEquals($array, $result->getArray3());
     }

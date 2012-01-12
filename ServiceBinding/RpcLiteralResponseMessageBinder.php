@@ -81,12 +81,14 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
                 $value = $p->getValue($message);
             }
 
-            $value = $this->processType($type->getValue(), $value);
+            if (null !== $value) {
+                $value = $this->processType($type->getValue(), $value);
 
-            if ($p->isPublic()) {
-                $message->{$type->getName()} = $value;
-            } else {
-                $p->setValue($message, $value);
+                if ($p->isPublic()) {
+                    $message->{$type->getName()} = $value;
+                } else {
+                    $p->setValue($message, $value);
+                }
             }
 
             if (!$type->isNillable() && null === $value) {
