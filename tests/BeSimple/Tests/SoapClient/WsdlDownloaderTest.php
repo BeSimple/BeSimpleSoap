@@ -24,11 +24,12 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
 
     protected function startPhpWebserver()
     {
-        if ('Windows' == substr(php_uname('s'), 0, 7 )) {
-            $powershellCommand = "\$app = start-process php.exe -ArgumentList '-S localhost:8000 -t ".__DIR__.DIRECTORY_SEPARATOR."Fixtures' -WindowStyle 'Hidden' -passthru; Echo \$app.Id;";
+        $dir = __DIR__.DIRECTORY_SEPARATOR.'Fixtures';
+        if ('Windows' == substr(php_uname('s'), 0, 7)) {
+            $powershellCommand = "\$app = start-process php.exe -ArgumentList '-S localhost:8000 -t ".$dir."' -WindowStyle 'Hidden' -passthru; Echo \$app.Id;";
             $shellCommand = 'powershell -command "& {'.$powershellCommand.'}"';
         } else {
-            $shellCommand = "nohup php -S localhost:8000 -t ".__DIR__.DIRECTORY_SEPARATOR."Fixtures &";
+            $shellCommand = "nohup php -S localhost:8000 -t ".$dir." &";
         }
         $output = array();
         exec($shellCommand, $output);
@@ -38,7 +39,7 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
     protected function stopPhpWebserver()
     {
         if (!is_null($this->webserverProcessId)) {
-            if ('Windows' == substr(php_uname('s'), 0, 7 )) {
+            if ('Windows' == substr(php_uname('s'), 0, 7)) {
                 exec('TASKKILL /F /PID ' . $this->webserverProcessId);
             } else {
                 exec('kill ' . $this->webserverProcessId);
@@ -57,7 +58,7 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $cacheDir = ini_get('soap.wsdl_cache_dir');
         if (!is_dir($cacheDir)) {
             $cacheDir = sys_get_temp_dir();
-            $cacheDirForRegExp = preg_quote( $cacheDir );
+            $cacheDirForRegExp = preg_quote($cacheDir);
         }
 
         $tests = array(
@@ -82,7 +83,7 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         foreach ($tests as $name => $values) {
             $cacheFileName = $wd->download($values['source']);
             $result = file_get_contents($cacheFileName);
-            $this->assertRegExp($values['assertRegExp'],$result,$name);
+            $this->assertRegExp($values['assertRegExp'], $result, $name);
             unlink($cacheFileName);
         }
 
@@ -129,7 +130,7 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $cacheDir = ini_get('soap.wsdl_cache_dir');
         if (!is_dir($cacheDir)) {
             $cacheDir = sys_get_temp_dir();
-            $cacheDirForRegExp = preg_quote( $cacheDir );
+            $cacheDirForRegExp = preg_quote($cacheDir);
         }
 
         $remoteUrlAbsolute = 'http://localhost:8000/wsdlinclude/wsdlinctest_absolute.xml';
@@ -162,10 +163,10 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         );
 
         foreach ($tests as $name => $values) {
-            $wsdl = file_get_contents( $values['source'] );
-            $method->invoke($wd, $wsdl, $values['cacheFile'],$values['remoteParentUrl']);
+            $wsdl = file_get_contents($values['source']);
+            $method->invoke($wd, $wsdl, $values['cacheFile'], $values['remoteParentUrl']);
             $result = file_get_contents($values['cacheFile']);
-            $this->assertRegExp($values['assertRegExp'],$result,$name);
+            $this->assertRegExp($values['assertRegExp'], $result, $name);
             unlink($values['cacheFile']);
         }
 
@@ -186,7 +187,7 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         $cacheDir = ini_get('soap.wsdl_cache_dir');
         if (!is_dir($cacheDir)) {
             $cacheDir = sys_get_temp_dir();
-            $cacheDirForRegExp = preg_quote( $cacheDir );
+            $cacheDirForRegExp = preg_quote($cacheDir);
         }
 
         $remoteUrlAbsolute = 'http://localhost:8000/xsdinclude/xsdinctest_absolute.xml';
@@ -219,10 +220,10 @@ class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
         );
 
         foreach ($tests as $name => $values) {
-            $wsdl = file_get_contents( $values['source'] );
-            $method->invoke($wd, $wsdl, $values['cacheFile'],$values['remoteParentUrl']);
+            $wsdl = file_get_contents($values['source']);
+            $method->invoke($wd, $wsdl, $values['cacheFile'], $values['remoteParentUrl']);
             $result = file_get_contents($values['cacheFile']);
-            $this->assertRegExp($values['assertRegExp'],$result,$name);
+            $this->assertRegExp($values['assertRegExp'], $result, $name);
             unlink($values['cacheFile']);
         }
 

@@ -77,7 +77,7 @@ class SoapClient extends \SoapClient
     private $lastResponse = '';
 
     /**
-     * Last response.
+     * Soap kernel.
      *
      * @var \BeSimple\SoapCommon\SoapKernel
      */

@@ -5,7 +5,21 @@ use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
 
 require '../bootstrap.php';
 
-echo '<pre>';
+class base64Binary
+{
+    public $_;
+    public $contentType;
+}
+
+class AttachmentType
+{
+    public $fileName;
+    public $binaryData;
+}
+
+class AttachmentRequest extends AttachmentType
+{
+}
 
 $options = array(
     'soap_version'    => SOAP_1_1,

@@ -13,6 +13,7 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\AbstractSoapBuilder;
+use BeSimple\SoapCommon\Helper;
 
 /**
  * Fluent interface builder for SoapClient instance.

@@ -5,8 +5,6 @@ use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
 
 require '../bootstrap.php';
 
-echo '<pre>';
-
 $options = array(
     'soap_version'    => SOAP_1_1,
     'features'        => SOAP_SINGLE_ELEMENT_ARRAYS, // make sure that result is array for size=1
