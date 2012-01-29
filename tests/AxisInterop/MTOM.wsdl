@@ -80,10 +80,10 @@
   </binding>
   <service name="MTOMSample">
     <port name="MTOMSampleSOAP12port_http" binding="tns:MTOMServiceSOAP12Binding">
-      <soap12:address location="http://192.168.0.104:8080/axis2/services/MTOMSample.MTOMSampleSOAP12port_http/"/>
+      <soap12:address location="http://localhost:8080/axis2/services/MTOMSample.MTOMSampleSOAP12port_http/"/>
     </port>
     <port name="MTOMSampleSOAP11port_http" binding="tns:MTOMServiceSOAP11Binding">
-      <soap:address location="http://192.168.0.104:8080/axis2/services/MTOMSample.MTOMSampleSOAP11port_http/"/>
+      <soap:address location="http://localhost:8080/axis2/services/MTOMSample.MTOMSampleSOAP11port_http/"/>
     </port>
   </service>
 </definitions>
