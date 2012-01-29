@@ -277,6 +277,8 @@ class SoapClient extends \SoapClient
                 $converter = new SwaTypeConverter();
                 $converter->setKernel($this->soapKernel);
             } elseif (Helper::ATTACHMENTS_TYPE_MTOM === $options['attachment_type']) {
+                $xmlMimeFilter = new XmlMimeFilter($options['attachment_type']);
+                $this->soapKernel->registerFilter($xmlMimeFilter);
                 $converter = new MtomTypeConverter();
                 $converter->setKernel($this->soapKernel);
             }
