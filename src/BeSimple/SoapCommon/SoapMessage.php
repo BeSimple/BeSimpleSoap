@@ -162,6 +162,7 @@ abstract class SoapMessage
     {
         if (null !== $this->contentDomDocument) {
             $this->content = $this->contentDomDocument->saveXML();
+            $this->contentDomDocument = null;
         }
         return $this->content;
     }
