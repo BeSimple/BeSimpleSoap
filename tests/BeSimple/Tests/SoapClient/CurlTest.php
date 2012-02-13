@@ -23,11 +23,12 @@ class CurlTest extends \PHPUnit_Framework_TestCase
 
     protected function startPhpWebserver()
     {
-        if ('Windows' == substr(php_uname('s'), 0, 7 )) {
-            $powershellCommand = "\$app = start-process php.exe -ArgumentList '-S localhost:8000 -t ".__DIR__.DIRECTORY_SEPARATOR."Fixtures' -WindowStyle 'Hidden' -passthru; Echo \$app.Id;";
+            $dir = __DIR__.DIRECTORY_SEPARATOR.'Fixtures';
+        if ('Windows' == substr(php_uname('s'), 0, 7)) {
+            $powershellCommand = "\$app = start-process php.exe -ArgumentList '-S localhost:8000 -t ".$dir."' -WindowStyle 'Hidden' -passthru; Echo \$app.Id;";
             $shellCommand = 'powershell -command "& {'.$powershellCommand.'}"';
         } else {
-            $shellCommand = "nohup php -S localhost:8000 -t ".__DIR__.DIRECTORY_SEPARATOR."Fixtures &";
+            $shellCommand = "nohup php -S localhost:8000 -t ".$dir." &";
         }
         $output = array();
         exec($shellCommand, $output);
