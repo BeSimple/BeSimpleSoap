@@ -194,6 +194,42 @@ class SoapClientBuilder extends AbstractSoapBuilder
     }
 
     /**
+    * SOAP attachment type Base64.
+    *
+    * @return \BeSimple\SoapServer\SoapServerBuilder
+    */
+    public function withBase64Attachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_BASE64;
+
+        return $this;
+    }
+
+    /**
+     * SOAP attachment type SwA.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withSwaAttachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_SWA;
+
+        return $this;
+    }
+
+    /**
+     * SOAP attachment type MTOM.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withMtomAttachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_MTOM;
+
+        return $this;
+    }
+
+    /**
      * Validate options.
      */
     protected function validateOptions()
