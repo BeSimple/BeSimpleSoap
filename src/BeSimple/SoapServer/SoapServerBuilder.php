@@ -13,6 +13,7 @@
 namespace BeSimple\SoapServer;
 
 use BeSimple\SoapCommon\AbstractSoapBuilder;
+use BeSimple\SoapCommon\Helper;
 
 /**
  * SoapServerBuilder provides a fluent interface to configure and create a SoapServer instance.
@@ -28,13 +29,14 @@ class SoapServerBuilder extends AbstractSoapBuilder
     protected $handlerObject;
 
     /**
-     * @return SoapServerBuilder
+     * Create new instance with default options.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
      */
     static public function createWithDefaults()
     {
         return parent::createWithDefaults()
-            ->withErrorReporting(false)
-        ;
+            ->withErrorReporting(false);
     }
 
     /**
@@ -48,6 +50,11 @@ class SoapServerBuilder extends AbstractSoapBuilder
         $this->withErrorReporting(false);
     }
 
+    /**
+     * Finally returns a SoapClient instance.
+     *
+     * @return \BeSimple\SoapServer\SoapServer
+     */
     public function build()
     {
         $this->validateOptions();
@@ -69,6 +76,13 @@ class SoapServerBuilder extends AbstractSoapBuilder
         return $server;
     }
 
+    /**
+     * Cofigures the SOAP actor.
+     *
+     * @param string $actor Actor name
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
     public function withActor($actor)
     {
         $this->options['actor'] = $actor;
@@ -76,6 +90,11 @@ class SoapServerBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * Enables persistence.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
     public function withPersistanceRequest()
     {
         $this->persistence = SOAP_PERSISTENCE_REQUEST;
@@ -85,6 +104,8 @@ class SoapServerBuilder extends AbstractSoapBuilder
 
     /**
      * Enables the HTTP session. The handler object is persisted between multiple requests in a session.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
      */
     public function withPersistenceSession()
     {
@@ -96,7 +117,9 @@ class SoapServerBuilder extends AbstractSoapBuilder
     /**
      * Enables reporting of internal errors to clients. This should only be enabled in development environments.
      *
-     * @param boolean $enable
+     * @param boolean $enable Enable error reporting
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
      */
     public function withErrorReporting($enable = true)
     {
@@ -105,25 +128,48 @@ class SoapServerBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * SOAP attachment type Base64.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
     public function withBase64Attachments()
     {
-        return $this;
-    }
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_BASE64;
 
-    public function withSwaAttachments()
-    {
-        return $this;
-    }
-
-    public function withMtomAttachments()
-    {
         return $this;
     }
 
     /**
+     * SOAP attachment type SwA.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withSwaAttachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_SWA;
+
+        return $this;
+    }
+
+    /**
+     * SOAP attachment type MTOM.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withMtomAttachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_MTOM;
+
+        return $this;
+    }
+
+    /**
+     * Configures the handler class or object.
+     *
      * @param mixed $handler Can be either a class name or an object.
      *
-     * @return SoapServerBuilder
+     * @return \BeSimple\SoapServer\SoapServerBuilder
      */
     public function withHandler($handler)
     {
@@ -140,6 +186,9 @@ class SoapServerBuilder extends AbstractSoapBuilder
         return $this;
     }
 
+    /**
+     * Validate options.
+     */
     protected function validateOptions()
     {
         $this->validateWsdl();
