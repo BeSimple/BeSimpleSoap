@@ -113,9 +113,6 @@ class SoapKernel
      */
     public function filterRequest(SoapRequest $request)
     {
-        $request->setAttachments($this->attachments);
-        $this->attachments = array();
-
         foreach ($this->requestFilters as $filter) {
             $filter->filterRequest($request);
         }
@@ -131,7 +128,5 @@ class SoapKernel
         foreach ($this->responseFilters as $filter) {
             $filter->filterResponse($response);
         }
-
-        $this->attachments = $response->getAttachments();
     }
 }
