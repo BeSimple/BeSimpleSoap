@@ -21,38 +21,6 @@ class AttachmentRequest extends AttachmentType
 {
 }
 
-class base64Binary
-{
-    public $_;
-    public $contentType;
-}
-
-class AttachmentType
-{
-    public $fileName;
-    public $binaryData;
-}
-
-class AttachmentRequest extends AttachmentType
-{
-}
-
-class base64Binary
-{
-    public $_;
-    public $contentType;
-}
-
-class AttachmentType
-{
-    public $fileName;
-    public $binaryData;
-}
-
-class AttachmentRequest extends AttachmentType
-{
-}
-
 $options = array(
     'soap_version'    => SOAP_1_1,
     'features'        => SOAP_SINGLE_ELEMENT_ARRAYS, // make sure that result is array for size=1
@@ -65,13 +33,6 @@ $options = array(
     ),
 );
 
-/*
- * Deploy "axis_services/sample-mtom.aar" to Apache Axis2 to get this
- * example to work.
- *
- * Apache Axis2 MTOM example.
- *
- */
 $sc = new BeSimpleSoapClient('MTOM.wsdl', $options);
 
 //var_dump($sc->__getFunctions());

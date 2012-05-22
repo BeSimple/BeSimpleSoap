@@ -13,7 +13,6 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Helper;
-use BeSimple\SoapCommon\SoapKernel;
 use BeSimple\SoapCommon\Converter\MtomTypeConverter;
 use BeSimple\SoapCommon\Converter\SwaTypeConverter;
 
@@ -77,9 +76,9 @@ class SoapClient extends \SoapClient
     private $lastResponse = '';
 
     /**
-     * Last response.
+     * Soap kernel.
      *
-     * @var \BeSimple\SoapCommon\SoapKernel
+     * @var \BeSimple\SoapClient\SoapKernel
      */
     protected $soapKernel = null;
 
@@ -252,7 +251,7 @@ class SoapClient extends \SoapClient
     /**
      * Get SoapKernel instance.
      *
-     * @return \BeSimple\SoapCommon\SoapKernel
+     * @return \BeSimple\SoapClient\SoapKernel
      */
     public function getSoapKernel()
     {
@@ -286,7 +285,6 @@ class SoapClient extends \SoapClient
             if (!isset($options['typemap'])) {
                 $options['typemap'] = array();
             }
-            $soapKernel = $this->soapKernel;
             $options['typemap'][] = array(
                 'type_name' => $converter->getTypeName(),
                 'type_ns'   => $converter->getTypeNamespace(),

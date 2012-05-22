@@ -13,6 +13,7 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\AbstractSoapBuilder;
+use BeSimple\SoapCommon\Helper;
 
 /**
  * Fluent interface builder for SoapClient instance.
@@ -188,6 +189,42 @@ class SoapClientBuilder extends AbstractSoapBuilder
             $this->soapOptions['proxy_login']    = $username;
             $this->soapOptions['proxy_password'] = $password;
         }
+
+        return $this;
+    }
+
+    /**
+    * SOAP attachment type Base64.
+    *
+    * @return \BeSimple\SoapServer\SoapServerBuilder
+    */
+    public function withBase64Attachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_BASE64;
+
+        return $this;
+    }
+
+    /**
+     * SOAP attachment type SwA.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withSwaAttachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_SWA;
+
+        return $this;
+    }
+
+    /**
+     * SOAP attachment type MTOM.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withMtomAttachments()
+    {
+        $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_MTOM;
 
         return $this;
     }

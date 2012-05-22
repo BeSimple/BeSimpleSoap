@@ -72,7 +72,7 @@ class Curl
             CURLOPT_HEADER => true,
             CURLOPT_USERAGENT => $options['user_agent'],
             CURLINFO_HEADER_OUT => true,
-       );
+        );
         curl_setopt_array($this->ch, $curlOptions);
         if (isset($options['compression']) && !($options['compression'] & SOAP_COMPRESSION_ACCEPT)) {
             curl_setopt($this->ch, CURLOPT_ENCODING, 'identity');
@@ -215,7 +215,7 @@ class Curl
             67 => 'Could not connect to host', //CURLE_LOGIN_DENIED
             77 => 'Could not connect to host', //CURLE_SSL_CACERT_BADFILE
             80 => 'Error Fetching http body, No Content-Length, connection closed or chunked data', //CURLE_SSL_SHUTDOWN_FAILED
-       );
+        );
     }
 
     /**
