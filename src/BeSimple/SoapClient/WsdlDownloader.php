@@ -189,14 +189,16 @@ class WsdlDownloader
         $nodes = $xpath->query($query);
         if ($nodes->length > 0) {
             foreach ($nodes as $node) {
-                $schemaLocation = $node->getAttribute('schemaLocation');
-                if ($this->isRemoteFile($schemaLocation)) {
-                    $schemaLocation = $this->download($schemaLocation);
-                    $node->setAttribute('schemaLocation', $schemaLocation);
-                } elseif (!is_null($parentFile)) {
-                    $schemaLocation = $this->resolveRelativePathInUrl($parentFile, $schemaLocation);
-                    $schemaLocation = $this->download($schemaLocation);
-                    $node->setAttribute('schemaLocation', $schemaLocation);
+                if ( $node->hasAttribute('schemaLocation') ) {
+                    $schemaLocation = $node->getAttribute('schemaLocation');
+                    if ($this->isRemoteFile($schemaLocation)) {
+                        $schemaLocation = $this->download($schemaLocation);
+                        $node->setAttribute('schemaLocation', $schemaLocation);
+                    } elseif (!is_null($parentFile)) {
+                        $schemaLocation = $this->resolveRelativePathInUrl($parentFile, $schemaLocation);
+                        $schemaLocation = $this->download($schemaLocation);
+                        $node->setAttribute('schemaLocation', $schemaLocation);
+                    }
                 }
             }
         }
