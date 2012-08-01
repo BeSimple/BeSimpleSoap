@@ -96,7 +96,7 @@ class AnnotationClassLoader implements LoaderInterface
 
                     $serviceMethod = new Definition\Method(
                         $annotation->getValue(),
-                        $this->getController($method, $annotation)
+                        $this->getController($class, $method, $annotation)
                     );
                 } elseif ($annotation instanceof Annotation\Result) {
                     if ($serviceReturn) {
@@ -134,12 +134,12 @@ class AnnotationClassLoader implements LoaderInterface
      *
      * @return string
      */
-    private function getController(\ReflectionMethod $method, Annotation\Method $annotation)
+    private function getController(\ReflectionClass $class, \ReflectionMethod $method, Annotation\Method $annotation)
     {
         if(null !== $annotation->getService()) {
             return $annotation->getService() . ':' . $method->name;
         } else {
-            return $method->class . '::' . $method->name;
+            return $class->name . '::' . $method->name;
         }
     }
 
