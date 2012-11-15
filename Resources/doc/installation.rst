@@ -12,16 +12,16 @@ Download `BeSimple\\SoapCommon`_ and `BeSimple\\SoapServer`_ (only for the serve
 
     ; deps file
     [BeSimple\SoapCommon]
-        git=http://github.com/BeSimple/SoapCommon
-        target=/besimple-soapcommon
-
+        git=https://github.com/BeSimple/BeSimpleSoapCommon.git
+        target=besimple-soapcommon
+    
     [BeSimple\SoapClient]
-        git=http://github.com/BeSimple/SoapClient
-        target=/besimple-soapclient
-
+        git=https://github.com/BeSimple/BeSimpleSoapClient.git
+        target=besimple-soapclient
+    
     [BeSimple\SoapServer]
-        git=http://github.com/BeSimple/SoapServer
-        target=/besimple-soapserver
+        git=https://github.com/BeSimple/BeSimpleSoapServer.git
+        target=besimple-soapserver
 
 
 Add `BeSimple` libraries in autoload.php
