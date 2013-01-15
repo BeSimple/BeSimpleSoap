@@ -1,0 +1,32 @@
+{
+    "name": "besimple/soap-server",
+    "type": "library",
+    "description": "Build and consume SOAP Server based web services",
+    "keywords": [ "soap", "soap-server" ],
+    "homepage": "https://github.com/BeSimple/BeSimpleSoapServer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Francis Besset",
+            "email": "francis.besset@gmail.com"
+        },
+        {
+            "name": "Christian Kerl",
+            "email": "christian-kerl@web.de"
+        },
+        {
+            "name": "Andreas Schamberger",
+            "email": "mail@andreass.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "besimple/soap-common": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "BeSimple\\SoapServer": "BeSimple/SoapServer/src/"
+        }
+    },
+    "target-dir": "BeSimple/SoapServer"
+}
