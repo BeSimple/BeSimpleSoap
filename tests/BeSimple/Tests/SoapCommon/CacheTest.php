@@ -13,6 +13,8 @@
 namespace BeSimple\Tests\SoapCommon\Soap;
 
 use BeSimple\SoapCommon\Cache;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamWrapper;
 
 class SoapRequestTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,19 +50,19 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDirectory()
     {
-        \vfsStream::setup('Fixtures');
+        vfsStream::setup('Fixtures');
 
-        $this->assertFalse(\vfsStreamWrapper::getRoot()->hasChild('foo'));
-        $dir = \vfsStream::url('Fixtures/foo');
+        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $dir = vfsStream::url('Fixtures/foo');
         Cache::setDirectory($dir);
         $this->assertEquals($dir, Cache::getDirectory());
-        $this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
 
-        $this->assertFalse(\vfsStreamWrapper::getRoot()->hasChild('bar'));
-        $dir = \vfsStream::url('Fixtures/bar');
+        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('bar'));
+        $dir = vfsStream::url('Fixtures/bar');
         Cache::setDirectory($dir);
         $this->assertEquals($dir, Cache::getDirectory());
-        $this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('bar'));
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('bar'));
     }
 
     public function testSetLifetime()
