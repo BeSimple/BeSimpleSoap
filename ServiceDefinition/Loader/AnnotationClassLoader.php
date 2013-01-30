@@ -185,8 +185,8 @@ class AnnotationClassLoader implements LoaderInterface
      *
      * @param LoaderResolverInterface $resolver A LoaderResolverInterface instance
      */
-    public function setResolver(LoaderResolverInterface $resolver){
-
+    public function setResolver(LoaderResolverInterface $resolver)
+    {
     }
 
     /**
@@ -194,7 +194,7 @@ class AnnotationClassLoader implements LoaderInterface
      *
      * @return LoaderResolverInterface A LoaderResolverInterface instance
      */
-    public function getResolver(){
-
+    public function getResolver()
+    {
     }
 }
