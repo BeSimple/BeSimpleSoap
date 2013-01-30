@@ -30,6 +30,5 @@
         "psr-0": {
             "BeSimple\\SoapCommon": "src/"
         }
-    },
-    "target-dir": "BeSimple/SoapCommon"
+    }
 }
