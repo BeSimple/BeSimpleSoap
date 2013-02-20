@@ -42,7 +42,8 @@ class WebServiceContext
     private $serviceBinder;
     private $serverBuilder;
 
-    public function __construct(LoaderInterface $loader, DumperInterface $dumper, Classmap $classmap, TypeRepository $typeRepository, TypeConverterCollection $converters, array $options) {
+    public function __construct(LoaderInterface $loader, DumperInterface $dumper, Classmap $classmap, TypeRepository $typeRepository, TypeConverterCollection $converters, array $options)
+    {
         $this->loader         = $loader;
         $this->wsdlFileDumper = $dumper;
 
@@ -51,7 +52,7 @@ class WebServiceContext
         $this->typeRepository = $typeRepository;
         $this->converters     = $converters;
 
-        $this->options = $options;
+        $this->options        = $options;
     }
 
     public function getServiceDefinition()

@@ -6,6 +6,62 @@ Requirements
 
 Install and enable PHP's SOAP extension.
 
+With Composer
+~~~~~~~~~~~~~
+
+Add `besimple/soap-bundle` (with vendors) in your composer.json:
+
+.. code-block:: json
+
+    {
+        "require": {
+            "besimple/soap-bundle": "dev-master",
+            "besimple/soap-common": "dev-master",
+            "ass/xmlsecurity":      "dev-master"
+        }
+    }
+
+To install the server please add `besimple/soap-server` in your composer.json:
+
+.. code-block:: json
+
+    {
+        "require": {
+            "besimple/soap-server": "dev-master"
+        }
+    }
+
+To install the client please add `besimple/soap-client` in your composer.json:
+
+.. code-block:: json
+
+    {
+        "require": {
+            "besimple/soap-client": "dev-master"
+        }
+    }
+
+.. code-block:: bash
+
+    $ php composer.phar update
+
+Enable the `BeSimpleSoapBundle` in your Kernel class
+
+.. code-block:: php
+
+    // app/AppKernel.php
+    public function registerBundles()
+    {
+        return array(
+            // ...
+            new BeSimple\SoapBundle\BeSimpleSoapBundle(),
+            // ...
+        );
+    }
+
+With deps file (outdated)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Download `BeSimple\\SoapCommon`_ and `BeSimple\\SoapServer`_ (only for the server part) and/or `BeSimple\\SoapClient`_ (only for ther client part).
 
 .. code-block:: ini
@@ -14,11 +70,11 @@ Download `BeSimple\\SoapCommon`_ and `BeSimple\\SoapServer`_ (only for the serve
     [BeSimple\SoapCommon]
         git=https://github.com/BeSimple/BeSimpleSoapCommon.git
         target=besimple-soapcommon
-    
+
     [BeSimple\SoapClient]
         git=https://github.com/BeSimple/BeSimpleSoapClient.git
         target=besimple-soapclient
-    
+
     [BeSimple\SoapServer]
         git=https://github.com/BeSimple/BeSimpleSoapServer.git
         target=besimple-soapserver
@@ -60,7 +116,7 @@ Add `Zend` library in autoload.php
     ));
 
 Installation
-------------
+````````````
 
 `Download`_ the bundle or add in `deps` file
 
@@ -94,7 +150,6 @@ Add `BeSimpleSoapBundle` in your Kernel class
             // ...
         );
     }
-
 
 .. _`Zend\\Soap`: http://github.com/BeSimple/zend-soap
 .. _`Zend\\Mime`: http://github.com/BeSimple/zend-mime
