@@ -23,9 +23,9 @@
         "php": ">=5.3.0",
         "besimple/soap-common": "dev-master",
         "ass/xmlsecurity": "dev-master",
-        "zendframework/zend-soap": "2.1.1",
-        "zendframework/zend-mime": "2.1.1",
-        "zendframework/zend-mail": "2.1.1",
+        "zendframework/zend-soap": "2.1.*",
+        "zendframework/zend-mime": "2.1.*",
+        "zendframework/zend-mail": "2.1.*",
         "symfony/http-foundation": ">=2.0,<2.3-dev"
     },
     "suggest": {
