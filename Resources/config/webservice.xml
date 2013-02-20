@@ -5,6 +5,7 @@
 
     <parameters>
         <parameter key="besimple.soap.response.class">BeSimple\SoapBundle\Soap\SoapResponse</parameter>
+        <parameter key="besimple.soap.response.listener.class">BeSimple\SoapBundle\EventListener\SoapResponseListener</parameter>
         <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
         <parameter key="besimple.soap.binder.request_header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
@@ -19,6 +20,11 @@
 
     <services>
         <service id="besimple.soap.response" class="%besimple.soap.response.class%" />
+
+        <service id="besimple.soap.response.listener" class="%besimple.soap.response.listener.class%">
+            <tag name="kernel.event_listener" event="kernel.view" method="onKernelView" />
+            <argument type="service" id="besimple.soap.response" />
+        </service>
 
         <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
             <argument type="service" id="besimple.soap.definition.loader" />
