@@ -6,7 +6,7 @@ Controller
 
 .. code-block:: php
 
-    namespace My\App\Controller;
+    namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
     use Symfony\Component\DependencyInjection\ContainerAware;
@@ -20,6 +20,6 @@ Controller
          */
         public function helloAction(array $names)
         {
-            return $this->container->get('besimple.soap.response')->setReturnValue("Hello ".implode(', ', $names));
+            return "Hello ".implode(', ', $names);
         }
     }

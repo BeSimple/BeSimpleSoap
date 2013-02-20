@@ -6,7 +6,7 @@ Controller
 
 .. code-block:: php
 
-    namespace My\App\Controller;
+    namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
     use Symfony\Component\DependencyInjection\ContainerAware;
@@ -28,7 +28,7 @@ Controller
                 throw new \SoapFault("INVALID_API_KEY", "The api_key is invalid.");
             }
 
-            return $this->container->get('besimple.soap.response')->setReturnValue("Hello ".implode(', ', $names));
+            return "Hello ".implode(', ', $names);
         }
     }
 
@@ -39,7 +39,7 @@ If you want use a header for all actions of your controller you can declare the 
 
 .. code-block:: php
 
-    namespace My\App\Controller;
+    namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
     use Symfony\Component\DependencyInjection\ContainerAware;
@@ -57,7 +57,7 @@ If you want use a header for all actions of your controller you can declare the 
          */
         public function helloAction(array $names)
         {
-            return $this->container->get('besimple.soap.response')->setReturnValue("Hello ".implode(', ', $names));
+            return "Hello ".implode(', ', $names);
         }
 
         /**
@@ -67,7 +67,7 @@ If you want use a header for all actions of your controller you can declare the 
          */
         public function welcomeAction($names)
         {
-            return $this->container->get('besimple.soap.response')->setReturnValue("Welcome ".implode(', ', $names));
+            return "Welcome ".implode(', ', $names);
         }
 
         public function setContainer(ContainerInterface $container = null)

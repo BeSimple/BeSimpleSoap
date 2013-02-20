@@ -12,7 +12,7 @@ Controller
 
 .. code-block:: php
 
-    namespace My\App\Controller;
+    namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
     use Symfony\Component\DependencyInjection\ContainerAware;
@@ -22,7 +22,7 @@ Controller
         /**
          * @Soap\Method("getUser")
          * @Soap\Param("name", phpType = "string")
-         * @Soap\Result(phpType = "My\App\Entity\User")
+         * @Soap\Result(phpType = "Acme\DemoBundle\Entity\User")
          */
         public function getUserAction($name)
         {
@@ -34,7 +34,7 @@ Controller
                 throw new \SoapFault('USER_NOT_FOUND', sprintf('The user with the name "%s" can not be found', $name));
             }
 
-            return $this->container->get('besimple.soap.response')->setReturnValue($user);
+            return $user;
         }
     }
 
@@ -45,7 +45,7 @@ You can expose only the properties (public, protected or private) of a complex t
 
 .. code-block:: php
 
-    namespace My\App\Entity;
+    namespace Acme\DemoBundle\Entity;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
 

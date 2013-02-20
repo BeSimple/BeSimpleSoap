@@ -3,7 +3,7 @@ BeSimpleSoapBundle
 ==================
 
 The BeSimpleSoapBundle is a Symfony2 bundle to build WSDL and SOAP based web services.
-It is based on the `ckWebServicePlugin`_ for symfony.
+It is based on the `ckWebServicePlugin <http://www.symfony-project.org/plugins/ckWebServicePlugin>`_ for symfony.
 
 ---------------
 Reference Guide
@@ -13,7 +13,9 @@ Reference Guide
     :maxdepth: 1
     :numbered:
 
-    installation
+    requirements
+    installation_composer
+    installation_deps
     cache
 
 ----------
@@ -33,5 +35,3 @@ SoapClient
 ----------
 
 Coming soon.
-
-.. _`ckWebServicePlugin`: http://www.symfony-project.org/plugins/ckWebServicePlugin

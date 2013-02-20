@@ -1,68 +1,10 @@
-Installation
-============
+Installation with deps file (deprecated)
+========================================
 
-Requirements
-------------
+**The installation with deps file is deprecated.
+Please prefer install the** `BeSimpleSoapBundle <https://github.com/BeSimple/BeSimpleSoapBundle>`_ **with** `Composer <http://getcomposer.org>`_.
 
-Install and enable PHP's SOAP extension.
-
-With Composer
-~~~~~~~~~~~~~
-
-Add `besimple/soap-bundle` (with vendors) in your composer.json:
-
-.. code-block:: json
-
-    {
-        "require": {
-            "besimple/soap-bundle": "dev-master",
-            "besimple/soap-common": "dev-master",
-            "ass/xmlsecurity":      "dev-master"
-        }
-    }
-
-To install the server please add `besimple/soap-server` in your composer.json:
-
-.. code-block:: json
-
-    {
-        "require": {
-            "besimple/soap-server": "dev-master"
-        }
-    }
-
-To install the client please add `besimple/soap-client` in your composer.json:
-
-.. code-block:: json
-
-    {
-        "require": {
-            "besimple/soap-client": "dev-master"
-        }
-    }
-
-.. code-block:: bash
-
-    $ php composer.phar update
-
-Enable the `BeSimpleSoapBundle` in your Kernel class
-
-.. code-block:: php
-
-    // app/AppKernel.php
-    public function registerBundles()
-    {
-        return array(
-            // ...
-            new BeSimple\SoapBundle\BeSimpleSoapBundle(),
-            // ...
-        );
-    }
-
-With deps file (outdated)
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Download `BeSimple\\SoapCommon`_ and `BeSimple\\SoapServer`_ (only for the server part) and/or `BeSimple\\SoapClient`_ (only for ther client part).
+Download `BeSimple\\SoapCommon <http://github.com/BeSimple/BeSimpleSoapCommon>`_ and `BeSimple\\SoapServer <http://github.com/BeSimple/BeSimpleSoapServer>`_ (only for the server part) and/or `BeSimple\\SoapClient <http://github.com/BeSimple/BeSimpleSoapClient>`_ (only for ther client part).
 
 .. code-block:: ini
 
@@ -92,7 +34,7 @@ Add `BeSimple` libraries in autoload.php
         // your other namespaces
     ));
 
-Download `Zend\\Soap`_ and `Zend\\Mime`_ or add in `deps` file. `Zend` library is required only for the server part.
+Download `Zend\\Soap <http://github.com/BeSimple/zend-soap>`_ and `Zend\\Mime <http://github.com/BeSimple/zend-mime>`_ or add in `deps` file. `Zend` library is required only for the server part.
 
 .. code-block:: ini
 
@@ -115,10 +57,7 @@ Add `Zend` library in autoload.php
         // your other namespaces
     ));
 
-Installation
-````````````
-
-`Download`_ the bundle or add in `deps` file
+`Download <http://github.com/BeSimple/BeSimpleSoapBundle>`_ the bundle or add in `deps` file
 
 .. code-block:: ini
 
@@ -150,10 +89,3 @@ Add `BeSimpleSoapBundle` in your Kernel class
             // ...
         );
     }
-
-.. _`Zend\\Soap`: http://github.com/BeSimple/zend-soap
-.. _`Zend\\Mime`: http://github.com/BeSimple/zend-mime
-.. _`BeSimple\\SoapCommon`: http://github.com/BeSimple/BeSimpleSoapCommon
-.. _`BeSimple\\SoapServer`: http://github.com/BeSimple/BeSimpleSoapServer
-.. _`BeSimple\\SoapClient`: http://github.com/BeSimple/BeSimpleSoapClient
-.. _`Download`: http://github.com/BeSimple/BeSimpleSoapBundle
