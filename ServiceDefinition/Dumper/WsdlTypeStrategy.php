@@ -17,10 +17,10 @@ use BeSimple\SoapBundle\Util\String;
 
 use Zend\Soap\Exception;
 use Zend\Soap\Wsdl as BaseWsdl;
-use Zend\Soap\Wsdl\ComplexTypeStrategy;
+use Zend\Soap\Wsdl\ComplexTypeStrategy\ComplexTypeStrategyInterface;
 use Zend\Soap\Wsdl\ComplexTypeStrategy\ArrayOfTypeSequence;
 
-class WsdlTypeStrategy implements ComplexTypeStrategy
+class WsdlTypeStrategy implements ComplexTypeStrategyInterface
 {
     /**
      * Context WSDL file
