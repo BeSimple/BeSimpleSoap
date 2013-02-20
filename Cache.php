@@ -19,9 +19,9 @@ use BeSimple\SoapCommon\Cache as BaseCache;
  */
 class Cache
 {
-    public function __construct($disabled, $type, $directory, $lifetime = null, $limit = null)
+    public function __construct($cacheDisabled, $type, $directory, $lifetime = null, $limit = null)
     {
-        $isEnabled = $disabled ? BaseCache::DISABLED : BaseCache::ENABLED;
+        $isEnabled = (Boolean) $cacheDisabled ? BaseCache::DISABLED : BaseCache::ENABLED;
 
         BaseCache::setEnabled($isEnabled);
 
