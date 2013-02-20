@@ -1,8 +1,10 @@
 <?php
+
 /*
  * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
+ * (c) Francis Besset <francis.besset@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -12,12 +14,12 @@ namespace BeSimple\SoapBundle\ServiceDefinition\Strategy;
 
 use BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader;
 use Zend\Soap\Wsdl;
-use Zend\Soap\Wsdl\Strategy\AbstractStrategy;
+use Zend\Soap\Wsdl\ComplexTypeStrategy\AbstractComplexTypeStrategy;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class ComplexType extends AbstractStrategy
+class ComplexType extends AbstractComplexTypeStrategy
 {
     private $loader;
     private $definition;
@@ -46,7 +48,7 @@ class ComplexType extends AbstractStrategy
             throw new \InvalidArgumentException(sprintf('Cannot add a complex type "%s" that is not an object or where class could not be found in "ComplexType" strategy.', $type));
         }
 
-        $dom   = $this->getContext()->toDomDocument();
+        $dom = $this->getContext()->toDomDocument();
 
         $soapTypeName = $this->getContext()->translateType($type);
         $soapType     = 'tns:'.$soapTypeName;
