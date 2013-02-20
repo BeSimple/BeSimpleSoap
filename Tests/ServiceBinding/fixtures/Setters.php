@@ -5,6 +5,7 @@ namespace BeSimple\SoapBundle\Tests\ServiceBinding\fixtures;
 class Setters
 {
     private $foo;
+
     private $bar;
 
     public function getFoo()

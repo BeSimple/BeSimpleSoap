@@ -7,6 +7,7 @@ class SimpleArrays
     public $array1;
 
     private $array2;
+
     private $array3;
 
     public function __construct($array1, $array2, $array3)
