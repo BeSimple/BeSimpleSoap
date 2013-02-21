@@ -61,16 +61,15 @@ class MessageBinder
             // needed to support magic method __get
             $value = $this->message->{$property};
         } elseif ($this->reflectionClass->hasProperty($property)) {
-            if (!$this->reflectionClass->getProperty($property)->isPublic()) {
-                throw new \RuntimeException(sprintf('Property "%s" is not public in class "%s". Maybe you should create the method "%s()" or "%s()" or "%s()"?', $property, $this->reflectionClass->name, $getter, $isser, $hasser));
+            $p = $this->reflectionClass->getProperty($property);
+            if (!$p->isPublic()) {
+                $p->setAccessible(true);
             }
 
-            $value = $this->message->{$property};
+            $value = $p->getValue($this->message);
         } elseif (property_exists($this->message, $property)) {
             // needed to support \stdClass instances
             $value = $this->message->{$property};
-        } else {
-            throw new \RuntimeException(sprintf('Neither property "%s" nor method "%s()" nor method "%s()" exists in class "%s"', $property, $getter, $isser, $this->reflectionClass->name));
         }
 
         return $value;
@@ -88,16 +87,15 @@ class MessageBinder
             // needed to support magic method __set
             $this->message->{$property} = $value;
         } elseif ($this->reflectionClass->hasProperty($property)) {
-            if (!$this->reflectionClass->getProperty($property)->isPublic()) {
-                throw new \RuntimeException(sprintf('Property "%s" is not public in class "%s". Maybe you should create the method "%s()"?', $property, $this->reflectionClass->name, $setter));
+            $p = $this->reflectionClass->getProperty($property);
+            if (!$p->isPublic()) {
+                $p->setAccessible(true);
             }
 
-            $this->message->{$property} = $value;
+            $p->setValue($this->message, $value);
         } elseif (property_exists($this->message, $property)) {
             // needed to support \stdClass instances
             $this->message->{$property} = $value;
-        } else {
-            throw new \RuntimeException(sprintf('Neither element "%s" nor method "%s()" exists in class "%s"', $property, $setter, $this->reflectionClass->name));
         }
     }
 }
