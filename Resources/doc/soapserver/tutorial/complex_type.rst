@@ -43,6 +43,8 @@ User class
 
 You can expose only the properties (public, protected or private) of a complex type.
 
+**For performance reasons, we advise to create getter and setter for each property.**
+
 .. code-block:: php
 
     namespace Acme\DemoBundle\Entity;
@@ -75,6 +77,56 @@ You can expose only the properties (public, protected or private) of a complex t
          * @Soap\ComplexType("string")
          */
         private $email;
+
+        /**
+         * @Soap\ComplexType("boolean")
+         */
+        private $newsletter;
+
+        public function getId()
+        {
+            return $this->id;
+        }
+
+        public function getUsername()
+        {
+            return $this->username;
+        }
+
+        public function getEmail()
+        {
+            return $this->email;
+        }
+
+        public function getFirstname()
+        {
+            return $this->firstname;
+        }
+
+        public function setFirstname($firstname)
+        {
+            $this->firstname = $firstname;
+        }
+
+        public function getLastname()
+        {
+            return $this->lastname;
+        }
+
+        public function setLastname($lastname)
+        {
+            $this->lastname = $lastname;
+        }
+
+        public function hasNewsletter()
+        {
+            return $this->newsletter;
+        }
+
+        public function setNewsletter($newsletter)
+        {
+            $this->newletter = (Boolean) $newsletter
+        }
     }
 
 ComplexType

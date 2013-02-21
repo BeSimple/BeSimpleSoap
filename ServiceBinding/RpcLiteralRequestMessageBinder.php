@@ -1,8 +1,10 @@
 <?php
+
 /*
  * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
+ * (c) Francis Besset <francis.besset@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -13,8 +15,7 @@ namespace BeSimple\SoapBundle\ServiceBinding;
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
-
-use Zend\Soap\Wsdl;
+use BeSimple\SoapCommon\Util\MessageBinder;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
@@ -86,24 +87,15 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
 
         $this->messageRefs[$hash] = $message;
 
-        $r = new \ReflectionClass($message);
+        $messageBinder = new MessageBinder($message);
         foreach ($this->definitionComplexTypes[$phpType] as $type) {
-            $p = $r->getProperty($type->getName());
-            if ($p->isPublic()) {
-                $value = $message->{$type->getName()};
-            } else {
-                $p->setAccessible(true);
-                $value = $p->getValue($message);
-            }
+            $property = $type->getName();
+            $value = $messageBinder->readProperty($property);
 
             if (null !== $value) {
                 $value = $this->processType($type->getValue(), $value);
 
-                if ($p->isPublic()) {
-                    $message->{$type->getName()} = $value;
-                } else {
-                    $p->setValue($message, $value);
-                }
+                $messageBinder->writeProperty($property, $value);
             }
 
             if (!$type->isNillable() && null === $value) {
