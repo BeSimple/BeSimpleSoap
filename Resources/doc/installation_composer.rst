@@ -37,6 +37,7 @@ Run this command to download the new vendors:
 
 .. code-block:: bash
 
+    $ php composer.phar self-update
     $ php composer.phar update
 
 Enable the `BeSimpleSoapBundle <https://github.com/BeSimple/BeSimpleSoapBundle>`_ in your Kernel class
