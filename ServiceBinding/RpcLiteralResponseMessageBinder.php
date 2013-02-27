@@ -46,6 +46,16 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
             if ($isArray) {
                 $array = array();
 
+                // See https://github.com/BeSimple/BeSimpleSoapBundle/issues/29
+                if (is_array($message) && in_array('BeSimple\SoapCommon\Type\AbstractKeyValue', class_parents($phpType))) {
+                    $keyValue = array();
+                    foreach ($message as $key => $value) {
+                        $keyValue[] = new $phpType($key, $value);
+                    }
+
+                    $message = $keyValue;
+                }
+
                 foreach ($message as $complexType) {
                     $array[] = $this->checkComplexType($phpType, $complexType);
                 }
