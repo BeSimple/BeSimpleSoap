@@ -39,6 +39,25 @@ class Wsdl extends BaseWsdl
         return $xmlType ?: $this->addComplexType($type);
     }
 
+    /**
+     * Translate PHP type into WSDL QName
+     *
+     * @param string $type
+     * @return string QName
+     */
+    public function translateType($type)
+    {
+        if (isset($this->classMap[$type])) {
+            return $this->classMap[$type];
+        }
+
+        if ($type[0] == '\\') {
+            $type = substr($type, 1);
+        }
+
+        return str_replace('\\', '.', $type);
+    }
+
     public function addBindingOperationHeader(\DOMElement $bindingOperation, array $headers, array $baseBinding)
     {
         foreach ($headers as $header) {
