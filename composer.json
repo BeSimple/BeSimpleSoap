@@ -26,7 +26,7 @@
         "zendframework/zend-soap": "2.1.*",
         "zendframework/zend-mime": "2.1.*",
         "zendframework/zend-mail": "2.1.*",
-        "symfony/http-foundation": ">=2.0,<2.3-dev"
+        "symfony/http-foundation": ">=2.0,<2.4-dev"
     },
     "suggest": {
         "besimple/soap-client": "dev-master",
