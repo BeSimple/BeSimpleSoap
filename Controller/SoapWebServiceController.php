@@ -123,10 +123,14 @@ class SoapWebServiceController extends ContainerAware
             // forward to controller
             try {
                 $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
-            } catch (\SoapFault $e) {
+            } catch (\Exception $e) {
                 $this->soapResponse = new Response(null, 500);
 
-                throw $e;
+                if ($e instanceof \SoapFault || $this->container->getParameter('kernel.debug')) {
+                    throw $e;
+                }
+
+                throw new \SoapFault('Receiver', $e->getMessage());
             }
 
             $this->setResponse($response);
