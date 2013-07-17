@@ -126,7 +126,7 @@ class SoapWebServiceController extends ContainerAware
             } catch (\Exception $e) {
                 $this->soapResponse = new Response(null, 500);
 
-                if ($this->container->getParameter('kernel.debug')) {
+                if ($e instanceof \SoapFault || $this->container->getParameter('kernel.debug')) {
                     throw $e;
                 }
 
