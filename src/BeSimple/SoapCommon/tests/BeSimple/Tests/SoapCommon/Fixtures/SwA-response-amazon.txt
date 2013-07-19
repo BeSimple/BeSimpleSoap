@@ -1,0 +1,29 @@
+HTTP/1.1 401 Authorization Required
+Date: Fri, 12 Feb 2010 15:46:00 GMT
+Server: Server
+WWW-Authenticate: Basic realm="Realm"
+Content-Length: 0
+Cneonction: close
+Content-Type: text/plain
+
+HTTP/1.1 200 OK
+Date: Fri, 12 Feb 2010 15:46:00 GMT
+Server: Server
+MIME-Version: 1.0
+Cneonction: close
+Transfer-Encoding: chunked
+Content-Type: multipart/related; boundary="xxx-MIME-Boundary-xxx-0xa36cb38-0a36cb38-xxx-END-xxx"; type="text/xml"
+
+
+--xxx-MIME-Boundary-xxx-0xa36cb38-0a36cb38-xxx-END-xxx
+Content-Type: text/xml; charset="UTF-8"
+
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SE="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body><ns1:doc href="cid:0x9d6ad00-0xa19ef48-0x9de7500-0xa4fae78-0xa382698" xmlns:ns1="http://myservice/schema/"/></SOAP-ENV:Body></SOAP-ENV:Envelope>
+--xxx-MIME-Boundary-xxx-0xa36cb38-0a36cb38-xxx-END-xxx
+Content-ID: <0x9d6ad00-0xa19ef48-0x9de7500-0xa4fae78-0xa382698>
+Content-Type: application/binary
+
+<?xml version="1.0" encoding="UTF-8"?>
+<XmlDocument><NoContent/></XmlDocument>
+
+--xxx-MIME-Boundary-xxx-0xa36cb38-0a36cb38-xxx-END-xxx--
