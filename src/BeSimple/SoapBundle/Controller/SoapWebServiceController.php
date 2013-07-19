@@ -14,6 +14,7 @@ namespace BeSimple\SoapBundle\Controller;
 
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
+use BeSimple\SoapServer\Exception as SoapException;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
@@ -126,11 +127,7 @@ class SoapWebServiceController extends ContainerAware
             } catch (\Exception $e) {
                 $this->soapResponse = new Response(null, 500);
 
-                if ($e instanceof \SoapFault || $this->container->getParameter('kernel.debug')) {
-                    throw $e;
-                }
-
-                throw new \SoapFault('Receiver', $e->getMessage());
+                throw $e instanceof \SoapFault || $this->container->getParameter('kernel.debug') ? $e : new SoapException\ReceiverSoapFault($e->getMessage());
             }
 
             $this->setResponse($response);
