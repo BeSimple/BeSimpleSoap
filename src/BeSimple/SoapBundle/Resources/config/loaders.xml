@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="besimple.soap.definition.loader.resolver.class">Symfony\Component\Config\Loader\LoaderResolver</parameter>
+        <parameter key="besimple.soap.definition.loader.class">Symfony\Component\Config\Loader\DelegatingLoader</parameter>
+        <parameter key="besimple.soap.definition.loader.annot_dir.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationDirectoryLoader</parameter>
+        <parameter key="besimple.soap.definition.loader.annot_file.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationFileLoader</parameter>
+        <parameter key="besimple.soap.definition.loader.annot_class.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationClassLoader</parameter>
+        <parameter key="besimple.soap.definition.loader.annot_complextype.class">BeSimple\SoapBundle\ServiceDefinition\Loader\AnnotationComplexTypeLoader</parameter>
+    </parameters>
+
+    <services>
+        <service id="besimple.soap.definition.loader.resolver" class="%besimple.soap.definition.loader.resolver.class%" public="false" />
+
+        <service id="besimple.soap.definition.loader" class="%besimple.soap.definition.loader.class%">
+            <argument type="service" id="besimple.soap.definition.loader.resolver" />
+        </service>
+
+        <service id="besimple.soap.definition.loader.annot_file" class="%besimple.soap.definition.loader.annot_file.class%" public="false">
+            <tag name="besimple.soap.definition.loader" />
+            <argument type="service" id="file_locator" />
+            <argument type="service" id="besimple.soap.definition.loader.annot_class" />
+        </service>
+
+        <service id="besimple.soap.definition.loader.annot_class" class="%besimple.soap.definition.loader.annot_class.class%" public="false">
+            <tag name="besimple.soap.definition.loader" />
+            <argument type="service" id="annotation_reader" />
+        </service>
+
+        <service id="besimple.soap.definition.loader.annot_complextype" class="%besimple.soap.definition.loader.annot_complextype.class%" public="false">
+            <argument type="service" id="annotation_reader" />
+        </service>
+    </services>
+
+</container>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://github.com/BeSimple/BeSimpleSoapBundle/servicedefinition/1.0/" xmlns:tns="http://github.com/BeSimple/BeSimpleSoapBundle/servicedefinition/1.0/" elementFormDefault="qualified">
+    <element name="webservice" type="tns:WebserviceType" />
+    <complexType name="WebserviceType">
+        <sequence>
+            <element name="header" type="tns:HeaderType" minOccurs="0" maxOccurs="unbounded" />
+            <element name="method" type="tns:MethodType" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="name" type="string" use="required" />
+    </complexType>
+
+    <complexType name="HeaderType">
+        <complexContent>
+            <extension base="tns:TransferObjectType">
+                <sequence>
+                    <element name="exception" type="tns:ExceptionType" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="name" type="ID" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="HeaderRefType">
+        <attribute name="name" type="IDREF" />
+        <attribute name="direction">
+            <simpleType>
+                <restriction base="string">
+                    <enumeration value="in" />
+                    <enumeration value="out" />
+                    <enumeration value="inout" />
+                </restriction>
+            </simpleType>
+        </attribute>
+    </complexType>
+
+    <complexType name="MethodType">
+        <sequence>
+            <element name="exception" type="tns:ExceptionType" minOccurs="0" maxOccurs="unbounded" />
+            <element name="header" type="tns:HeaderRefType" minOccurs="0" maxOccurs="unbounded" />
+
+            <element name="argument" type="tns:ArgumentType" minOccurs="0" maxOccurs="unbounded" />
+            <element name="return" type="tns:ReturnType"  minOccurs="0" maxOccurs="1" />
+        </sequence>
+        <attribute name="name" type="string" use="required" />
+        <attribute name="controller" type="string" use="required" />
+    </complexType>
+
+    <complexType name="TransferObjectType" abstract="true">
+        <sequence>
+            <element name="type" type="tns:TypeConversionType" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ExceptionType">
+        <complexContent>
+            <extension base="tns:TransferObjectType">
+                <attribute name="name" type="string" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ArgumentType">
+        <complexContent>
+            <extension base="tns:TransferObjectType">
+                <attribute name="name" type="string" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ReturnType">
+        <complexContent>
+            <extension base="tns:TransferObjectType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="TypeConversionType">
+        <attribute name="php-type" type="string" use="required" />
+        <attribute name="xml-type" type="QName" use="required" />
+        <attribute name="converter" type="string" use="optional" />
+    </complexType>
+</schema>

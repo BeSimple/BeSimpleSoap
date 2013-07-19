@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="besimple.soap.response.class">BeSimple\SoapBundle\Soap\SoapResponse</parameter>
+        <parameter key="besimple.soap.response.listener.class">BeSimple\SoapBundle\EventListener\SoapResponseListener</parameter>
+        <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
+        <parameter key="besimple.soap.binder.request_header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.response.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralResponseMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.request.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.request_header.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedRequestHeaderMessageBinder</parameter>
+        <parameter key="besimple.soap.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
+        <parameter key="besimple.soap.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
+        <parameter key="besimple.soap.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
+        <parameter key="besimple.soap.server.classmap.class">BeSimple\SoapCommon\Classmap</parameter>
+    </parameters>
+
+    <services>
+        <service id="besimple.soap.response" class="%besimple.soap.response.class%" />
+
+        <service id="besimple.soap.response.listener" class="%besimple.soap.response.listener.class%">
+            <tag name="kernel.event_listener" event="kernel.view" method="onKernelView" />
+            <argument type="service" id="besimple.soap.response" />
+        </service>
+
+        <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">
+            <argument type="service" id="besimple.soap.definition.loader" />
+            <argument type="service" id="besimple.soap.definition.dumper.wsdl.rpcliteral" />
+            <argument type="service" id="besimple.soap.server.classmap" />
+            <argument type="service" id="besimple.soap.type.repository" />
+            <argument type="service" id="besimple.soap.converter.collection" />
+            <argument type="collection">
+                <argument key="cache_dir">%besimple.soap.cache.dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
+                <argument key="cache_type">null</argument>
+                <argument key="binder_request_header_class">%besimple.soap.binder.request_header.rpcliteral.class%</argument>
+                <argument key="binder_request_class">%besimple.soap.binder.request.rpcliteral.class%</argument>
+                <argument key="binder_response_class">%besimple.soap.binder.response.rpcliteral.class%</argument>
+            </argument>
+            <argument type="service" id="besimple.soap.cache" />
+        </service>
+
+        <service id="besimple.soap.context.documentwrapped" class="%besimple.soap.context.class%" abstract="true">
+            <argument type="service" id="besimple.soap.definition.loader" />
+            <argument type="service" id="besimple.soap.definition.dumper.wsdl.documentwrapped" />
+            <argument type="service" id="besimple.soap.server.classmap" />
+            <argument type="service" id="besimple.soap.type.repository" />
+            <argument type="service" id="besimple.soap.converter.collection" />
+            <argument type="collection">
+                <argument key="cache_dir">%besimple.soap.cache.dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
+                <argument key="cache_type">null</argument>
+                <argument key="binder_request_header_class">%besimple.soap.binder.request_header.documentwrapped.class%</argument>
+                <argument key="binder_request_class">%besimple.soap.binder.request.documentwrapped.class%</argument>
+                <argument key="binder_response_class">%besimple.soap.binder.response.documentwrapped.class%</argument>
+            </argument>
+            <argument type="service" id="besimple.soap.cache" />
+        </service>
+
+        <service id="besimple.soap.definition.dumper.wsdl.rpcliteral" class="%besimple.soap.definition.dumper.wsdl.rpcliteral.class%">
+            <argument type="service" id="besimple.soap.definition.loader.annot_complextype" />
+            <argument type="service" id="besimple.soap.type.repository" />
+            <argument type="collection">
+                <argument key="stylesheet">%besimple.soap.definition.dumper.options.stylesheet%</argument>
+            </argument>
+        </service>
+
+        <service id="besimple.soap.server.classmap" class="%besimple.soap.server.classmap.class%" public="false" />
+
+        <service id="besimple.soap.type.repository" class="%besimple.soap.type.repository.class%">
+            <call method="addXmlNamespace">
+                <argument>xsd</argument>
+                <argument>http://www.w3.org/2001/XMLSchema</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>string</argument>
+                <argument>xsd:string</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>boolean</argument>
+                <argument>xsd:boolean</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>int</argument>
+                <argument>xsd:int</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>float</argument>
+                <argument>xsd:float</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>date</argument>
+                <argument>xsd:date</argument>
+            </call>
+            <call method="addDefaultTypeMapping">
+                <argument>dateTime</argument>
+                <argument>xsd:dateTime</argument>
+            </call>
+        </service>
+    </services>
+
+</container>

@@ -1,0 +1,4 @@
+build/*
+phpunit.xml
+vendor
+*.swp

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="besimple.soap.cache.class">BeSimple\SoapBundle\Cache</parameter>
+        <parameter key="besimple.soap.cache.dir">%kernel.cache_dir%/besimple/soap</parameter>
+    </parameters>
+
+    <services>
+        <service id="besimple.soap.cache" class="%besimple.soap.cache.class%">
+            <argument>%kernel.debug%</argument>
+            <argument>%besimple.soap.cache.type%</argument>
+            <argument>%besimple.soap.cache.dir%/php</argument>
+            <argument>%besimple.soap.cache.lifetime%</argument>
+            <argument>%besimple.soap.cache.limit%</argument>
+        </service>
+    </services>
+
+</container>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MathApi" targetNamespace="http://localhost/" xmlns:tns="http://localhost/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+    <wsdl:types xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost/">
+            <xsd:complexType name="AuthHeader">
+                <xsd:sequence>
+                    <xsd:element name="username" type="xsd:string"/>
+                    <xsd:element name="password" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AuthHeaderElement" type="tns:AuthHeader"/>
+            <xsd:complexType name="DoubleArray">
+                <xsd:sequence>
+                    <xsd:element name="item" type="xsd:double" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DoubleArrayElement" type="tns:DoubleArray"/>
+            <xsd:complexType name="ComplexNumber">
+                <xsd:sequence>
+                    <xsd:element name="realPart" type="xsd:double"/>
+                    <xsd:element name="imaginaryPart" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ComplexNumberElement" type="tns:ComplexNumber"/>
+            <xsd:complexType name="ComplexNumberArray">
+                <xsd:sequence>
+                    <xsd:element name="item" type="tns:ComplexNumber" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ComplexNumberArrayElement" type="tns:ComplexNumberArray"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:portType name="MathApiPortType">
+        <wsdl:operation name="math_multiply" parameterOrder="a b">
+            <wsdl:input message="tns:math_multiplyRequest"/>
+            <wsdl:output message="tns:math_multiplyResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="SimpleMultiply" parameterOrder="a b">
+            <wsdl:input message="tns:SimpleMultiplyRequest"/>
+            <wsdl:output message="tns:SimpleMultiplyResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="SimpleMultiplyWithHeader" parameterOrder="AuthHeader a b">
+            <wsdl:input message="tns:SimpleMultiplyWithHeaderRequest"/>
+            <wsdl:output message="tns:SimpleMultiplyWithHeaderResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ArrayMultiply" parameterOrder="factors">
+            <wsdl:input message="tns:ArrayMultiplyRequest"/>
+            <wsdl:output message="tns:ArrayMultiplyResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="ComplexMultiply" parameterOrder="input">
+            <wsdl:input message="tns:ComplexMultiplyRequest"/>
+            <wsdl:output message="tns:ComplexMultiplyResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MathApiBinding" type="tns:MathApiPortType">
+        <soap:binding xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="math_multiply">
+            <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/math_multiply" style="rpc"/>
+            <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="a b" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="SimpleMultiply">
+            <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/SimpleMultiply" style="rpc"/>
+            <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="a b" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="SimpleMultiplyWithHeader">
+            <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/SimpleMultiplyWithHeader" style="rpc"/>
+            <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="a b" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderRequest" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                <soap:header xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" message="tns:SimpleMultiplyWithHeaderResponse" part="AuthHeader" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ArrayMultiply">
+            <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/ArrayMultiply" style="rpc"/>
+            <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="factors" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ComplexMultiply">
+            <soap:operation xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://localhost/ComplexMultiply" style="rpc"/>
+            <wsdl:input xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="input" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+                <soap:body xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" parts="result" use="literal" namespace="http://localhost/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="math_multiplyRequest">
+        <wsdl:part name="a" type="xsd:double"/>
+        <wsdl:part name="b" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="math_multiplyResponse">
+        <wsdl:part name="result" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="SimpleMultiplyRequest">
+        <wsdl:part name="a" type="xsd:double"/>
+        <wsdl:part name="b" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="SimpleMultiplyResponse">
+        <wsdl:part name="result" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="SimpleMultiplyWithHeaderRequest">
+        <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+        <wsdl:part name="a" type="xsd:double"/>
+        <wsdl:part name="b" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="SimpleMultiplyWithHeaderResponse">
+        <wsdl:part name="AuthHeader" element="tns:AuthHeaderElement"/>
+        <wsdl:part name="result" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayMultiplyRequest">
+        <wsdl:part name="factors" type="tns:DoubleArray"/>
+    </wsdl:message>
+    <wsdl:message name="ArrayMultiplyResponse">
+        <wsdl:part name="result" type="xsd:double"/>
+    </wsdl:message>
+    <wsdl:message name="ComplexMultiplyRequest">
+        <wsdl:part name="input" type="tns:ComplexNumberArray"/>
+    </wsdl:message>
+    <wsdl:message name="ComplexMultiplyResponse">
+        <wsdl:part name="result" type="tns:ComplexNumber"/>
+    </wsdl:message>
+    <wsdl:service xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MathApiService">
+        <wsdl:port xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="MathApiPort" binding="tns:MathApiBinding">
+            <soap:address xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" location="http://localhost/MathApi.php"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
