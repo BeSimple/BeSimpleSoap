@@ -13,24 +13,17 @@
 >
 
     <testsuites>
-        <testsuite name="SoapBundle Test Suite">
+        <testsuite name="BeSimple SoapBundle Test Suite">
             <directory>./Tests</directory>
         </testsuite>
     </testsuites>
 
-    <!--
-    <logging>
-        <log type="coverage-html" target="build/coverage" />
-    </logging>
-    -->
-
     <filter>
         <whitelist>
-            <directory>.</directory>
+            <directory>./</directory>
             <exclude>
-                <directory>Tests</directory>
-                <directory>vendor</directory>
-                <file>vendors.php</file>
+                <directory>./Tests/</directory>
+                <directory>./vendor/</directory>
             </exclude>
         </whitelist>
     </filter>

@@ -11,18 +11,19 @@
          syntaxCheck="false"
          bootstrap="vendor/autoload.php"
 >
+
     <testsuites>
-        <testsuite name="BeSimple SoapClient Test Suite">
-            <directory>./Tests/</directory>
+        <testsuite name="BeSimpleSoap Test Suite">
+            <directory>./src/BeSimple/*/Tests/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>./</directory>
+            <directory>./src/BeSimple/</directory>
             <exclude>
-                <directory>./Tests/</directory>
-                <directory>./vendor/</directory>
+                <directory>./src/BeSimple/*/Tests</directory>
+                <directory>./src/BeSimple/*/Resources</directory>
             </exclude>
         </whitelist>
     </filter>

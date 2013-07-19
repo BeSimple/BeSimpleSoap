@@ -9,23 +9,21 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="BeSimple\SoapServer Test Suite">
-            <directory>./tests/BeSimple/</directory>
+        <testsuite name="BeSimple SoapServer Test Suite">
+            <directory>./Tests</directory>
         </testsuite>
     </testsuites>
 
-    <groups>
-        <exclude>
-            <group>benchmark</group>
-        </exclude>
-    </groups>
-
     <filter>
         <whitelist>
-            <directory>./src/BeSimple/</directory>
+            <directory>./</directory>
+            <exclude>
+                <directory>./Tests/</directory>
+                <directory>./vendor/</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
