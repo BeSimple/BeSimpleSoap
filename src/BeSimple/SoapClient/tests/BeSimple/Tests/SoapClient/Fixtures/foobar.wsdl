@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://foobar/soap/User/1.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="User" targetNamespace="http://foobar/soap/User/1.0/">
+  <portType name="UserPortType">
+    <operation name="login" parameterOrder="username password">
+      <input message="tns:loginRequest"/>
+      <output message="tns:loginResponse"/>
+    </operation>
+  </portType>
+  <binding name="UserBinding" type="tns:UserPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="login">
+      <soap:operation soapAction="http://foobar/soap/User/1.0/login"/>
+      <input>
+        <soap:body parts="username password" use="literal" namespace="http://foobar/soap/User/1.0/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body parts="return" use="literal" namespace="http://foobar/soap/User/1.0/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="UserService">
+    <port name="UserPort" binding="tns:UserBinding">
+      <soap:address location="http://foobar/soap/user"/>
+    </port>
+  </service>
+  <types>
+    <xsd:schema targetNamespace="http://foobar/soap/User/1.0/">
+      <xsd:complexType name="User">
+        <xsd:all>
+          <xsd:element name="id" type="xsd:int" nillable="true"/>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="email" type="xsd:string"/>
+          <xsd:element name="language" type="xsd:string"/>
+          <xsd:element name="apiKey" type="xsd:string"/>
+          <xsd:element name="subscriptionEndAt" type="xsd:dateTime" nillable="true"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+  <message name="loginRequest">
+    <part name="username" type="xsd:string"/>
+    <part name="password" type="xsd:string"/>
+  </message>
+  <message name="loginResponse">
+    <part name="return" type="tns:User"/>
+  </message>
+</definitions>
