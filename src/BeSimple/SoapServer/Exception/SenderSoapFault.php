@@ -17,7 +17,7 @@ namespace BeSimple\SoapServer\Exception;
  * SenderSoapFault send a "Sender" fault code to client.
  * This fault code is standardized: http://www.w3.org/TR/soap12-part1/#tabsoapfaultcodes
  */
-class SenderSoapFault extends SoapFault
+class SenderSoapFault extends \SoapFault
 {
     public function __construct($faultstring, $faultactor = null, $detail = null, $faultname = null, $headerfault = null)
     {
