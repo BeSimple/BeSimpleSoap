@@ -16,7 +16,6 @@
             </argument>
             <argument type="service" id="besimple.soap.classmap" />
             <argument type="service" id="besimple.soap.converter.collection" />
-            <argument type="service" id="besimple.soap.cache" />
         </service>
 
         <service id="besimple.soap.client" factory-service="besimple.soap.client.builder" factory-method="build" class="%besimple.soap.client.builder.class%" abstract="true" />
