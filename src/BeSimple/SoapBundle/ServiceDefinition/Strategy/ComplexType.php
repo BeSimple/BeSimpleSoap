@@ -36,51 +36,50 @@ class ComplexType extends AbstractComplexTypeStrategy
      * @param  string $type Name of the class to be specified
      * @return string XSD Type for the given PHP type
      */
-    public function addComplexType($type)
+    public function addComplexType($classname)
     {
         // Really needed?
-        if (null !== $soapType = $this->scanRegisteredTypes($type)) {
-            return $soapType;
+        if (null !== $type = $this->scanRegisteredTypes($classname)) {
+            return $type;
         }
 
         $classmap = $this->definition->getClassmap();
-        if ($classmap->has($type)) {
-            $xmlName = $classmap->get($type);
-            $this->addDefinition($type, $xmlName);
+        if ($classmap->hasByClassname($classname)) {
+            $type = $classmap->getByClassname($classname);
 
-            $xmlType = 'tns:'.$xmlName;
+            $xmlType = 'tns:'.$type;
         } else {
-            if (!$this->loader->supports($type)) {
-                throw new \InvalidArgumentException(sprintf('Cannot add a complex type "%s" that is not an object or where class could not be found in "ComplexType" strategy.', $type));
+            if (!$this->loader->supports($classname)) {
+                throw new \InvalidArgumentException(sprintf('Cannot add a complex type "%s" that is not an object or where class could not be found in "ComplexType" strategy.', $classname));
             }
 
-            $xmlName = $this->getContext()->translateType($type);
-            $xmlType = 'tns:'.$xmlName;
+            $type = $this->getContext()->translateType($classname);
+            $xmlType = 'tns:'.$type;
 
             // Register type here to avoid recursion
-            $classmap->add($type, $xmlName);
-            $this->getContext()->addType($type, $soapType);
+            $classmap->add($type, $classname);
+            $this->getContext()->addType($classname, $xmlType);
         }
 
-        $this->addDefinition($type, $xmlName);
+        $this->addXmlDefinition($classname, $type);
 
         return $xmlType;
     }
 
-    private function addDefinition($type, $xmlName)
+    private function addXmlDefinition($classname, $type)
     {
-        if ($this->definition->hasDefinitionComplexType($type)) {
+        if ($this->definition->hasDefinitionComplexType($classname)) {
             return false;
         }
 
         $dom = $this->getContext()->toDomDocument();
         $complexType = $dom->createElement('xsd:complexType');
-        $complexType->setAttribute('name', $xmlName);
+        $complexType->setAttribute('name', $type);
 
         $all = $dom->createElement('xsd:all');
 
         $elements              = array();
-        $definitionComplexType = $this->loader->load($type);
+        $definitionComplexType = $this->loader->load($classname);
         foreach ($definitionComplexType as $annotationComplexType) {
             $element = $dom->createElement('xsd:element');
             $element->setAttribute('name', $annotationComplexType->getName());

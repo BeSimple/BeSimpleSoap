@@ -15,7 +15,7 @@
         <parameter key="besimple.soap.binder.response.documentwrapped.class">BeSimple\SoapBundle\ServiceBinding\DocumentLiteralWrappedResponseMessageBinder</parameter>
         <parameter key="besimple.soap.definition.dumper.wsdl.rpcliteral.class">BeSimple\SoapBundle\ServiceDefinition\Dumper\WsdlDumper</parameter>
         <parameter key="besimple.soap.type.repository.class">BeSimple\SoapBundle\Converter\TypeRepository</parameter>
-        <parameter key="besimple.soap.server.classmap.class">BeSimple\SoapCommon\Classmap</parameter>
+        <parameter key="besimple.soap.server.classmap.class">BeSimple\SoapServer\Classmap</parameter>
     </parameters>
 
     <services>
