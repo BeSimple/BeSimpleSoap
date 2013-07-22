@@ -38,40 +38,53 @@ class ComplexType extends AbstractComplexTypeStrategy
      */
     public function addComplexType($type)
     {
-        $classmap = $this->definition->getClassmap();
-
+        // Really needed?
         if (null !== $soapType = $this->scanRegisteredTypes($type)) {
             return $soapType;
         }
 
-        if (!$this->loader->supports($type)) {
-            throw new \InvalidArgumentException(sprintf('Cannot add a complex type "%s" that is not an object or where class could not be found in "ComplexType" strategy.', $type));
+        $classmap = $this->definition->getClassmap();
+        if ($classmap->has($type)) {
+            $xmlName = $classmap->get($type);
+            $this->addDefinition($type, $xmlName);
+
+            $xmlType = 'tns:'.$xmlName;
+        } else {
+            if (!$this->loader->supports($type)) {
+                throw new \InvalidArgumentException(sprintf('Cannot add a complex type "%s" that is not an object or where class could not be found in "ComplexType" strategy.', $type));
+            }
+
+            $xmlName = $this->getContext()->translateType($type);
+            $xmlType = 'tns:'.$xmlName;
+
+            // Register type here to avoid recursion
+            $classmap->add($type, $xmlName);
+            $this->getContext()->addType($type, $soapType);
+        }
+
+        $this->addDefinition($type, $xmlName);
+
+        return $xmlType;
+    }
+
+    private function addDefinition($type, $xmlName)
+    {
+        if ($this->definition->hasDefinitionComplexType($type)) {
+            return false;
         }
 
         $dom = $this->getContext()->toDomDocument();
-
-        $soapTypeName = $this->getContext()->translateType($type);
-        $soapType     = 'tns:'.$soapTypeName;
-
-        if (!$classmap->has($soapTypeName)) {
-            $classmap->add($soapTypeName, $type);
-        }
-
-        // Register type here to avoid recursion
-        $this->getContext()->addType($type, $soapType);
-
         $complexType = $dom->createElement('xsd:complexType');
-        $complexType->setAttribute('name', $soapTypeName);
+        $complexType->setAttribute('name', $xmlName);
 
         $all = $dom->createElement('xsd:all');
 
+        $elements              = array();
         $definitionComplexType = $this->loader->load($type);
-        $this->definition->addDefinitionComplexType($type, $definitionComplexType);
-
         foreach ($definitionComplexType as $annotationComplexType) {
             $element = $dom->createElement('xsd:element');
-            $element->setAttribute('name', $propertyName = $annotationComplexType->getName());
-            $element->setAttribute('type', $this->getContext()->getType(trim($annotationComplexType->getValue())));
+            $element->setAttribute('name', $annotationComplexType->getName());
+            $element->setAttribute('type', $this->getContext()->getType($annotationComplexType->getValue()));
 
             if ($annotationComplexType->isNillable()) {
                 $element->setAttribute('nillable', 'true');
@@ -83,6 +96,8 @@ class ComplexType extends AbstractComplexTypeStrategy
         $complexType->appendChild($all);
         $this->getContext()->getSchema()->appendChild($complexType);
 
-        return $soapType;
+        $this->definition->addDefinitionComplexType($type, $definitionComplexType);
+
+        return true;
     }
 }
