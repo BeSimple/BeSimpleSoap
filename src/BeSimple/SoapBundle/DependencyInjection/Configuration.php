@@ -97,8 +97,6 @@ class Configuration
     {
         $rootNode
             ->children()
-
-                // "services" section
                 ->arrayNode('services')
                     ->useAttributeAsKey('name')
                         ->prototype('array')
@@ -120,13 +118,6 @@ class Configuration
                                 ->end()
                             ->end()
                         ->end()
-                    ->end()
-                ->end()
-
-                // "services_classmap" section
-                ->arrayNode('services_classmap')
-                    ->useAttributeAsKey('name')
-                        ->prototype('scalar')->end()
                     ->end()
                 ->end()
             ->end()
