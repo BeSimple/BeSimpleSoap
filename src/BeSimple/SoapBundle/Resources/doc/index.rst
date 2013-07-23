@@ -14,8 +14,7 @@ Reference Guide
     :numbered:
 
     requirements
-    installation_composer
-    installation_deps
+    installation
     cache
 
 ----------
