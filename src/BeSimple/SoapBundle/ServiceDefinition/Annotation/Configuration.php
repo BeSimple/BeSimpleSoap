@@ -21,7 +21,7 @@ abstract class Configuration implements ConfigurationInterface
     {
         foreach ($values as $k => $v) {
             if (!method_exists($this, $name = 'set'.$k)) {
-                throw new \RuntimeException(sprintf('Unknown key "%s" for annotation "@%s".', $k, get_class($this)));
+                throw new \RuntimeException(sprintf('Unknown key "%s" for annotation "@%s".', $k, __CLASS__));
             }
 
             $this->$name($v);

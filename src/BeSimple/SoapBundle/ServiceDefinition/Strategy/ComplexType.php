@@ -38,54 +38,43 @@ class ComplexType extends AbstractComplexTypeStrategy
      */
     public function addComplexType($classname)
     {
-        // Really needed?
-        if (null !== $type = $this->scanRegisteredTypes($classname)) {
-            return $type;
-        }
-
         $classmap = $this->definition->getClassmap();
         if ($classmap->hasByClassname($classname)) {
-            $type = $classmap->getByClassname($classname);
-
-            $xmlType = 'tns:'.$type;
-        } else {
-            if (!$this->loader->supports($classname)) {
-                throw new \InvalidArgumentException(sprintf('Cannot add a complex type "%s" that is not an object or where class could not be found in "ComplexType" strategy.', $classname));
-            }
-
-            $type = $this->getContext()->translateType($classname);
-            $xmlType = 'tns:'.$type;
-
-            // Register type here to avoid recursion
-            $classmap->add($type, $classname);
-            $this->getContext()->addType($classname, $xmlType);
+            return 'tns:'.$classmap->getByClassname($classname);
         }
 
-        $this->addXmlDefinition($classname, $type);
+        if (!$this->loader->supports($classname)) {
+            throw new \InvalidArgumentException(sprintf('Cannot add ComplexType "%s" because it is not an object or the class could not be found.', $classname));
+        }
+
+        $definitionComplexType = $this->loader->load($classname);
+        $classnameAlias        = isset($definitionComplexType['alias']) ? $definitionComplexType['alias'] : $classname;
+
+        $type = $this->getContext()->translateType($classnameAlias);
+        $xmlType = 'tns:'.$type;
+
+        // Register type here to avoid recursion
+        $classmap->add($type, $classname);
+        $this->addXmlDefinition($definitionComplexType, $classname, $type);
 
         return $xmlType;
     }
 
-    private function addXmlDefinition($classname, $type)
+    private function addXmlDefinition(array $definitionComplexType, $classname, $type)
     {
-        if ($this->definition->hasDefinitionComplexType($classname)) {
-            return false;
-        }
-
         $dom = $this->getContext()->toDomDocument();
         $complexType = $dom->createElement('xsd:complexType');
         $complexType->setAttribute('name', $type);
 
         $all = $dom->createElement('xsd:all');
 
-        $elements              = array();
-        $definitionComplexType = $this->loader->load($classname);
-        foreach ($definitionComplexType as $annotationComplexType) {
+        $elements = array();
+        foreach ($definitionComplexType['properties'] as $property) {
             $element = $dom->createElement('xsd:element');
-            $element->setAttribute('name', $annotationComplexType->getName());
-            $element->setAttribute('type', $this->getContext()->getType($annotationComplexType->getValue()));
+            $element->setAttribute('name', $property->getName());
+            $element->setAttribute('type', $this->getContext()->getType($property->getValue()));
 
-            if ($annotationComplexType->isNillable()) {
+            if ($property->isNillable()) {
                 $element->setAttribute('nillable', 'true');
             }
 
@@ -96,7 +85,5 @@ class ComplexType extends AbstractComplexTypeStrategy
         $this->getContext()->getSchema()->appendChild($complexType);
 
         $this->definition->addDefinitionComplexType($type, $definitionComplexType);
-
-        return true;
     }
 }

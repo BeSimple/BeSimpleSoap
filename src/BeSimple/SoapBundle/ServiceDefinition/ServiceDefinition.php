@@ -133,13 +133,13 @@ class ServiceDefinition
         return isset($this->complexTypes[$type]);
     }
 
-    public function addDefinitionComplexType($type, Collection $complexType)
+    public function addDefinitionComplexType($type, $definition)
     {
         if ($this->hasDefinitionComplexType($type)) {
             return false;
         }
 
-        $this->complexTypes[$type] = $complexType;
+        $this->complexTypes[$type] = $definition;
 
         return true;
     }
