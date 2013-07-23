@@ -31,12 +31,18 @@ class Wsdl extends BaseWsdl
     public function getType($type)
     {
         if ($type instanceof Type) {
-            $xmlType = $type->getXmlType();
-        } else {
-            $xmlType = $this->typeRepository->getXmlTypeMapping($type);
+            return $type->getXmlType();
         }
 
-        return $xmlType ?: $this->addComplexType($type);
+        if ('\\' === $type[0]) {
+            $type = substr($type, 1);
+        }
+
+        if (!$xmlType = $this->typeRepository->getXmlTypeMapping($type)) {
+            $xmlType = $this->addComplexType($type);
+        }
+
+        return $xmlType;
     }
 
     /**
@@ -49,10 +55,6 @@ class Wsdl extends BaseWsdl
     {
         if (isset($this->classMap[$type])) {
             return $this->classMap[$type];
-        }
-
-        if ($type[0] == '\\') {
-            $type = substr($type, 1);
         }
 
         return str_replace('\\', '.', $type);
