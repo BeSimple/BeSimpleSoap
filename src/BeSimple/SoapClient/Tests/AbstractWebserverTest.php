@@ -32,9 +32,10 @@ abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
             self::markTestSkipped('PHP Webserver is available from PHP 5.4');
         }
 
+        $phpFinder = new PhpExecutableFinder();
         self::$webserver = ProcessBuilder::create(array(
             'exec', // used exec binary (https://github.com/symfony/symfony/issues/5759)
-            (new PhpExecutableFinder())->find(),
+            $phpFinder->find(),
             '-S',
             sprintf('localhost:%d', WEBSERVER_PORT),
             '-t',
