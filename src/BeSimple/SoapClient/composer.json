@@ -26,6 +26,10 @@
         "besimple/soap-common": "self.version",
         "ass/xmlsecurity": "dev-master"
     },
+    "require-dev": {
+        "mikey179/vfsStream": "dev-master",
+        "symfony/process": ">=2.3,<2.4-dev"
+    },
     "autoload": {
         "psr-0": { "BeSimple\\SoapClient": "" }
     },

@@ -25,6 +25,7 @@
         "ass/xmlsecurity": "dev-master"
     },
     "require-dev": {
+        "ext-mcrypt": "*",
         "mikey179/vfsStream": "dev-master"
     },
     "autoload": {

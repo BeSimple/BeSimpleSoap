@@ -13,256 +13,245 @@
 namespace BeSimple\SoapClient\Tests;
 
 use BeSimple\SoapClient\WsdlDownloader;
+use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapClient\Curl;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamWrapper;
 
 /**
  * @author Andreas Schamberger <mail@andreass.net>
+ * @author Francis Besset <francis.bessset@gmail.com>
  */
-class WsdlDownloaderTest extends \PHPUnit_Framework_TestCase
+class WsdlDownloaderTest extends AbstractWebserverTest
 {
-    protected $webserverProcessId;
-
-    protected function startPhpWebserver()
+    /**
+     * @dataProvider provideDownload
+     */
+    public function testDownload($source, $regexp, $nbDownloads)
     {
-        $this->markTestSkipped('Start a local webserver is not the best practice');
+        $wsdlCacheDir = vfsStream::setup('wsdl');
+        $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
 
-        $dir = __DIR__.DIRECTORY_SEPARATOR.'Fixtures';
-        if ('Windows' == substr(php_uname('s'), 0, 7)) {
-            $powershellCommand = "\$app = start-process php.exe -ArgumentList '-S localhost:8000 -t ".$dir."' -WindowStyle 'Hidden' -passthru; Echo \$app.Id;";
-            $shellCommand = 'powershell -command "& {'.$powershellCommand.'}"';
-        } else {
-            $shellCommand = "nohup php -S localhost:8000 -t ".$dir." &";
-        }
-        $output = array();
-        exec($shellCommand, $output);
-        $this->webserverProcessId = $output[0]; // pid is in first element
+        Cache::setEnabled(Cache::ENABLED);
+        Cache::setDirectory($wsdlCacheUrl);
+        $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
+
+        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $this->assertCount(0, $wsdlCacheDir->getChildren());
+
+        $cacheFileName = $wsdlDownloader->download($source);
+        $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
+
+        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFileName));
     }
 
-    protected function stopPhpWebserver()
+    public function provideDownload()
     {
-        if (!is_null($this->webserverProcessId)) {
-            if ('Windows' == substr(php_uname('s'), 0, 7)) {
-                exec('TASKKILL /F /PID ' . $this->webserverProcessId);
-            } else {
-                exec('kill ' . $this->webserverProcessId);
-            }
-            $this->webserverProcessId = null;
-        }
-    }
-
-    public function testDownload()
-    {
-        $this->startPhpWebserver();
-
-        $curl = new Curl();
-        $wd = new WsdlDownloader($curl);
-
-        $cacheDir = ini_get('soap.wsdl_cache_dir');
-        if (!is_dir($cacheDir)) {
-            $cacheDir = sys_get_temp_dir();
-            $cacheDirForRegExp = preg_quote($cacheDir);
-        }
-
-        $tests = array(
-            'localWithAbsolutePath' => array(
-                 'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_absolute.xml',
-                 'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_absolute.xml',
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
             ),
-            'localWithRelativePath' => array(
-                 'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
-                 'assertRegExp' => '~.*\.\./type_include\.xsd.*~',
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
+                '\.\./type_include\.xsd',
+                1,
             ),
-            'remoteWithAbsolutePath' => array(
-                 'source' => 'http://localhost:8000/xsdinclude/xsdinctest_absolute.xml',
-                 'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            array(
+                sprintf('http://localhost:%d/xsdinclude/xsdinctest_absolute.xml', WEBSERVER_PORT),
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
             ),
-            'remoteWithAbsolutePath' => array(
-                 'source' => 'http://localhost:8000/xsdinclude/xsdinctest_relative.xml',
-                 'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            array(
+                sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT),
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
             ),
         );
-
-        foreach ($tests as $name => $values) {
-            $cacheFileName = $wd->download($values['source']);
-            $result = file_get_contents($cacheFileName);
-            $this->assertRegExp($values['assertRegExp'], $result, $name);
-            unlink($cacheFileName);
-        }
-
-        $this->stopPhpWebserver();
     }
 
     public function testIsRemoteFile()
     {
-        $curl = new Curl();
-        $wd = new WsdlDownloader($curl);
+        $wsdlDownloader = new WsdlDownloader(new Curl());
 
-        $class = new \ReflectionClass($wd);
-        $method = $class->getMethod('isRemoteFile');
-        $method->setAccessible(true);
+        $r = new \ReflectionClass($wsdlDownloader);
+        $m = $r->getMethod('isRemoteFile');
+        $m->setAccessible(true);
 
-        $this->assertTrue($method->invoke($wd, 'http://www.php.net/'));
-        $this->assertTrue($method->invoke($wd, 'http://localhost/'));
-        $this->assertTrue($method->invoke($wd, 'http://mylocaldomain/'));
-        $this->assertTrue($method->invoke($wd, 'http://www.php.net/dir/test.html'));
-        $this->assertTrue($method->invoke($wd, 'http://localhost/dir/test.html'));
-        $this->assertTrue($method->invoke($wd, 'http://mylocaldomain/dir/test.html'));
-        $this->assertTrue($method->invoke($wd, 'https://www.php.net/'));
-        $this->assertTrue($method->invoke($wd, 'https://localhost/'));
-        $this->assertTrue($method->invoke($wd, 'https://mylocaldomain/'));
-        $this->assertTrue($method->invoke($wd, 'https://www.php.net/dir/test.html'));
-        $this->assertTrue($method->invoke($wd, 'https://localhost/dir/test.html'));
-        $this->assertTrue($method->invoke($wd, 'https://mylocaldomain/dir/test.html'));
-        $this->assertFalse($method->invoke($wd, 'c:/dir/test.html'));
-        $this->assertFalse($method->invoke($wd, '/dir/test.html'));
-        $this->assertFalse($method->invoke($wd, '../dir/test.html'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'http://www.php.net/'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'http://localhost/'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'http://mylocaldomain/'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'http://www.php.net/dir/test.html'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'http://localhost/dir/test.html'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'http://mylocaldomain/dir/test.html'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'https://www.php.net/'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'https://localhost/'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'https://mylocaldomain/'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'https://www.php.net/dir/test.html'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'https://localhost/dir/test.html'));
+        $this->assertTrue($m->invoke($wsdlDownloader, 'https://mylocaldomain/dir/test.html'));
+        $this->assertFalse($m->invoke($wsdlDownloader, 'c:/dir/test.html'));
+        $this->assertFalse($m->invoke($wsdlDownloader, '/dir/test.html'));
+        $this->assertFalse($m->invoke($wsdlDownloader, '../dir/test.html'));
     }
 
-    public function testResolveWsdlIncludes()
+    /**
+     * @dataProvider provideResolveWsdlIncludes
+     */
+    public function testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
-        $this->startPhpWebserver();
+        $wsdlCacheDir = vfsStream::setup('wsdl');
+        $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
 
-        $curl = new Curl();
-        $wd = new WsdlDownloader($curl);
+        Cache::setEnabled(Cache::ENABLED);
+        Cache::setDirectory($wsdlCacheUrl);
+        $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
 
-        $class = new \ReflectionClass($wd);
-        $method = $class->getMethod('resolveRemoteIncludes');
-        $method->setAccessible(true);
+        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $r = new \ReflectionClass($wsdlDownloader);
+        $m = $r->getMethod('resolveRemoteIncludes');
+        $m->setAccessible(true);
 
-        $cacheDir = ini_get('soap.wsdl_cache_dir');
-        if (!is_dir($cacheDir)) {
-            $cacheDir = sys_get_temp_dir();
-            $cacheDirForRegExp = preg_quote($cacheDir);
-        }
+        $this->assertCount(0, $wsdlCacheDir->getChildren());
 
-        $remoteUrlAbsolute = 'http://localhost:8000/wsdlinclude/wsdlinctest_absolute.xml';
-        $remoteUrlRelative = 'http://localhost:8000/wsdlinclude/wsdlinctest_relative.xml';
-        $tests = array(
-            'localWithAbsolutePath' => array(
-                     'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_absolute.xml',
-                     'cacheFile' => $cacheDir.'/cache_local_absolute.xml',
-                     'remoteParentUrl' => null,
-                     'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
-            ),
-            'localWithRelativePath' => array(
-                     'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_relative.xml',
-                     'cacheFile' => $cacheDir.'/cache_local_relative.xml',
-                     'remoteParentUrl' => null,
-                     'assertRegExp' => '~.*\.\./wsdl_include\.wsdl.*~',
-            ),
-            'remoteWithAbsolutePath' => array(
-                     'source' => $remoteUrlAbsolute,
-                     'cacheFile' => $cacheDir.'/cache_remote_absolute.xml',
-                     'remoteParentUrl' => $remoteUrlAbsolute,
-                     'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
-            ),
-            'remoteWithAbsolutePath' => array(
-                     'source' => $remoteUrlRelative,
-                     'cacheFile' => $cacheDir.'/cache_remote_relative.xml',
-                     'remoteParentUrl' => $remoteUrlRelative,
-                     'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
-            ),
-        );
+        $cacheFile = sprintf($cacheFile, $wsdlCacheUrl);
+        $m->invoke($wsdlDownloader, file_get_contents($source), $cacheFile, $remoteParentUrl);
+        $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
 
-        foreach ($tests as $name => $values) {
-            $wsdl = file_get_contents($values['source']);
-            $method->invoke($wd, $wsdl, $values['cacheFile'], $values['remoteParentUrl']);
-            $result = file_get_contents($values['cacheFile']);
-            $this->assertRegExp($values['assertRegExp'], $result, $name);
-            unlink($values['cacheFile']);
-        }
-
-        $this->stopPhpWebserver();
+        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFile));
     }
 
-    public function testResolveXsdIncludes()
+    public function provideResolveWsdlIncludes()
     {
-        $this->startPhpWebserver();
+        $remoteUrlAbsolute = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_absolute.xml', WEBSERVER_PORT);
+        $remoteUrlRelative = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_relative.xml', WEBSERVER_PORT);
 
-        $curl = new Curl();
-        $wd = new WsdlDownloader($curl);
-
-        $class = new \ReflectionClass($wd);
-        $method = $class->getMethod('resolveRemoteIncludes');
-        $method->setAccessible(true);
-
-        $cacheDir = ini_get('soap.wsdl_cache_dir');
-        if (!is_dir($cacheDir)) {
-            $cacheDir = sys_get_temp_dir();
-            $cacheDirForRegExp = preg_quote($cacheDir);
-        }
-
-        $remoteUrlAbsolute = 'http://localhost:8000/xsdinclude/xsdinctest_absolute.xml';
-        $remoteUrlRelative = 'http://localhost:8000/xsdinclude/xsdinctest_relative.xml';
-        $tests = array(
-            'localWithAbsolutePath' => array(
-                 'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_absolute.xml',
-                 'cacheFile' => $cacheDir.'/cache_local_absolute.xml',
-                 'remoteParentUrl' => null,
-                 'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_absolute.xml',
+                '%s/cache_local_absolute.xml',
+                null,
+                '%s/wsdl_[a-f0-9]{32}.cache',
+                2,
             ),
-            'localWithRelativePath' => array(
-                 'source' => __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
-                 'cacheFile' => $cacheDir.'/cache_local_relative.xml',
-                 'remoteParentUrl' => null,
-                 'assertRegExp' => '~.*\.\./type_include\.xsd.*~',
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_relative.xml',
+                '%s/cache_local_relative.xml',
+                null,
+                '\.\./wsdl_include\.wsdl',
+                1,
             ),
-            'remoteWithAbsolutePath' => array(
-                 'source' => $remoteUrlAbsolute,
-                 'cacheFile' => $cacheDir.'/cache_remote_absolute.xml',
-                 'remoteParentUrl' => $remoteUrlAbsolute,
-                 'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            array(
+                $remoteUrlAbsolute,
+                '%s/cache_remote_absolute.xml',
+                $remoteUrlAbsolute,
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
             ),
-            'remoteWithAbsolutePath' => array(
-                 'source' => $remoteUrlRelative,
-                 'cacheFile' => $cacheDir.'/cache_remote_relative.xml',
-                 'remoteParentUrl' => $remoteUrlRelative,
-                 'assertRegExp' => '~.*'.$cacheDirForRegExp.'\\\wsdl_.*\.cache.*~',
+            array(
+                $remoteUrlRelative,
+                '%s/cache_remote_relative.xml',
+                $remoteUrlRelative,
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2
             ),
         );
+    }
 
-        foreach ($tests as $name => $values) {
-            $wsdl = file_get_contents($values['source']);
-            $method->invoke($wd, $wsdl, $values['cacheFile'], $values['remoteParentUrl']);
-            $result = file_get_contents($values['cacheFile']);
-            $this->assertRegExp($values['assertRegExp'], $result, $name);
-            unlink($values['cacheFile']);
-        }
+    /**
+     * @dataProvider provideResolveXsdIncludes
+     */
+    public function testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    {
+        $wsdlCacheDir = vfsStream::setup('wsdl');
+        $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
 
-        $this->stopPhpWebserver();
+        Cache::setEnabled(Cache::ENABLED);
+        Cache::setDirectory($wsdlCacheUrl);
+        $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
+
+        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $r = new \ReflectionClass($wsdlDownloader);
+        $m = $r->getMethod('resolveRemoteIncludes');
+        $m->setAccessible(true);
+
+        $this->assertCount(0, $wsdlCacheDir->getChildren());
+
+        $cacheFile = sprintf($cacheFile, $wsdlCacheUrl);
+        $m->invoke($wsdlDownloader, file_get_contents($source), $cacheFile, $remoteParentUrl);
+        $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
+
+        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFile));
+    }
+
+    public function provideResolveXsdIncludes()
+    {
+        $remoteUrlAbsolute = sprintf('http://localhost:%d/xsdinclude/xsdinctest_absolute.xml', WEBSERVER_PORT);
+        $remoteUrlRelative = sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT);
+
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_absolute.xml',
+                '%s/cache_local_absolute.xml',
+                null,
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
+            ),
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
+                '%s/cache_local_relative.xml',
+                null,
+                '\.\./type_include\.xsd',
+                1,
+            ),
+            array(
+                $remoteUrlAbsolute,
+                '%s/cache_remote_absolute.xml',
+                $remoteUrlAbsolute,
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
+            ),
+            array(
+                $remoteUrlRelative,
+                '%s/cache_remote_relative.xml',
+                $remoteUrlRelative,
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
+            ),
+        );
     }
 
     public function testResolveRelativePathInUrl()
     {
-        $curl = new Curl();
-        $wd = new WsdlDownloader($curl);
+        $wsdlDownloader = new WsdlDownloader(new Curl());
 
-        $class = new \ReflectionClass($wd);
-        $method = $class->getMethod('resolveRelativePathInUrl');
-        $method->setAccessible(true);
+        $r = new \ReflectionClass($wsdlDownloader);
+        $m = $r->getMethod('resolveRelativePathInUrl');
+        $m->setAccessible(true);
 
-        $this->assertEquals('http://localhost:8080/test', $method->invoke($wd, 'http://localhost:8080/sub', '/test'));
-        $this->assertEquals('http://localhost:8080/test', $method->invoke($wd, 'http://localhost:8080/sub/', '/test'));
+        $this->assertEquals('http://localhost:8080/test', $m->invoke($wsdlDownloader, 'http://localhost:8080/sub', '/test'));
+        $this->assertEquals('http://localhost:8080/test', $m->invoke($wsdlDownloader, 'http://localhost:8080/sub/', '/test'));
 
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub', '/test'));
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/', '/test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub', '/test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/', '/test'));
 
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost', './test'));
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/', './test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost', './test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/', './test'));
 
-        $this->assertEquals('http://localhost/sub/test', $method->invoke($wd, 'http://localhost/sub/sub', './test'));
-        $this->assertEquals('http://localhost/sub/sub/test', $method->invoke($wd, 'http://localhost/sub/sub/', './test'));
+        $this->assertEquals('http://localhost/sub/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub', './test'));
+        $this->assertEquals('http://localhost/sub/sub/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/', './test'));
 
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/sub', '../test'));
-        $this->assertEquals('http://localhost/sub/test', $method->invoke($wd, 'http://localhost/sub/sub/', '../test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub', '../test'));
+        $this->assertEquals('http://localhost/sub/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/', '../test'));
 
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/sub/sub', '../../test'));
-        $this->assertEquals('http://localhost/sub/test', $method->invoke($wd, 'http://localhost/sub/sub/sub/', '../../test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub', '../../test'));
+        $this->assertEquals('http://localhost/sub/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/', '../../test'));
 
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/sub/sub/sub', '../../../test'));
-        $this->assertEquals('http://localhost/sub/test', $method->invoke($wd, 'http://localhost/sub/sub/sub/sub/', '../../../test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/sub', '../../../test'));
+        $this->assertEquals('http://localhost/sub/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/sub/', '../../../test'));
 
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/sub/sub', '../../../test'));
-        $this->assertEquals('http://localhost/test', $method->invoke($wd, 'http://localhost/sub/sub/sub/', '../../../test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub', '../../../test'));
+        $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/', '../../../test'));
     }
 }
