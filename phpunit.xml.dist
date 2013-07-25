@@ -12,6 +12,10 @@
          bootstrap="vendor/autoload.php"
 >
 
+    <php>
+        <const name="WEBSERVER_PORT" value="8000" />
+    </php>
+
     <testsuites>
         <testsuite name="BeSimpleSoap Test Suite">
             <directory>./src/BeSimple/*/Tests/</directory>

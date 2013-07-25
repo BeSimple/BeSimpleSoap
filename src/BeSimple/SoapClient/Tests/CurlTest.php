@@ -17,167 +17,91 @@ use BeSimple\SoapClient\Curl;
 /**
  * @author Andreas Schamberger <mail@andreass.net>
  */
-class CurlTest extends \PHPUnit_Framework_TestCase
+class CurlTest extends AbstractWebserverTest
 {
-    protected $webserverProcessId;
-
-    protected function startPhpWebserver()
-    {
-        $this->markTestSkipped('Start a local webserver is not the best practice');
-
-        $dir = __DIR__.DIRECTORY_SEPARATOR.'Fixtures';
-        if ('Windows' == substr(php_uname('s'), 0, 7)) {
-            $powershellCommand = "\$app = start-process php.exe -ArgumentList '-S localhost:8000 -t ".$dir."' -WindowStyle 'Hidden' -passthru; Echo \$app.Id;";
-            $shellCommand = 'powershell -command "& {'.$powershellCommand.'}"';
-        } else {
-            $shellCommand = "nohup php -S localhost:8000 -t ".$dir." &";
-        }
-        $output = array();
-        exec($shellCommand, $output);
-        $this->webserverProcessId = $output[0]; // pid is in first element
-    }
-
-    protected function stopPhpWebserver()
-    {
-        if (!is_null($this->webserverProcessId)) {
-            if ('Windows' == substr(php_uname('s'), 0, 7 )) {
-                exec('TASKKILL /F /PID ' . $this->webserverProcessId);
-            } else {
-                exec('kill ' . $this->webserverProcessId);
-            }
-            $this->webserverProcessId = null;
-        }
-    }
-
     public function testExec()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $this->assertTrue($curl->exec('http://localhost:8000/curl.txt'));
-        $this->assertTrue($curl->exec('http://localhost:8000/404.txt'));
-
-        $this->stopPhpWebserver();
+        $this->assertTrue($curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT)));
+        $this->assertTrue($curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT)));
     }
 
     public function testGetErrorMessage()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
         $curl->exec('http://unknown/curl.txt');
         $this->assertEquals('Could not connect to host', $curl->getErrorMessage());
 
-        $curl->exec('xyz://localhost:8000/@404.txt');
+        $curl->exec(sprintf('xyz://localhost:%d/@404.txt', WEBSERVER_PORT));
         $this->assertEquals('Unknown protocol. Only http and https are allowed.', $curl->getErrorMessage());
 
         $curl->exec('');
         $this->assertEquals('Unable to parse URL', $curl->getErrorMessage());
-
-        $this->stopPhpWebserver();
     }
 
     public function testGetRequestHeaders()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $curl->exec('http://localhost:8000/curl.txt');
-        $this->assertEquals(136, strlen($curl->getRequestHeaders()));
+        $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
+        $this->assertEquals(132 + self::$websererPortLength, strlen($curl->getRequestHeaders()));
 
-        $curl->exec('http://localhost:8000/404.txt');
-        $this->assertEquals(135, strlen($curl->getRequestHeaders()));
-
-        $this->stopPhpWebserver();
+        $curl->exec(sprintf('http://localhost:%s/404.txt', WEBSERVER_PORT));
+        $this->assertEquals(131 + self::$websererPortLength, strlen($curl->getRequestHeaders()));
     }
 
     public function testGetResponse()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $curl->exec('http://localhost:8000/curl.txt');
-        $this->assertEquals(150, strlen($curl->getResponse()));
+        $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
+        $this->assertSame('OK', $curl->getResponseStatusMessage());
+        $this->assertEquals(145 + self::$websererPortLength, strlen($curl->getResponse()));
 
-        $curl->exec('http://localhost:8000/404.txt');
-        $this->assertEquals(1282, strlen($curl->getResponse()));
-
-        $this->stopPhpWebserver();
+        $curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT));
+        $this->assertSame('Not Found', $curl->getResponseStatusMessage());
     }
 
     public function testGetResponseBody()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $curl->exec('http://localhost:8000/curl.txt');
+        $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
         $this->assertEquals('This is a testfile for cURL.', $curl->getResponseBody());
-
-        $this->stopPhpWebserver();
     }
 
     public function testGetResponseContentType()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $curl->exec('http://localhost:8000/curl.txt');
+        $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
         $this->assertEquals('text/plain; charset=UTF-8', $curl->getResponseContentType());
 
-        $curl->exec('http://localhost:8000/404.txt');
+        $curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT));
         $this->assertEquals('text/html; charset=UTF-8', $curl->getResponseContentType());
-
-        $this->stopPhpWebserver();
     }
 
     public function testGetResponseHeaders()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $curl->exec('http://localhost:8000/curl.txt');
-        $this->assertEquals(122, strlen($curl->getResponseHeaders()));
+        $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
+        $this->assertEquals(117 + self::$websererPortLength, strlen($curl->getResponseHeaders()));
 
-        $curl->exec('http://localhost:8000/404.txt');
-        $this->assertEquals(130, strlen($curl->getResponseHeaders()));
-
-        $this->stopPhpWebserver();
+        $curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT));
+        $this->assertEquals(124 + self::$websererPortLength, strlen($curl->getResponseHeaders()));
     }
 
     public function testGetResponseStatusCode()
     {
-        $this->startPhpWebserver();
-
         $curl = new Curl();
 
-        $curl->exec('http://localhost:8000/curl.txt');
+        $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
         $this->assertEquals(200, $curl->getResponseStatusCode());
 
-        $curl->exec('http://localhost:8000/404.txt');
+        $curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT));
         $this->assertEquals(404, $curl->getResponseStatusCode());
-
-        $this->stopPhpWebserver();
-    }
-
-    public function testGetResponseStatusMessage()
-    {
-        $this->startPhpWebserver();
-
-        $curl = new Curl();
-
-        $curl->exec('http://localhost:8000/curl.txt');
-        $this->assertEquals('OK', $curl->getResponseStatusMessage());
-
-        $curl->exec('http://localhost:8000/404.txt');
-        $this->assertEquals('Not Found', $curl->getResponseStatusMessage());
-
-        $this->stopPhpWebserver();
     }
 }
