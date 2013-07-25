@@ -15,6 +15,7 @@ namespace BeSimple\SoapClient\Tests;
 use BeSimple\SoapClient\WsdlDownloader;
 use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapClient\Curl;
+use Symfony\Component\Filesystem\Filesystem;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 
@@ -24,6 +25,10 @@ use org\bovigo\vfs\vfsStreamWrapper;
  */
 class WsdlDownloaderTest extends AbstractWebserverTest
 {
+    static protected $filesystem;
+
+    static protected $fixturesPath;
+
     /**
      * @dataProvider provideDownload
      */
@@ -49,7 +54,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         return array(
             array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_absolute.xml',
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/xsdinctest_absolute.xml',
                 '%s/wsdl_[a-f0-9]{32}\.cache',
                 2,
             ),
@@ -59,7 +64,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 1,
             ),
             array(
-                sprintf('http://localhost:%d/xsdinclude/xsdinctest_absolute.xml', WEBSERVER_PORT),
+                sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT),
                 '%s/wsdl_[a-f0-9]{32}\.cache',
                 2,
             ),
@@ -124,12 +129,12 @@ class WsdlDownloaderTest extends AbstractWebserverTest
 
     public function provideResolveWsdlIncludes()
     {
-        $remoteUrlAbsolute = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_absolute.xml', WEBSERVER_PORT);
+        $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/wsdlinctest_absolute.xml', WEBSERVER_PORT);
         $remoteUrlRelative = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_relative.xml', WEBSERVER_PORT);
 
         return array(
             array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_absolute.xml',
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/wsdlinctest_absolute.xml',
                 '%s/cache_local_absolute.xml',
                 null,
                 '%s/wsdl_[a-f0-9]{32}.cache',
@@ -187,12 +192,12 @@ class WsdlDownloaderTest extends AbstractWebserverTest
 
     public function provideResolveXsdIncludes()
     {
-        $remoteUrlAbsolute = sprintf('http://localhost:%d/xsdinclude/xsdinctest_absolute.xml', WEBSERVER_PORT);
+        $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT);
         $remoteUrlRelative = sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT);
 
         return array(
             array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_absolute.xml',
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/xsdinctest_absolute.xml',
                 '%s/cache_local_absolute.xml',
                 null,
                 '%s/wsdl_[a-f0-9]{32}\.cache',
@@ -253,5 +258,28 @@ class WsdlDownloaderTest extends AbstractWebserverTest
 
         $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub', '../../../test'));
         $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/', '../../../test'));
+    }
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+
+        self::$filesystem  = new Filesystem();
+        self::$fixturesPath = __DIR__.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR;
+        self::$filesystem->mkdir(self::$fixturesPath.'build_include');
+
+        foreach (array('wsdlinclude/wsdlinctest_absolute.xml', 'xsdinclude/xsdinctest_absolute.xml') as $file) {
+            $content = file_get_contents(self::$fixturesPath.$file);
+            $content = preg_replace('#'.preg_quote('%location%').'#', sprintf('localhost:%d', WEBSERVER_PORT), $content);
+
+            self::$filesystem->dumpFile(self::$fixturesPath.'build_include'.DIRECTORY_SEPARATOR.pathinfo($file, PATHINFO_BASENAME), $content);
+        }
+    }
+
+    public static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
+
+        self::$filesystem->remove(self::$fixturesPath.'build_include');
     }
 }
