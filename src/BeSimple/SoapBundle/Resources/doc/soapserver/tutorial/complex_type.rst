@@ -51,8 +51,16 @@ You can expose only the properties (public, protected or private) of a complex t
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
 
+    /**
+     * @Soap\Alias("User")
+     */
     class User
     {
+        /**
+         * @Soap\ComplexType("int", nillable=true)
+         */
+        private $id;
+
         /**
          * @Soap\ComplexType("string")
          */
@@ -62,11 +70,6 @@ You can expose only the properties (public, protected or private) of a complex t
          * @Soap\ComplexType("string")
          */
         public $lastname;
-
-        /**
-         * @Soap\ComplexType("int", nillable=true)
-         */
-        private $id;
 
         /**
          * @Soap\ComplexType("string")
@@ -135,3 +138,9 @@ ComplexType
 `ComplexType` accepts the following options:
 
     * nillable: To specify that the value can be null
+
+Alias
+-----
+
+If you can Alias annotation, the name of your entity will be renamed in the WSDL generated.
+With alias the name in WSDL will `User` instead of `Acme.DemoBundle.Entity.User` (name without Alias annotation).
