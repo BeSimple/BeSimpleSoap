@@ -128,9 +128,20 @@ class ServiceDefinition
         $this->classmap = $classmap;
     }
 
-    public function addDefinitionComplexType($type, Collection $complexType)
+    public function hasDefinitionComplexType($type)
     {
-        $this->complexTypes[$type] = $complexType;
+        return isset($this->complexTypes[$type]);
+    }
+
+    public function addDefinitionComplexType($type, array $definition)
+    {
+        if ($this->hasDefinitionComplexType($type)) {
+            return false;
+        }
+
+        $this->complexTypes[$type] = $definition;
+
+        return true;
     }
 
     public function getDefinitionComplexTypes()

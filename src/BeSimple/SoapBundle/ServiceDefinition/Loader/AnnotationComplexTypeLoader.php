@@ -22,6 +22,7 @@ use BeSimple\SoapBundle\Util\Collection;
  */
 class AnnotationComplexTypeLoader extends AnnotationClassLoader
 {
+    private $aliasClass       = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\Alias';
     private $complexTypeClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\ComplexType';
 
     /**
@@ -40,9 +41,14 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
-        $class      = new \ReflectionClass($class);
-        $collection = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\ComplexType');
+        $annotations = array();
 
+        $class = new \ReflectionClass($class);
+        if ($alias = $this->reader->getClassAnnotation($class, $this->aliasClass)) {
+            $annotations['alias'] = $alias->getValue();
+        }
+
+        $annotations['properties'] = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\ComplexType');
         foreach ($class->getProperties() as $property) {
             $complexType = $this->reader->getPropertyAnnotation($property, $this->complexTypeClass);
 
@@ -51,10 +57,10 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
                 $propertyComplexType->setValue($complexType->getValue());
                 $propertyComplexType->setNillable($complexType->isNillable());
                 $propertyComplexType->setName($property->getName());
-                $collection->add($propertyComplexType);
+                $annotations['properties']->add($propertyComplexType);
             }
         }
 
-        return $collection;
+        return $annotations;
     }
 }
