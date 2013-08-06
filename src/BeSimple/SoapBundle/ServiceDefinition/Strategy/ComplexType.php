@@ -84,6 +84,6 @@ class ComplexType extends AbstractComplexTypeStrategy
         $complexType->appendChild($all);
         $this->getContext()->getSchema()->appendChild($complexType);
 
-        $this->definition->addDefinitionComplexType($type, $definitionComplexType);
+        $this->definition->addDefinitionComplexType($classname, $definitionComplexType);
     }
 }

@@ -83,7 +83,7 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
         }
 
         $messageBinder = new MessageBinder($message);
-        foreach ($this->definitionComplexTypes[$phpType] as $type) {
+        foreach ($this->definitionComplexTypes[$phpType]['properties'] as $type) {
             $property = $type->getName();
             $value = $messageBinder->readProperty($property);
 
