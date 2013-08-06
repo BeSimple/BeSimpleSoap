@@ -1,8 +1,10 @@
 <?php
+
 /*
  * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
+ * (c) Francis Besset <francis.besset@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -15,7 +17,7 @@ use BeSimple\SoapBundle\ServiceDefinition\Annotation;
 
 use Doctrine\Common\Annotations\Reader;
 
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 
 /**
@@ -25,7 +27,7 @@ use Symfony\Component\Config\Loader\LoaderResolverInterface;
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class AnnotationClassLoader implements LoaderInterface
+class AnnotationClassLoader extends Loader
 {
     protected $reader;
 
@@ -181,18 +183,7 @@ class AnnotationClassLoader implements LoaderInterface
     }
 
     /**
-     * Sets the loader resolver.
-     *
-     * @param LoaderResolverInterface $resolver A LoaderResolverInterface instance
-     */
-    public function setResolver(LoaderResolverInterface $resolver)
-    {
-    }
-
-    /**
-     * Gets the loader resolver.
-     *
-     * @return LoaderResolverInterface A LoaderResolverInterface instance
+     * @return null
      */
     public function getResolver()
     {
