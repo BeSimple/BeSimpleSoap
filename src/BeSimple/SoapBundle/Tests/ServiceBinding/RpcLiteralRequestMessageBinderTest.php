@@ -275,6 +275,6 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
             $collection->add($complexType);
         }
 
-        return $collection;
+        return array('properties' => $collection);
     }
 }
