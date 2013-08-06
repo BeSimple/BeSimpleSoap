@@ -71,7 +71,11 @@ class SoapWebServiceController extends ContainerAware
         ob_start();
         $this->soapServer->handle($this->soapRequest->getSoapMessage());
 
-        return $this->getResponse()->setContent(ob_get_clean());
+        $response = $this->getResponse();
+        $response->setContent(ob_get_clean());
+
+        // The Symfony 2.0 Response::setContent() does not return the Response instance
+        return $response;
     }
 
     /**
