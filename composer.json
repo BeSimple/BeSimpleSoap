@@ -33,7 +33,8 @@
         "besimple/soap-bundle": "self.version",
         "besimple/soap-client": "self.version",
         "besimple/soap-common": "self.version",
-        "besimple/soap-server": "self.version"
+        "besimple/soap-server": "self.version",
+        "besimple/soap-wsdl":   "self.version"
     },
     "require-dev": {
         "ext-mcrypt": "*",
