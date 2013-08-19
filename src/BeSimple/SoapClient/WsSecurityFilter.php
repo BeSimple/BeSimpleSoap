@@ -566,7 +566,7 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
                             && 'EncryptedKey' == $referencedNode->localName) {
                             $key = XmlSecurityEnc::decryptEncryptedKey($referencedNode, $this->userSecurityKey->getPrivateKey());
 
-                            return XmlSecurityKey::factory($algorithm, $key, XmlSecurityKey::TYPE_PRIVATE);
+                            return XmlSecurityKey::factory($algorithm, $key, false, XmlSecurityKey::TYPE_PRIVATE);
                         } else {
                             //$valueType = $key->getAttribute('ValueType');
 
