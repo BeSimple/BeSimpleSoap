@@ -15,6 +15,7 @@ namespace BeSimple\SoapClient;
 use ass\XmlSecurity\DSig as XmlSecurityDSig;
 use ass\XmlSecurity\Enc as XmlSecurityEnc;
 use ass\XmlSecurity\Key as XmlSecurityKey;
+use ass\XmlSecurity\Pem as XmlSecurityPem;
 
 use BeSimple\SoapCommon\FilterHelper;
 use BeSimple\SoapCommon\Helper;
@@ -390,10 +391,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
         $security = $dom->getElementsByTagNameNS(Helper::NS_WSS, 'Security')->item(0);
         if (null !== $security) {
             // add SecurityTokenReference resolver for KeyInfo
-            if (null !== $this->serviceSecurityKey) {
-                $keyResolver = array($this, 'keyInfoSecurityTokenReferenceResolver');
-                XmlSecurityDSig::addKeyInfoResolver(Helper::NS_WSS, 'SecurityTokenReference', $keyResolver);
-            }
+            $keyResolver = array($this, 'keyInfoSecurityTokenReferenceResolver');
+            XmlSecurityDSig::addKeyInfoResolver(Helper::NS_WSS, 'SecurityTokenReference', $keyResolver);
             // do we have a reference list in header
             $referenceList = XmlSecurityEnc::locateReferenceList($security);
             // get a list of encrypted nodes
@@ -420,6 +419,8 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
                     throw new \SoapFault('wsse:FailedCheck', 'The signature or decryption was invalid');
                 }
             }
+
+            $security->parentNode->removeChild($security);
         }
     }
 
@@ -567,6 +568,12 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
                             $key = XmlSecurityEnc::decryptEncryptedKey($referencedNode, $this->userSecurityKey->getPrivateKey());
 
                             return XmlSecurityKey::factory($algorithm, $key, false, XmlSecurityKey::TYPE_PRIVATE);
+                        } elseif (Helper::NS_WSS === $referencedNode->namespaceURI
+                            && 'BinarySecurityToken' == $referencedNode->localName) {
+
+                            $key = XmlSecurityPem::formatKeyInPemFormat($referencedNode->textContent);
+
+                            return XmlSecurityKey::factory(XmlSecurityKey::RSA_SHA1, $key, false, XmlSecurityKey::TYPE_PUBLIC);
                         } else {
                             //$valueType = $key->getAttribute('ValueType');
 
