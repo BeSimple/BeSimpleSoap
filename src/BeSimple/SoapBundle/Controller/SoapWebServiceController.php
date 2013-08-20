@@ -18,8 +18,10 @@ use BeSimple\SoapServer\Exception as SoapException;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
@@ -125,11 +127,24 @@ class SoapWebServiceController extends ContainerAware
                 $this->serviceBinder->processServiceMethodArguments($method, $arguments)
             );
 
+            $httpKernel = $this->container->get('http_kernel');
+
             // forward to controller
             try {
-                $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
+                $response = $httpKernel->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
             } catch (\Exception $e) {
                 $this->soapResponse = new Response(null, 500);
+
+                // Dispatch the exception event to trigger logging.
+                // The response that comes back is ignored.
+                $event = new GetResponseForExceptionEvent(
+                    $httpKernel,
+                    $this->soapRequest,
+                    HttpKernelInterface::SUB_REQUEST,
+                    $e
+                );
+
+                $this->container->get('event_dispatcher')->dispatch(KernelEvents::EXCEPTION, $event);
 
                 throw $e instanceof \SoapFault || $this->container->getParameter('kernel.debug') ? $e : new SoapException\ReceiverSoapFault($e->getMessage());
             }
