@@ -574,10 +574,6 @@ class WsSecurityFilter implements SoapRequestFilter, SoapResponseFilter
                             $key = XmlSecurityPem::formatKeyInPemFormat($referencedNode->textContent);
 
                             return XmlSecurityKey::factory(XmlSecurityKey::RSA_SHA1, $key, false, XmlSecurityKey::TYPE_PUBLIC);
-                        } else {
-                            //$valueType = $key->getAttribute('ValueType');
-
-                            return $this->serviceSecurityKey->getPublicKey();
                         }
                 }
             }
