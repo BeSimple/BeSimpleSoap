@@ -117,6 +117,8 @@ class Configuration
                                     ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
                                 ->end()
                             ->end()
+                            ->scalarNode('encoding')
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
