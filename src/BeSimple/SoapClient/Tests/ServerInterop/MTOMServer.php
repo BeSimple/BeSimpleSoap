@@ -1,25 +1,11 @@
 <?php
 
+require '../../../../../vendor/autoload.php';
+
 use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapServer\SoapServer as BeSimpleSoapServer;
 
-require '../../../BeSimpleSoapServer/tests/bootstrap.php';
-
-class base64Binary
-{
-    public $_;
-    public $contentType;
-}
-
-class AttachmentType
-{
-    public $fileName;
-    public $binaryData;
-}
-
-class AttachmentRequest extends AttachmentType
-{
-}
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures;
 
 $options = array(
     'soap_version'    => SOAP_1_1,
@@ -27,8 +13,8 @@ $options = array(
     'attachment_type' => BeSimpleSoapHelper::ATTACHMENTS_TYPE_MTOM,
     'cache_wsdl'      => WSDL_CACHE_NONE,
     'classmap'        => array(
-        'base64Binary'      => 'base64Binary',
-        'AttachmentRequest' => 'AttachmentRequest',
+        'base64Binary'      => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary',
+        'AttachmentRequest' => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest',
     ),
 );
 
@@ -38,16 +24,12 @@ class Mtom
     {
         $b64 = $attachment->binaryData;
 
-        file_put_contents('test.txt', var_export(array(
-            $attachment->fileName,
-            $b64->_,
-            $b64->contentType
-        ), true));
+        file_put_contents(__DIR__.'/'.$attachment->fileName, $b64->_);
 
-        return 'done';
+        return 'File saved succesfully.';
     }
 }
 
-$ss = new BeSimpleSoapServer('MTOM.wsdl', $options);
+$ss = new BeSimpleSoapServer(__DIR__.'/Fixtures/MTOM.wsdl', $options);
 $ss->setClass('Mtom');
 $ss->handle();
