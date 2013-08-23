@@ -128,7 +128,7 @@ class Curl
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $requestHeaders);
         }
 
-        $this->response = $this->execManualRedirect($this->followLocationMaxRedirects);
+        $this->response = $this->execManualRedirect();
 
         return ($this->response === false) ? false : true;
     }
