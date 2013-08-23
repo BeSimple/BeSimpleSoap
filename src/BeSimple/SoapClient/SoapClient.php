@@ -15,6 +15,7 @@ namespace BeSimple\SoapClient;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Converter\MtomTypeConverter;
 use BeSimple\SoapCommon\Converter\SwaTypeConverter;
+use BeSimple\SoapCommon\SoapMessage;
 
 /**
  * Extended SoapClient that uses a a cURL wrapper for all underlying HTTP
@@ -39,6 +40,15 @@ class SoapClient extends \SoapClient
      * @var boolean
      */
     protected $tracingEnabled = false;
+
+    /**
+     * Work around missing header/php://input access in PHP cli webserver by
+     * setting headers additionally as GET parameters and SOAP request body
+     * explicitly as POST variable.
+     *
+     * @var boolean
+     */
+    private $cliWebserverWorkaround = false;
 
     /**
      * cURL instance.
@@ -98,6 +108,10 @@ class SoapClient extends \SoapClient
         if (isset($options['soap_version'])) {
             $this->soapVersion = $options['soap_version'];
         }
+        // activate cli webserver workaround
+        if (isset($options['cli_webserver_workaround'])) {
+            $this->cliWebserverWorkaround = $options['cli_webserver_workaround'];
+        }
         $this->curl = new Curl($options);
         $wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
@@ -128,10 +142,33 @@ class SoapClient extends \SoapClient
             'Content-Type:' . $soapRequest->getContentType(),
             'SOAPAction: "' . $soapRequest->getAction() . '"',
         );
+
+        $location = $soapRequest->getLocation();
+        $content = $soapRequest->getContent();
+        /*
+         * Work around missing header/php://input access in PHP cli webserver by
+         * setting headers additionally as GET parameters and SOAP request body
+         * explicitly as POST variable
+         */
+        if ($this->cliWebserverWorkaround === true) {
+            if (strpos($location, '?') === false) {
+                $location .= '?';
+            } else {
+                $location .= '&';
+            }
+            $location .= SoapMessage::CONTENT_TYPE_HEADER.'='.urlencode($soapRequest->getContentType());
+            $location .= '&';
+            $location .= SoapMessage::SOAP_ACTION_HEADER.'='.urlencode($soapRequest->getAction());
+
+            $content = http_build_query(array('request' => $content));
+
+            $headers = array();
+        }
+
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
-            $soapRequest->getLocation(),
-            $soapRequest->getContent(),
+            $location,
+            $content,
             $headers
         );
         // tracing enabled: store last request header and body
