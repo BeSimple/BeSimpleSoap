@@ -35,7 +35,7 @@ cp -r $DIR/../AxisInterop/axis_services/* $AXIS_DIR/repository/services
 $AXIS_DIR/bin/axis2server.sh&
 
 echo "Waiting until Axis is ready on port 8080"
-while [[ -z `curl -s 'http://localhost:8080' ` ]]
+while [[ -z `curl -s 'http://localhost:8080/axis2/services/' ` ]]
 do
     echo -n "."
     sleep 2s
