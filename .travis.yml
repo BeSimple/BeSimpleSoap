@@ -9,3 +9,4 @@ before_script:
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source
   - ./src/BeSimple/SoapClient/Tests/bin/phpwebserver.sh
+  - phpenv config-add .travis.php.ini
