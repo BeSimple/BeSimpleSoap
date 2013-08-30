@@ -138,10 +138,18 @@ class SoapClient extends \SoapClient
     private function __doHttpRequest(SoapRequest $soapRequest)
     {
         // HTTP headers
-        $headers = array(
-            'Content-Type:' . $soapRequest->getContentType(),
-            'SOAPAction: "' . $soapRequest->getAction() . '"',
-        );
+        $soapVersion = $soapRequest->getVersion();
+        $soapAction = $soapRequest->getAction();
+        if (SOAP_1_1 == $soapVersion) {
+            $headers = array(
+                'Content-Type:' . $soapRequest->getContentType(),
+                'SOAPAction: "' . $soapAction . '"',
+            );
+        } else {
+            $headers = array(
+               'Content-Type:' . $soapRequest->getContentType() . '; action="' . $soapAction . '"',
+            );
+        }
 
         $location = $soapRequest->getLocation();
         $content = $soapRequest->getContent();
