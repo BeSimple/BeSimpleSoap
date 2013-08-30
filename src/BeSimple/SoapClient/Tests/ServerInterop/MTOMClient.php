@@ -1,57 +1,12 @@
 <?php
 
+require '../../../../../vendor/autoload.php';
+
 use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
 
-require '../bootstrap.php';
-
-class base64Binary
-{
-    public $_;
-    public $contentType;
-}
-
-class AttachmentType
-{
-    public $fileName;
-    public $binaryData;
-}
-
-class AttachmentRequest extends AttachmentType
-{
-}
-
-class base64Binary
-{
-    public $_;
-    public $contentType;
-}
-
-class AttachmentType
-{
-    public $fileName;
-    public $binaryData;
-}
-
-class AttachmentRequest extends AttachmentType
-{
-}
-
-class base64Binary
-{
-    public $_;
-    public $contentType;
-}
-
-class AttachmentType
-{
-    public $fileName;
-    public $binaryData;
-}
-
-class AttachmentRequest extends AttachmentType
-{
-}
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest;
 
 $options = array(
     'soap_version'    => SOAP_1_1,
@@ -60,19 +15,14 @@ $options = array(
     'attachment_type' => BeSimpleSoapHelper::ATTACHMENTS_TYPE_MTOM,
     'cache_wsdl'      => WSDL_CACHE_NONE,
     'classmap'        => array(
-        'base64Binary'      => 'base64Binary',
-        'AttachmentRequest' => 'AttachmentRequest',
+        'base64Binary'      => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary',
+        'AttachmentRequest' => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest',
     ),
+    'cli_webserver_workaround' => true, // Work around missing header access in PHP cli webserver by setting headers additionally as GET parameters.
+    'connection_timeout' => 1,
 );
 
-/*
- * Deploy "axis_services/sample-mtom.aar" to Apache Axis2 to get this
- * example to work.
- *
- * Apache Axis2 MTOM example.
- *
- */
-$sc = new BeSimpleSoapClient('MTOM.wsdl', $options);
+$sc = new BeSimpleSoapClient('Fixtures/MTOM.wsdl', $options);
 
 //var_dump($sc->__getFunctions());
 //var_dump($sc->__getTypes());

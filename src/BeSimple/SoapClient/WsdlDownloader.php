@@ -74,11 +74,8 @@ class WsdlDownloader
 
         // get current WSDL caching config
         $this->cacheEnabled = $cacheWsdl === Cache::TYPE_NONE ? Cache::DISABLED : Cache::ENABLED == Cache::isEnabled();
-
-        if ($this->cacheEnabled) {
-            $this->cacheDir = Cache::getDirectory();
-            $this->cacheTtl = Cache::getLifetime();
-        }
+        $this->cacheDir = Cache::getDirectory();
+        $this->cacheTtl = Cache::getLifetime();
     }
 
     /**
