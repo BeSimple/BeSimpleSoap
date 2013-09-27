@@ -24,7 +24,7 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "dev-master",
-        "symfony/http-foundation": ">=2.0,<2.4-dev",
+        "symfony/framework-bundle": "~2.0",
         "zendframework/zend-mail": "2.1.*",
         "zendframework/zend-mime": "2.1.*",
         "zendframework/zend-soap": "2.1.*"
@@ -39,8 +39,8 @@
     "require-dev": {
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "dev-master",
-        "symfony/filesystem": ">=2.3,<2.4-dev",
-        "symfony/process": ">=2.3,<2.4-dev"
+        "symfony/filesystem": "~2.3",
+        "symfony/process": "~2.3"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }

@@ -52,6 +52,8 @@ class WebServiceContext
         $this->typeRepository = $typeRepository;
         $this->converters     = $converters;
 
+        // Issue #6: keep the debug because the cache is invalid
+        $options['debug']     = true;
         $this->options        = $options;
     }
 
