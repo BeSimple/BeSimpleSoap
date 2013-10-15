@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the BeSimpleSoapBundle.
+ * This file is part of the BeSimpleSoap.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  * (c) Francis Besset <francis.besset@gmail.com>
@@ -14,6 +14,8 @@ namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
 use BeSimple\SoapBundle\ServiceDefinition as Definition;
 use BeSimple\SoapBundle\ServiceDefinition\Annotation;
+use BeSimple\SoapCommon\Definition\Type\ComplexType;
+use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 
 use Doctrine\Common\Annotations\Reader;
 
@@ -26,19 +28,23 @@ use Symfony\Component\Config\Loader\LoaderResolverInterface;
  * Based on \Symfony\Component\Routing\Loader\AnnotationClassLoader
  *
  * @author Christian Kerl <christian-kerl@web.de>
+ * @author Francis Besset <francis.besset@gmail.com>
  */
 class AnnotationClassLoader extends Loader
 {
     protected $reader;
+
+    protected $typeRepository;
 
     /**
      * Constructor.
      *
      * @param \Doctrine\Common\Annotations\Reader $reader
      */
-    public function __construct(Reader $reader)
+    public function __construct(Reader $reader, TypeRepository $typeRepository)
     {
         $this->reader = $reader;
+        $this->typeRepository = $typeRepository;
     }
 
     /**
@@ -58,39 +64,26 @@ class AnnotationClassLoader extends Loader
         }
 
         $class      = new \ReflectionClass($class);
-        $definition = new Definition\ServiceDefinition();
+        $definition = new Definition\Definition($this->typeRepository);
 
-        $serviceMethodHeaders = array();
+        $sharedHeaders = array();
         foreach ($this->reader->getClassAnnotations($class) as $annotation) {
             if ($annotation instanceof Annotation\Header) {
-                $serviceMethodHeaders[$annotation->getValue()] = $annotation;
+                $sharedHeaders[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
             }
         }
 
         foreach ($class->getMethods() as $method) {
-            $serviceArguments =
-            $serviceHeaders   = array();
+            $serviceHeaders   = $sharedHeaders;
+            $serviceArguments = array();
             $serviceMethod    =
             $serviceReturn    = null;
 
-            foreach ($serviceMethodHeaders as $annotation) {
-                $serviceHeaders[$annotation->getValue()] = new Definition\Header(
-                    $annotation->getValue(),
-                    $this->getArgumentType($method, $annotation)
-                );
-            }
-
             foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
                 if ($annotation instanceof Annotation\Header) {
-                    $serviceHeaders[$annotation->getValue()] = new Definition\Header(
-                        $annotation->getValue(),
-                        $this->getArgumentType($method, $annotation)
-                    );
+                    $serviceHeaders[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
                 } elseif ($annotation instanceof Annotation\Param) {
-                    $serviceArguments[] = new Definition\Argument(
-                        $annotation->getValue(),
-                        $this->getArgumentType($method, $annotation)
-                    );
+                    $serviceArguments[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
                 } elseif ($annotation instanceof Annotation\Method) {
                     if ($serviceMethod) {
                         throw new \LogicException(sprintf('@Soap\Method defined twice for "%s".', $method->getName()));
@@ -98,6 +91,7 @@ class AnnotationClassLoader extends Loader
 
                     $serviceMethod = new Definition\Method(
                         $annotation->getValue(),
+                        $this->typeRepository,
                         $this->getController($class, $method, $annotation)
                     );
                 } elseif ($annotation instanceof Annotation\Result) {
@@ -105,7 +99,7 @@ class AnnotationClassLoader extends Loader
                         throw new \LogicException(sprintf('@Soap\Result defined twice for "%s".', $method->getName()));
                     }
 
-                    $serviceReturn = new Definition\Type($annotation->getPhpType(), $annotation->getXmlType());
+                    $serviceReturn = $annotation->getPhpType();
                 }
             }
 
@@ -114,16 +108,21 @@ class AnnotationClassLoader extends Loader
             }
 
             if ($serviceMethod) {
-                $serviceMethod->setArguments($serviceArguments);
-                $serviceMethod->setHeaders($serviceHeaders);
+                foreach ($serviceHeaders as $name => $type) {
+                    $serviceMethod->addHeader($name, $type);
+                }
+
+                foreach ($serviceArguments as $name => $type) {
+                    $serviceMethod->addInput($name, $type);
+                }
 
                 if (!$serviceReturn) {
                     throw new \LogicException(sprintf('@Soap\Result non-existent for "%s".', $method->getName()));
                 }
 
-                $serviceMethod->setReturn($serviceReturn);
+                $serviceMethod->setOutput($this->loadType($serviceReturn));
 
-                $definition->getMethods()->add($serviceMethod);
+                $definition->addMethod($serviceMethod);
             }
         }
 
@@ -167,6 +166,30 @@ class AnnotationClassLoader extends Loader
         }
 
         return new Definition\Type($phpType, $xmlType);
+    }
+
+    private function loadType($phpType)
+    {
+        if (false !== $arrayOf = $this->typeRepository->getArrayOf($phpType)) {
+            $this->loadType($arrayOf);
+        }
+
+        if (!$this->typeRepository->hasType($phpType)) {
+            $complexTypeResolver = $this->resolve($phpType, 'annotation_complextype');
+            if (!$complexTypeResolver) {
+                throw new Exception();
+            }
+
+            $loaded = $complexTypeResolver->load($phpType);
+            $complexType = new ComplexType($phpType, $loaded['alias']);
+            foreach ($loaded['properties'] as $name => $property) {
+                $complexType->add($name, $this->loadType($property->getValue()), $property->isNillable());
+            }
+
+            $this->typeRepository->addComplexType($complexType);
+        }
+
+        return $phpType;
     }
 
     /**

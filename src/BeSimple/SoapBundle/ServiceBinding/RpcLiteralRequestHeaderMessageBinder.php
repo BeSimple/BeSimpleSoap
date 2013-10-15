@@ -11,6 +11,7 @@
 namespace BeSimple\SoapBundle\ServiceBinding;
 
 use BeSimple\SoapBundle\ServiceDefinition\Method;
+use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>
@@ -24,10 +25,11 @@ class RpcLiteralRequestHeaderMessageBinder extends RpcLiteralRequestMessageBinde
         $this->header = $header;
     }
 
-    public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
+    public function processMessage(Method $messageDefinition, $message, TypeRepository $typeRepository)
     {
+        $this->typeRepository = $typeRepository;
         $headerDefinition = $messageDefinition->getHeaders()->get($this->header);
 
-        return $this->processType($headerDefinition->getType()->getPhpType(), $message, $definitionComplexTypes);
+        return $this->processType($headerDefinition->getType(), $message);
     }
 }

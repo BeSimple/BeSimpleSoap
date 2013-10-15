@@ -15,6 +15,9 @@ namespace BeSimple\SoapBundle\ServiceBinding;
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
+use BeSimple\SoapCommon\Definition\Type\ArrayOfType;
+use BeSimple\SoapCommon\Definition\Type\ComplexType;
+use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 use BeSimple\SoapCommon\Util\MessageBinder;
 
 /**
@@ -23,26 +26,32 @@ use BeSimple\SoapCommon\Util\MessageBinder;
  */
 class RpcLiteralResponseMessageBinder implements MessageBinderInterface
 {
+    protected $typeRepository;
+
     private $messageRefs = array();
-    private $definitionComplexTypes;
 
-    public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
+    public function processMessage(Method $messageDefinition, $message, TypeRepository $typeRepository)
     {
-        $this->definitionComplexTypes = $definitionComplexTypes;
+        $this->typeRepository = $typeRepository;
 
-        return $this->processType($messageDefinition->getReturn()->getPhpType(), $message);
+        return $this->processType($messageDefinition->getOutput()->get('return')->getType(), $message);
     }
 
     private function processType($phpType, $message)
     {
         $isArray = false;
 
-        if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
+        $type = $this->typeRepository->getType($phpType);
+        if ($type instanceof ArrayOfType) {
             $isArray = true;
-            $phpType = $match[1];
+            $arrayType = $type;
+
+            $type = $this->typeRepository->getType($type->get('item')->getType());
         }
 
-        if (isset($this->definitionComplexTypes[$phpType])) {
+        if ($type instanceof ComplexType) {
+            $phpType = $type->getPhpType();
+
             if ($isArray) {
                 $array = array();
 
@@ -83,12 +92,12 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
         }
 
         $messageBinder = new MessageBinder($message);
-        foreach ($this->definitionComplexTypes[$phpType]['properties'] as $type) {
+        foreach ($this->typeRepository->getType($phpType)->all() as $type) {
             $property = $type->getName();
             $value = $messageBinder->readProperty($property);
 
             if (null !== $value) {
-                $value = $this->processType($type->getValue(), $value);
+                $value = $this->processType($type->getType(), $value);
 
                 $messageBinder->writeProperty($property, $value);
             }

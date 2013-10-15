@@ -148,9 +148,9 @@ class BeSimpleSoapExtension extends Extension
 
         $options = $container
             ->getDefinition('besimple.soap.context.'.$bindingSuffix)
-            ->getArgument(5);
+            ->getArgument(2);
 
-        $definition->replaceArgument(5, array_merge($options, $config));
+        $definition->replaceArgument(2, array_merge($options, $config));
     }
 
     private function getCacheType($type)

@@ -15,6 +15,9 @@ namespace BeSimple\SoapBundle\ServiceBinding;
 use BeSimple\SoapBundle\ServiceDefinition\Method;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
 use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
+use BeSimple\SoapCommon\Definition\Type\ArrayOfType;
+use BeSimple\SoapCommon\Definition\Type\ComplexType;
+use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 use BeSimple\SoapCommon\Util\MessageBinder;
 
 /**
@@ -23,19 +26,20 @@ use BeSimple\SoapCommon\Util\MessageBinder;
  */
 class RpcLiteralRequestMessageBinder implements MessageBinderInterface
 {
-    private $messageRefs = array();
-    private $definitionComplexTypes;
+    protected $typeRepository;
 
-    public function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array())
+    private $messageRefs = array();
+
+    public function processMessage(Method $messageDefinition, $message, TypeRepository $typeRepository)
     {
-        $this->definitionComplexTypes = $definitionComplexTypes;
+        $this->typeRepository = $typeRepository;
 
         $result = array();
         $i      = 0;
 
-        foreach ($messageDefinition->getArguments() as $argument) {
+        foreach ($messageDefinition->getInput()->all() as $argument) {
             if (isset($message[$i])) {
-                $result[$argument->getName()] = $this->processType($argument->getType()->getPhpType(), $message[$i]);
+                $result[$argument->getName()] = $this->processType($argument->getType(), $message[$i]);
             }
 
             $i++;
@@ -48,15 +52,21 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
     {
         $isArray = false;
 
-        if (preg_match('/^([^\[]+)\[\]$/', $phpType, $match)) {
+        $type = $this->typeRepository->getType($phpType);
+        if ($type instanceof ArrayOfType) {
             $isArray = true;
-            $array   = array();
-            $phpType = $match[1];
+            $arrayType = $type;
+
+            $type = $this->typeRepository->getType($type->get('item')->getType());
         }
 
         // @TODO Fix array reference
-        if (isset($this->definitionComplexTypes[$phpType])) {
+        if ($type instanceof ComplexType) {
+            $phpType = $type->getPhpType();
+
             if ($isArray) {
+                $array = array();
+
                 if (isset($message->item)) {
                     foreach ($message->item as $complexType) {
                         $array[] = $this->checkComplexType($phpType, $complexType);
@@ -98,12 +108,12 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         $this->messageRefs[$hash] = $message;
 
         $messageBinder = new MessageBinder($message);
-        foreach ($this->definitionComplexTypes[$phpType]['properties'] as $type) {
+        foreach ($this->typeRepository->getType($phpType)->all() as $type) {
             $property = $type->getName();
             $value = $messageBinder->readProperty($property);
 
             if (null !== $value) {
-                $value = $this->processType($type->getValue(), $value);
+                $value = $this->processType($type->getType(), $value);
 
                 $messageBinder->writeProperty($property, $value);
             }

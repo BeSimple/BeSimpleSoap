@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the BeSimpleSoapBundle.
+ * This file is part of the BeSimpleSoap.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
  * (c) Francis Besset <francis.besset@gmail.com>
@@ -64,5 +64,18 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
         }
 
         return $annotations;
+    }
+
+    /**
+     * Returns true if this class supports the given resource.
+     *
+     * @param mixed  $resource A resource
+     * @param string $type     The resource type
+     *
+     * @return Boolean True if this class supports the given resource, false otherwise
+     */
+    public function supports($resource, $type = null)
+    {
+        return is_string($resource) && class_exists($resource) && 'annotation_complextype' === $type;
     }
 }

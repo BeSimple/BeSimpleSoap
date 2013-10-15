@@ -11,6 +11,7 @@
 namespace BeSimple\SoapBundle\ServiceBinding;
 
 use BeSimple\SoapBundle\ServiceDefinition\Method;
+use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
@@ -23,5 +24,5 @@ interface MessageBinderInterface
      *
      * @return mixed
      */
-    function processMessage(Method $messageDefinition, $message, array $definitionComplexTypes = array());
+    function processMessage(Method $messageDefinition, $message, TypeRepository $typeRepository);
 }

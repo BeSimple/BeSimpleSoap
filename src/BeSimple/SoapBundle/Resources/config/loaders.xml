@@ -29,10 +29,13 @@
         <service id="besimple.soap.definition.loader.annot_class" class="%besimple.soap.definition.loader.annot_class.class%" public="false">
             <tag name="besimple.soap.definition.loader" />
             <argument type="service" id="annotation_reader" />
+            <argument type="service" id="besimple.soap.type.repository" />
         </service>
 
         <service id="besimple.soap.definition.loader.annot_complextype" class="%besimple.soap.definition.loader.annot_complextype.class%" public="false">
+            <tag name="besimple.soap.definition.loader" />
             <argument type="service" id="annotation_reader" />
+            <argument type="service" id="besimple.soap.type.repository" />
         </service>
     </services>
 

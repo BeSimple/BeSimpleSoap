@@ -64,6 +64,7 @@ class SoapWebServiceController extends ContainerAware
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
         $this->soapServer  = $webServiceContext
             ->getServerBuilder()
+            ->withSoapVersion11()
             ->withHandler($this)
             ->build()
         ;
