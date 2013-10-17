@@ -75,7 +75,7 @@ abstract class AbstractSoapBuilder
      */
     public function withSoapVersion11()
     {
-        $this->soapOptions['soap_version'] = SOAP_1_1;
+        $this->soapOptions['soap_version'] = \SOAP_1_1;
 
         return $this;
     }
@@ -85,7 +85,7 @@ abstract class AbstractSoapBuilder
      */
     public function withSoapVersion12()
     {
-        $this->soapOptions['soap_version'] = SOAP_1_2;
+        $this->soapOptions['soap_version'] = \SOAP_1_2;
 
         return $this;
     }
@@ -156,7 +156,7 @@ abstract class AbstractSoapBuilder
      */
     public function withSingleElementArrays()
     {
-        $this->soapOptions['features'] |= SOAP_SINGLE_ELEMENT_ARRAYS;
+        $this->soapOptions['features'] |= \SOAP_SINGLE_ELEMENT_ARRAYS;
 
         return $this;
     }
@@ -168,7 +168,7 @@ abstract class AbstractSoapBuilder
      */
     public function withWaitOneWayCalls()
     {
-        $this->soapOptions['features'] |= SOAP_WAIT_ONE_WAY_CALLS;
+        $this->soapOptions['features'] |= \SOAP_WAIT_ONE_WAY_CALLS;
 
         return $this;
     }
@@ -180,7 +180,7 @@ abstract class AbstractSoapBuilder
      */
     public function withUseXsiArrayType()
     {
-        $this->soapOptions['features'] |= SOAP_USE_XSI_ARRAY_TYPE;
+        $this->soapOptions['features'] |= \SOAP_USE_XSI_ARRAY_TYPE;
 
         return $this;
     }
