@@ -23,6 +23,7 @@
         "php": ">=5.3.0",
         "ext-soap": "*",
         "besimple/soap-common": "0.2.*",
+        "besimple/soap-wsdl": "0.2.*",
         "ass/xmlsecurity": "dev-master",
         "zendframework/zend-mail": "2.1.*",
         "zendframework/zend-mime": "2.1.*",
