@@ -1,4 +1,4 @@
-# BeSimpleSoap [![Build Status](https://secure.travis-ci.org/BeSimple/BeSimpleSoap.png?branch=master)](http://travis-ci.org/BeSimple/BeSimpleSoap)
+# BeSimpleSoap
 
 Build SOAP and WSDL based web services
 
