@@ -83,7 +83,7 @@ class SwaTypeConverter implements TypeConverterInterface, SoapKernelAwareInterfa
 
         $this->soapKernel->addAttachment($part);
 
-        return sprintf('<%s href="%s"/>', $this->getTypeName(), $contentId);
+        return sprintf('<%s href="%s"/>', $this->getTypeName(), 'cid:' . $contentId);
     }
 
     /**

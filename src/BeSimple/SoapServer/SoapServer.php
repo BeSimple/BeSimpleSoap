@@ -70,7 +70,12 @@ class SoapServer extends \SoapServer
         $soapRequest = SoapRequest::create($request, $this->soapVersion);
 
         // handle actual SOAP request
-        $soapResponse = $this->handle2($soapRequest);
+        try {
+            $soapResponse = $this->handle2($soapRequest);
+        } catch (\SoapFault $fault) {
+            // issue an error to the client
+            $this->fault($fault->faultcode, $fault->faultstring);
+        }
 
         // send SOAP response to client
         $soapResponse->send();

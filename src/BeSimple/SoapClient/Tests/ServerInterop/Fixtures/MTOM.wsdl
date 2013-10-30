@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://ws.apache.org/axis2/mtomsample/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.apache.org/axis2/mtomsample/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://ws.apache.org/axis2/mtomsample/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+            <xsd:import namespace="http://www.w3.org/2005/05/xmlmime"/>
+            <xsd:complexType name="AttachmentType">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="fileName" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="binaryData" type="xmime:base64Binary"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="AttachmentRequest" type="tns:AttachmentType"/>
+            <xsd:element name="AttachmentResponse" type="xsd:string"/>
+        </xsd:schema>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://www.w3.org/2005/05/xmlmime">
+<xs:attribute name="contentType">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:minLength value="3"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:attribute>
+<xs:attribute name="expectedContentTypes" type="xs:string"/>
+<xs:complexType name="base64Binary">
+<xs:simpleContent>
+<xs:extension base="xs:base64Binary">
+<xs:attribute ref="xmime:contentType"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+<xs:complexType name="hexBinary">
+<xs:simpleContent>
+<xs:extension base="xs:hexBinary">
+<xs:attribute ref="xmime:contentType"/>
+</xs:extension>
+</xs:simpleContent>
+</xs:complexType>
+</xs:schema>
+
+  </types>
+  <message name="AttachmentResponse">
+    <part name="part1" element="tns:AttachmentResponse">
+    </part>
+  </message>
+  <message name="AttachmentRequest">
+    <part name="part1" element="tns:AttachmentRequest">
+    </part>
+  </message>
+  <portType name="MTOMServicePortType">
+    <operation name="attachment">
+      <input message="tns:AttachmentRequest" wsaw:Action="attachment">
+    </input>
+      <output message="tns:AttachmentResponse" wsaw:Action="http://schemas.xmlsoap.org/wsdl/MTOMServicePortType/AttachmentResponse">
+    </output>
+    </operation>
+  </portType>
+  <binding name="MTOMServiceSOAP11Binding" type="tns:MTOMServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="attachment">
+      <soap:operation soapAction="attachment" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <binding name="MTOMServiceSOAP12Binding" type="tns:MTOMServicePortType">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="attachment">
+      <soap12:operation soapAction="attachment" style="document"/>
+      <input>
+        <soap12:body use="literal"/>
+      </input>
+      <output>
+        <soap12:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="MTOMSample">
+    <port name="MTOMSampleSOAP12port_http" binding="tns:MTOMServiceSOAP12Binding">
+      <soap12:address location="http://localhost:8081/ServerInterop/MTOMServer.php"/>
+    </port>
+    <port name="MTOMSampleSOAP11port_http" binding="tns:MTOMServiceSOAP11Binding">
+      <soap:address location="http://localhost:8081/ServerInterop/MTOMServer.php"/>
+    </port>
+  </service>
+</definitions>

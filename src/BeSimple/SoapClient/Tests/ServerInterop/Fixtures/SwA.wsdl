@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.besimple" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.besimple">
+    <wsdl:documentation>BeSimpleSwaService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.besimple">
+            <xs:complexType name="Exception">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Exception" nillable="true" type="xs:anyType"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="Exception">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="Exception" nillable="true" type="ns:Exception"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uploadFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="data" nillable="true" type="xs:base64Binary"/>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uploadFileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="downloadFile">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="downloadFileResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="data" nillable="true" type="xs:base64Binary"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="downloadFileRequest">
+        <wsdl:part name="parameters" element="ns:downloadFile"/>
+    </wsdl:message>
+    <wsdl:message name="downloadFileResponse">
+        <wsdl:part name="parameters" element="ns:downloadFileResponse"/>
+    </wsdl:message>
+    <wsdl:message name="Exception">
+        <wsdl:part name="parameters" element="ns:Exception"/>
+    </wsdl:message>
+    <wsdl:message name="uploadFileRequest">
+        <wsdl:part name="parameters" element="ns:uploadFile"/>
+    </wsdl:message>
+    <wsdl:message name="uploadFileResponse">
+        <wsdl:part name="parameters" element="ns:uploadFileResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="BeSimpleSwaServicePortType">
+        <wsdl:operation name="downloadFile">
+            <wsdl:input message="ns:downloadFileRequest" wsaw:Action="urn:downloadFile"/>
+            <wsdl:output message="ns:downloadFileResponse" wsaw:Action="urn:downloadFileResponse"/>
+            <wsdl:fault message="ns:Exception" name="Exception" wsaw:Action="urn:downloadFileException"/>
+        </wsdl:operation>
+        <wsdl:operation name="uploadFile">
+            <wsdl:input message="ns:uploadFileRequest" wsaw:Action="urn:uploadFile"/>
+            <wsdl:output message="ns:uploadFileResponse" wsaw:Action="urn:uploadFileResponse"/>
+            <wsdl:fault message="ns:Exception" name="Exception" wsaw:Action="urn:uploadFileException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BeSimpleSwaServiceSoap11Binding" type="ns:BeSimpleSwaServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="downloadFile">
+            <soap:operation soapAction="urn:downloadFile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="Exception">
+                <soap:fault use="literal" name="Exception"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="uploadFile">
+            <soap:operation soapAction="urn:uploadFile" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="Exception">
+                <soap:fault use="literal" name="Exception"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BeSimpleSwaServiceSoap12Binding" type="ns:BeSimpleSwaServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="downloadFile">
+            <soap12:operation soapAction="urn:downloadFile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="Exception">
+                <soap12:fault use="literal" name="Exception"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="uploadFile">
+            <soap12:operation soapAction="urn:uploadFile" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="Exception">
+                <soap12:fault use="literal" name="Exception"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BeSimpleSwaServiceHttpBinding" type="ns:BeSimpleSwaServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="downloadFile">
+            <http:operation location="BeSimpleSwaService/downloadFile"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="downloadFile"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="downloadFile"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="uploadFile">
+            <http:operation location="BeSimpleSwaService/uploadFile"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="uploadFile"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="uploadFile"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="BeSimpleSwaService">
+        <wsdl:port name="BeSimpleSwaServiceHttpSoap11Endpoint" binding="ns:BeSimpleSwaServiceSoap11Binding">
+            <soap:address location="http://localhost:8081/ServerInterop/SwAServer.php"/>
+        </wsdl:port>
+        <wsdl:port name="BeSimpleSwaServiceHttpSoap12Endpoint" binding="ns:BeSimpleSwaServiceSoap12Binding">
+            <soap12:address location="http://localhost:8081/ServerInterop/SwAServer.php"/>
+        </wsdl:port>
+        <wsdl:port name="BeSimpleSwaServiceHttpEndpoint" binding="ns:BeSimpleSwaServiceHttpBinding">
+            <http:address location="http://localhost:8081/ServerInterop/SwAServer.php"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
