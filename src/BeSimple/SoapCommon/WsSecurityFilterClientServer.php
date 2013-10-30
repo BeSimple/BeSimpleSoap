@@ -146,7 +146,7 @@ abstract class WsSecurityFilterClientServer
     }
 
     /**
-     * Get service security key.
+     * Set service security key.
      *
      * @param \BeSimple\SoapCommon\WsSecurityKey $serviceSecurityKey Service security key
      *
@@ -158,7 +158,7 @@ abstract class WsSecurityFilterClientServer
     }
 
     /**
-     * Get user security key.
+     * Set user security key.
      *
      * @param \BeSimple\SoapCommon\WsSecurityKey $userSecurityKey User security key
      *
