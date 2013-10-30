@@ -44,7 +44,7 @@ Create a `composer.json` file:
 ```json
 {
     "require": {
-        "besimple/soap": "dev-master"
+        "besimple/soap": "0.2.*@dev"
     }
 }
 ```

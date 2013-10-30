@@ -21,7 +21,7 @@ Create a `composer.json` file:
 ```json
 {
     "require": {
-        "besimple/soap-common": "dev-master"
+        "besimple/soap-common": "0.2.*@dev"
     }
 }
 ```
