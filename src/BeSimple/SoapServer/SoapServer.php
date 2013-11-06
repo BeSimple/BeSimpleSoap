@@ -100,6 +100,10 @@ class SoapServer extends \SoapServer
         parent::handle($soapRequest->getContent());
         $response = ob_get_clean();
 
+        // Remove headers added by SoapServer::handle() method
+        header_remove('Content-Length');
+        header_remove('Content-Type');
+
         // wrap response data in SoapResponse object
         $soapResponse = SoapResponse::create(
             $response,
