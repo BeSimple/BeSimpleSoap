@@ -14,8 +14,8 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\SoapKernel as CommonSoapKernel;
-use BeSimple\SoapCommon\SoapRequest;
-use BeSimple\SoapCommon\SoapResponse;
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
+use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
 
 /**
  * SoapKernel for Client.
@@ -27,7 +27,7 @@ class SoapKernel extends CommonSoapKernel
     /**
      * {@inheritDoc}
      */
-    public function filterRequest(SoapRequest $request)
+    public function filterRequest(CommonSoapRequest $request)
     {
         $request->setAttachments($this->attachments);
         $this->attachments = array();
@@ -38,7 +38,7 @@ class SoapKernel extends CommonSoapKernel
     /**
      * {@inheritDoc}
      */
-    public function filterResponse(SoapResponse $response)
+    public function filterResponse(CommonSoapResponse $response)
     {
         parent::filterResponse($response);
 
