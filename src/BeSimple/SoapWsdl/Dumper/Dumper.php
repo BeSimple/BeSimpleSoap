@@ -244,11 +244,9 @@ class Dumper
             $element->setAttribute('name', $child->getName());
 
             if ($childType instanceof ComplexType) {
-                $name = $child->getName();
+                $name = $childType->getXmlType();
                 if ($childType instanceof ArrayOfType) {
                     $name = $childType->getName();
-                } elseif ($type instanceof ArrayOfType && $childType instanceof ComplexType) {
-                    $name = $childType->getXmlType();
                 }
 
                 $element->setAttribute('type', static::TYPES_NS.':'.$name);
