@@ -6,6 +6,7 @@
     <parameters>
         <parameter key="besimple.soap.response.class">BeSimple\SoapBundle\Soap\SoapResponse</parameter>
         <parameter key="besimple.soap.response.listener.class">BeSimple\SoapBundle\EventListener\SoapResponseListener</parameter>
+        <parameter key="besimple.soap.exception_listener.class">BeSimple\SoapBundle\EventListener\SoapExceptionListener</parameter>
         <parameter key="besimple.soap.context.class">BeSimple\SoapBundle\WebServiceContext</parameter>
         <parameter key="besimple.soap.binder.request_header.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestHeaderMessageBinder</parameter>
         <parameter key="besimple.soap.binder.request.rpcliteral.class">BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder</parameter>
@@ -23,6 +24,14 @@
         <service id="besimple.soap.response.listener" class="%besimple.soap.response.listener.class%">
             <tag name="kernel.event_listener" event="kernel.view" method="onKernelView" />
             <argument type="service" id="besimple.soap.response" />
+        </service>
+
+        <service id="besimple.soap.exception_listener" class="%besimple.soap.exception_listener.class%">
+            <tag name="kernel.event_subscriber" />
+            <tag name="monolog.logger" channel="request" />
+            <argument type="service" id="service_container" />
+            <argument>%besimple.soap.exception_listener.controller%</argument>
+            <argument type="service" id="logger" on-invalid="null" />
         </service>
 
         <service id="besimple.soap.context.rpcliteral" class="%besimple.soap.context.class%" abstract="true">

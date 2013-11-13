@@ -12,14 +12,18 @@
 
 namespace BeSimple\SoapBundle\Controller;
 
+use BeSimple\SoapBundle\Handler\ExceptionHandler;
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
 use BeSimple\SoapServer\Exception as SoapException;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\FlattenException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
@@ -101,6 +105,46 @@ class SoapWebServiceController extends ContainerAware
     }
 
     /**
+     * Converts an Exception to a SoapFault Response.
+     *
+     * @param Request              $request   The request
+     * @param FlattenException     $exception A FlattenException instance
+     * @param DebugLoggerInterface $logger    A DebugLoggerInterface instance
+     *
+     * @return Response
+     *
+     * @throws \LogicException When the request query parameter "_besimple_soap_webservice" does not exist
+     */
+    public function exceptionAction(Request $request, FlattenException $exception, DebugLoggerInterface $logger = null)
+    {
+        if (!$webservice = $request->query->get('_besimple_soap_webservice')) {
+            throw new \LogicException(sprintf('The parameter "%s" is required in Request::$query parameter bag to generate the SoapFault.', '_besimple_soap_webservice'), null, $e);
+        }
+
+        $view = 'TwigBundle:Exception:'.($this->container->get('kernel')->isDebug() ? 'exception' : 'error').'.txt.twig';
+        $code = $exception->getStatusCode();
+        $details = $this->container->get('templating')->render($view, array(
+            'status_code' => $code,
+            'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : '',
+            'exception'   => $exception,
+            'logger'      => $logger,
+        ));
+
+        $server = $this
+            ->container
+            ->get(sprintf('besimple.soap.context.%s', $webservice))
+            ->getServerBuilder()
+            ->withHandler(new ExceptionHandler($exception, $details))
+            ->build()
+        ;
+
+        ob_start();
+        $server->handle($request->getContent());
+
+        return new Response(ob_get_clean());
+    }
+
+    /**
      * This method gets called once for every SOAP header the \SoapServer received
      * and afterwards once for the called SOAP operation.
      *
@@ -125,13 +169,7 @@ class SoapWebServiceController extends ContainerAware
             );
 
             // forward to controller
-            try {
-                $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
-            } catch (\Exception $e) {
-                $this->soapResponse = new Response(null, 500);
-
-                throw $e instanceof \SoapFault || $this->container->getParameter('kernel.debug') ? $e : new SoapException\ReceiverSoapFault($e->getMessage());
-            }
+            $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
 
             $this->setResponse($response);
 
