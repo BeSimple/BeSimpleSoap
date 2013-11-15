@@ -40,6 +40,12 @@ class Configuration
         $this->addServicesSection($rootNode);
         $this->addWsdlDumperSection($rootNode);
 
+        $rootNode
+            ->children()
+                ->scalarNode('exception_controller')->defaultValue('BeSimpleSoapBundle:SoapWebService:exception')->end()
+            ->end()
+        ;
+
         return $treeBuilder->buildTree();
     }
 

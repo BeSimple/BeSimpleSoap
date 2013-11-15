@@ -63,6 +63,8 @@ class BeSimpleSoapExtension extends Extension
             $serviceConfig['name'] = $name;
             $this->createWebServiceContext($serviceConfig, $container);
         }
+
+        $container->setParameter('besimple.soap.exception_listener.controller', $config['exception_controller']);
     }
 
     private function registerCacheConfiguration(array $config, ContainerBuilder $container, XmlFileLoader $loader)
