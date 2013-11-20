@@ -55,6 +55,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
         $type = $this->typeRepository->getType($phpType);
         if ($type instanceof ArrayOfType) {
             $isArray = true;
+            $array = array();
             $arrayType = $type;
 
             $type = $this->typeRepository->getType($type->get('item')->getType());
@@ -65,8 +66,6 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             $phpType = $type->getPhpType();
 
             if ($isArray) {
-                $array = array();
-
                 if (isset($message->item)) {
                     foreach ($message->item as $complexType) {
                         $array[] = $this->checkComplexType($phpType, $complexType);
