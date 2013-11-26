@@ -69,6 +69,7 @@ class Dumper
             'version12_class' => 'BeSimple\\SoapWsdl\\Dumper\\Version12',
             'version11_name' => $this->definition->getName(),
             'version12_name' => $this->definition->getName().'12',
+            'stylesheet' => null,
         );
 
         $invalid = array();
@@ -122,6 +123,8 @@ class Dumper
         }
 
         $this->document->formatOutput = true;
+
+        $this->addStylesheet();
 
         return $this->document->saveXML();
     }
@@ -295,6 +298,15 @@ class Dumper
         $this->domPortType->appendChild($operation);
 
         return $operation;
+    }
+
+    protected function addStylesheet()
+    {
+        if ($this->options['stylesheet']) {
+            $stylesheet = $this->document->createProcessingInstruction('xml-stylesheet', sprintf('type="text/xsl" href="%s"', $this->options['stylesheet']));
+
+            $this->document->insertBefore($stylesheet, $this->document->documentElement);
+        }
     }
 
     protected function getVersion($version)
