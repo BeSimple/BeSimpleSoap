@@ -13,8 +13,6 @@
 namespace BeSimple\SoapBundle\ServiceBinding;
 
 use BeSimple\SoapBundle\ServiceDefinition\Method;
-use BeSimple\SoapBundle\ServiceDefinition\Strategy\MethodComplexType;
-use BeSimple\SoapBundle\ServiceDefinition\Strategy\PropertyComplexType;
 use BeSimple\SoapCommon\Definition\Type\ArrayOfType;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 use BeSimple\SoapCommon\Definition\Type\TypeRepository;

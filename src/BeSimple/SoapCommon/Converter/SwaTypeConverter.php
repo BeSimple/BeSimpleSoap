@@ -12,7 +12,6 @@
 
 namespace BeSimple\SoapCommon\Converter;
 
-use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Mime\Part as MimePart;
 use BeSimple\SoapCommon\SoapKernel;
 use BeSimple\SoapCommon\Converter\SoapKernelAwareInterface;

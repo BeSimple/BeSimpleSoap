@@ -14,7 +14,6 @@ namespace BeSimple\SoapWsdl\Dumper;
 
 use BeSimple\SoapCommon\Definition\Definition;
 use BeSimple\SoapCommon\Definition\Method;
-use BeSimple\SoapCommon\Definition\Part;
 use BeSimple\SoapCommon\Definition\Type\ArrayOfType;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 

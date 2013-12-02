@@ -14,16 +14,12 @@ namespace BeSimple\SoapServer;
 
 use ass\XmlSecurity\DSig as XmlSecurityDSig;
 use ass\XmlSecurity\Enc as XmlSecurityEnc;
-use ass\XmlSecurity\Key as XmlSecurityKey;
-use ass\XmlSecurity\Pem as XmlSecurityPem;
-
 use BeSimple\SoapCommon\FilterHelper;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;
 use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
 use BeSimple\SoapCommon\SoapResponseFilter;
-use BeSimple\SoapCommon\WsSecurityKey;
 use BeSimple\SoapCommon\WsSecurityFilterClientServer;
 
 /**

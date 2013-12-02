@@ -13,8 +13,6 @@
 
 namespace BeSimple\SoapCommon;
 
-use BeSimple\SoapCommon\Mime\Part as MimePart;
-
 /**
  * Base class for SoapRequest and SoapResponse.
  *

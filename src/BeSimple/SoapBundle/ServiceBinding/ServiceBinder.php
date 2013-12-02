@@ -10,7 +10,6 @@
 
 namespace BeSimple\SoapBundle\ServiceBinding;
 
-use BeSimple\SoapBundle\ServiceDefinition\Header;
 use BeSimple\SoapBundle\ServiceDefinition\Definition;
 use BeSimple\SoapBundle\Soap\SoapHeader;
 

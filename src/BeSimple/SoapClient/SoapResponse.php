@@ -13,7 +13,6 @@
 namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
-use BeSimple\SoapCommon\SoapMessage;
 
 /**
  * SoapResponse class for SoapClient. Provides factory function for response object.

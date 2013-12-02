@@ -16,11 +16,8 @@ use BeSimple\SoapBundle\ServiceDefinition as Definition;
 use BeSimple\SoapBundle\ServiceDefinition\Annotation;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 use BeSimple\SoapCommon\Definition\Type\TypeRepository;
-
 use Doctrine\Common\Annotations\Reader;
-
 use Symfony\Component\Config\Loader\Loader;
-use Symfony\Component\Config\Loader\LoaderResolverInterface;
 
 /**
  * AnnotationClassLoader loads ServiceDefinition from a PHP class and its methods.

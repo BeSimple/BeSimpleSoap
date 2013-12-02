@@ -14,11 +14,6 @@ namespace BeSimple\SoapServer;
 
 use BeSimple\SoapCommon\FilterHelper;
 use BeSimple\SoapCommon\Helper;
-use BeSimple\SoapCommon\Mime\MultiPart as MimeMultiPart;
-use BeSimple\SoapCommon\Mime\Parser as MimeParser;
-use BeSimple\SoapCommon\Mime\Part as MimePart;
-use BeSimple\SoapCommon\SoapRequest;
-use BeSimple\SoapCommon\SoapRequestFilter;
 use BeSimple\SoapCommon\SoapResponse;
 use BeSimple\SoapCommon\SoapResponseFilter;
 

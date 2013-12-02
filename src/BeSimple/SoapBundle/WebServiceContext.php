@@ -11,14 +11,10 @@
 
 namespace BeSimple\SoapBundle;
 
-use BeSimple\SoapBundle\ServiceBinding\MessageBinderInterface;
 use BeSimple\SoapBundle\ServiceBinding\ServiceBinder;
-use BeSimple\SoapBundle\ServiceDefinition\Dumper\DumperInterface;
-
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 use BeSimple\SoapWsdl\Dumper\Dumper;
 use BeSimple\SoapServer\SoapServerBuilder;
-
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
 

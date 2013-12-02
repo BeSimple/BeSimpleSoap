@@ -14,9 +14,6 @@
 namespace BeSimple\SoapCommon;
 
 use BeSimple\SoapCommon\Mime\Part as MimePart;
-
-use BeSimple\SoapCommon\Converter\MtomTypeConverter;
-use BeSimple\SoapCommon\Converter\SwaTypeConverter;
 use BeSimple\SoapCommon\SoapRequest;
 use BeSimple\SoapCommon\SoapResponse;
 use BeSimple\SoapCommon\SoapRequestFilter;

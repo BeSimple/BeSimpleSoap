@@ -16,7 +16,6 @@ use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\FileLoader;
-use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * AnnotationFileLoader loads ServiceDefinition from annotations set
