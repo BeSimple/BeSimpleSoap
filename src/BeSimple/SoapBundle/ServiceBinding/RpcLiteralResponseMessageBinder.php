@@ -42,7 +42,6 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
         $type = $this->typeRepository->getType($phpType);
         if ($type instanceof ArrayOfType) {
             $isArray = true;
-            $arrayType = $type;
 
             $type = $this->typeRepository->getType($type->get('item')->getType());
         }

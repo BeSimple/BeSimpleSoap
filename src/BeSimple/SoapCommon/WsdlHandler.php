@@ -174,7 +174,7 @@ class WsdlHandler
             return true;
         // type/* match
         } else {
-            list($ctype, $csubtype) = explode('/', $currentMimeType);
+            list($ctype) = explode('/', $currentMimeType);
             foreach ($mimeTypes as $mimeType) {
                 list($type, $subtype) = explode('/', $mimeType);
                 if ($subtype == '*' && $type == $ctype) {

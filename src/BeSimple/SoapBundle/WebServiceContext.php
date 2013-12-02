@@ -26,8 +26,6 @@ use Symfony\Component\Config\Loader\LoaderInterface;
  */
 class WebServiceContext
 {
-    private $converterRepository;
-
     private $options;
 
     private $serviceDefinition;

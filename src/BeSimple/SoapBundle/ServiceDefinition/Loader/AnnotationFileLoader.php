@@ -61,7 +61,7 @@ class AnnotationFileLoader extends FileLoader
         $path = $this->locator->locate($file);
 
         if ($class = $this->findClass($path)) {
-            return $definition = $this->loader->load($class, $type);
+            return $this->loader->load($class, $type);
         }
 
         return null;

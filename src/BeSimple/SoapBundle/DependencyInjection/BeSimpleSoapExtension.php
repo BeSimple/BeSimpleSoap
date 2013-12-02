@@ -84,7 +84,7 @@ class BeSimpleSoapExtension extends Extension
 
         foreach ($config as $client => $options) {
             $definition = new DefinitionDecorator('besimple.soap.client.builder');
-            $context    = $container->setDefinition(sprintf('besimple.soap.client.builder.%s', $client), $definition);
+            $container->setDefinition(sprintf('besimple.soap.client.builder.%s', $client), $definition);
 
             $definition->replaceArgument(0, $options['wsdl']);
 
@@ -118,7 +118,7 @@ class BeSimpleSoapExtension extends Extension
     private function createClientClassmap($client, array $classmap, ContainerBuilder $container)
     {
         $definition = new DefinitionDecorator('besimple.soap.classmap');
-        $context    = $container->setDefinition(sprintf('besimple.soap.classmap.%s', $client), $definition);
+        $container->setDefinition(sprintf('besimple.soap.classmap.%s', $client), $definition);
 
         $definition->setMethodCalls(array(
             array('set', array($classmap)),
@@ -130,7 +130,7 @@ class BeSimpleSoapExtension extends Extension
     private function createClient($client, ContainerBuilder $container)
     {
         $definition = new DefinitionDecorator('besimple.soap.client');
-        $context    = $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
+        $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
 
         $definition->setFactoryService(sprintf('besimple.soap.client.builder.%s', $client));
     }
@@ -142,7 +142,7 @@ class BeSimpleSoapExtension extends Extension
 
         $contextId  = 'besimple.soap.context.'.$config['name'];
         $definition = new DefinitionDecorator('besimple.soap.context.'.$bindingSuffix);
-        $context    = $container->setDefinition($contextId, $definition);
+        $container->setDefinition($contextId, $definition);
 
         if (isset($config['cache_type'])) {
             $config['cache_type'] = $this->getCacheType($config['cache_type']);

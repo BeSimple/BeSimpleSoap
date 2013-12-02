@@ -90,7 +90,7 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
 
             // TODO
             $headers = $multipart->getHeadersForHttp();
-            list($name, $contentType) = explode(': ', $headers[0]);
+            list(, $contentType) = explode(': ', $headers[0]);
 
             $request->setContentType($contentType);
         }

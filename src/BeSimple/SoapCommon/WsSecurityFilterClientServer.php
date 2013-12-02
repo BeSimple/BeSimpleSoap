@@ -242,11 +242,10 @@ abstract class WsSecurityFilterClientServer
      * Create a list of \DOMNodes that should be encrypted.
      *
      * @param \DOMDocument $dom      DOMDocument to query
-     * @param \DOMElement  $security Security element
      *
      * @return \DOMNodeList
      */
-    protected function createNodeListForEncryption(\DOMDocument $dom, \DOMElement $security)
+    protected function createNodeListForEncryption(\DOMDocument $dom)
     {
         $xpath = new \DOMXPath($dom);
         $xpath->registerNamespace('SOAP-ENV', $dom->documentElement->namespaceURI);

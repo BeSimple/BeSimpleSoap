@@ -48,8 +48,6 @@ class TypeRepository
 
     public function fixTypeInformation(ServiceDefinition $definition)
     {
-        $typeMap = $this->defaultTypeMap;
-
         foreach($definition->getAllTypes() as $type) {
             $phpType = $type->getPhpType();
             $xmlType = $type->getXmlType();

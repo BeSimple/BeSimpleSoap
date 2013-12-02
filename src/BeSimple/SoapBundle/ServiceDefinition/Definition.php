@@ -21,8 +21,6 @@ use BeSimple\SoapCommon\Definition\Type\TypeRepository;
  */
 class Definition extends BaseDefinition
 {
-    private $complexTypes;
-
     public function __construct(TypeRepository $typeRepository)
     {
         $this->typeRepository = $typeRepository;

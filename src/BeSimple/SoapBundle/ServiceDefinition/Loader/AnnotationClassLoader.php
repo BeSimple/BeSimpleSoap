@@ -141,30 +141,6 @@ class AnnotationClassLoader extends Loader
         }
     }
 
-    /**
-     * @param \ReflectionMethod $method
-     * @param \BeSimple\SoapBundle\ServiceDefinition\Annotation\Param $annotation
-     *
-     * @return \BeSimple\SoapBundle\ServiceDefinition\Type
-     */
-    private function getArgumentType(\ReflectionMethod $method, Annotation\Param $annotation)
-    {
-        $phpType = $annotation->getPhpType();
-        $xmlType = $annotation->getXmlType();
-
-        if (null === $phpType) {
-            foreach ($method->getParameters() as $param) {
-                if ($param->name === $annotation->getName()) {
-                    $phpType = $param->getClass()->name;
-
-                    break;
-                }
-            }
-        }
-
-        return new Definition\Type($phpType, $xmlType);
-    }
-
     private function loadType($phpType)
     {
         if (false !== $arrayOf = $this->typeRepository->getArrayOf($phpType)) {

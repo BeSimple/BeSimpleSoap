@@ -226,7 +226,7 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
                 $referenceList = XmlSecurityEnc::createReferenceList($encryptedKey);
                 // token reference to encrypted key
                 $keyInfo = $this->createKeyInfo($filterHelper, self::TOKEN_REFERENCE_SECURITY_TOKEN, $guid);
-                $nodes = $this->createNodeListForEncryption($dom, $security);
+                $nodes = $this->createNodeListForEncryption($dom);
                 foreach ($nodes as $node) {
                     $type = XmlSecurityEnc::ELEMENT;
                     if ($node->localName == 'Body') {
