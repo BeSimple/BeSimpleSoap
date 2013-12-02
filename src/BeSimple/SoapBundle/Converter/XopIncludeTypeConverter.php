@@ -13,6 +13,7 @@ namespace BeSimple\SoapBundle\Converter;
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
 use BeSimple\SoapBundle\Util\String;
+use BeSimple\SoapCommon\Converter\TypeConverterInterface;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
