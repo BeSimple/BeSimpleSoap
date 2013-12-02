@@ -174,7 +174,7 @@ class AnnotationClassLoader extends Loader
         if (!$this->typeRepository->hasType($phpType)) {
             $complexTypeResolver = $this->resolve($phpType, 'annotation_complextype');
             if (!$complexTypeResolver) {
-                throw new Exception();
+                throw new \Exception();
             }
 
             $loaded = $complexTypeResolver->load($phpType);
