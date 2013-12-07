@@ -26,14 +26,14 @@ class Method
     private $output;
     private $fault;
 
-    public function __construct($name, TypeRepository $typeRepository)
+    public function __construct($name)
     {
         $this->name = $name;
 
-        $this->headers = new Message($name.'Header', $typeRepository);
-        $this->input = new Message($name.'Request', $typeRepository);
-        $this->output = new Message($name.'Response', $typeRepository);
-        $this->fault = new Message($name.'Fault', $typeRepository);
+        $this->headers = new Message($name.'Header');
+        $this->input = new Message($name.'Request');
+        $this->output = new Message($name.'Response');
+        $this->fault = new Message($name.'Fault');
     }
 
     public function getName()

@@ -88,7 +88,6 @@ class AnnotationClassLoader extends Loader
 
                     $serviceMethod = new Definition\Method(
                         $annotation->getValue(),
-                        $this->typeRepository,
                         $this->getController($class, $method, $annotation)
                     );
                 } elseif ($annotation instanceof Annotation\Result) {

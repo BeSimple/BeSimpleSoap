@@ -23,9 +23,9 @@ class Method extends BaseMethod
 {
     private $controller;
 
-    public function __construct($name, TypeRepository $typeRepository, $controller)
+    public function __construct($name, $controller)
     {
-        parent::__construct($name, $typeRepository);
+        parent::__construct($name);
 
         $this->controller = $controller;
     }
