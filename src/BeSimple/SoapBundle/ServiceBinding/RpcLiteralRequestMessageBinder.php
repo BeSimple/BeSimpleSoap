@@ -112,9 +112,8 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
                 $value = $this->processType($type->getType(), $value);
 
                 $messageBinder->writeProperty($property, $value);
-            }
-
-            if (!$type->isNillable() && null === $value) {
+            } elseif (!$type->isNillable()) {
+                // @TODO use xmlType instead of phpType
                 throw new \SoapFault('SOAP_ERROR_COMPLEX_TYPE', sprintf('"%s:%s" cannot be null.', ucfirst($phpType), $type->getName()));
             }
         }
