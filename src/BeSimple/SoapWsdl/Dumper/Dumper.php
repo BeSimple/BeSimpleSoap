@@ -189,7 +189,7 @@ class Dumper
     protected function addMessages(array $messages)
     {
         foreach ($messages as $message) {
-            if ($message->isEmpty()) {
+            if (preg_match('#Header$#', $message->getName()) && $message->isEmpty()) {
                 continue;
             }
 
@@ -285,7 +285,7 @@ class Dumper
         $operation->setAttribute('name', $method->getName());
 
         foreach (array('input' => $method->getInput(), 'output' => $method->getOutput(), 'fault' => $method->getFault()) as $type => $message) {
-            if ($message->isEmpty()) {
+            if ('fault' === $type && $message->isEmpty()) {
                 continue;
             }
 
