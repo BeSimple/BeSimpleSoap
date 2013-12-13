@@ -95,9 +95,10 @@ class SoapWebServiceController extends ContainerAware
             )
         ));
 
-        $query = $this->container->get('request')->query;
-        if (!$query->has('wsdl') && !$query->has('WSDL')) {
-            $this->container->get('request')->setRequestFormat('xml');
+        $request = $this->container->get('request');
+        $query = $request->query;
+        if ($query->has('wsdl') || $query->has('WSDL')) {
+            $request->setRequestFormat('wsdl');
         }
 
         return $response;
