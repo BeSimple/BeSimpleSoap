@@ -23,6 +23,7 @@ class ExceptionHandler
 {
     protected $exception;
     protected $details;
+    protected $soapFault;
 
     public function __construct(FlattenException $exception, $details = null)
     {
@@ -30,8 +31,17 @@ class ExceptionHandler
         $this->details = $details;
     }
 
+    public function setSoapFault(\SoapFault $soapFault)
+    {
+        $this->soapFault = $soapFault;
+    }
+
     public function __call($method, $arguments)
     {
+        if (isset($this->soapFault)) {
+            throw $this->soapFault;
+        }
+
         $code = $this->exception->getStatusCode();
 
         throw new ReceiverSoapFault(

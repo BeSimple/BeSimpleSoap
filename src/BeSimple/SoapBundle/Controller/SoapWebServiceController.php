@@ -15,6 +15,7 @@ namespace BeSimple\SoapBundle\Controller;
 use BeSimple\SoapBundle\Handler\ExceptionHandler;
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
+use BeSimple\SoapServer\SoapServerBuilder;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -128,16 +129,30 @@ class SoapWebServiceController extends ContainerAware
             'logger'      => $logger,
         ));
 
-        $server = $this
-            ->container
-            ->get(sprintf('besimple.soap.context.%s', $webservice))
-            ->getServerBuilder()
-            ->withHandler(new ExceptionHandler($exception, $details))
+        $handler = new ExceptionHandler($exception, $details);
+        if ($soapFault = $request->query->get('_besimple_soap_fault')) {
+            $handler->setSoapFault($soapFault);
+
+            // Remove parameter from query because cannot be Serialized in Logger
+            $request->query->remove('_besimple_soap_fault');
+        }
+
+        $server = SoapServerBuilder::createWithDefaults()
+            ->withWsdl(__DIR__.'/../Handler/wsdl/exception.wsdl')
+            ->withWsdlCacheNone()
+            ->withHandler($handler)
             ->build()
         ;
 
         ob_start();
-        $server->handle($request->getContent());
+        $server->handle(
+            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://besim.pl/soap/exception/1.0/">'.
+               '<soapenv:Header/>'.
+               '<soapenv:Body>'.
+                  '<ns:exception />'.
+               '</soapenv:Body>'.
+            '</soapenv:Envelope>'
+        );
 
         return new Response(ob_get_clean());
     }

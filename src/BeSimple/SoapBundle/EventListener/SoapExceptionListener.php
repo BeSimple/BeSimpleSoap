@@ -67,12 +67,18 @@ class SoapExceptionListener extends ExceptionListener
         // hack to retrieve the current WebService name in the controller
         $request->query->set('_besimple_soap_webservice', $webservice);
 
+        $exception = $event->getException();
+        if ($exception instanceof \SoapFault) {
+            $request->query->set('_besimple_soap_fault', $exception);
+        }
+
         parent::onKernelException($event);
     }
 
     public static function getSubscribedEvents()
     {
         return array(
+            // Must be called before ExceptionListener of HttpKernel component
             KernelEvents::EXCEPTION => array('onKernelException', -64),
         );
     }

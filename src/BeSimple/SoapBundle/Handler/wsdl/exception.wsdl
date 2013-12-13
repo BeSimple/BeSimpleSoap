@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://besim.pl/soap/exception/1.0/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="Exception" targetNamespace="http://besim.pl/soap/exception/1.0/">
+
+  <portType name="ExceptionPortType">
+    <operation name="exception">
+      <input message="tns:empty"/>
+      <output message="tns:empty"/>
+    </operation>
+  </portType>
+
+  <message name="empty" />
+
+  <binding name="ExceptionBinding" type="tns:ExceptionPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+    <operation name="exception">
+      <soap:operation soapAction="http://besim.pl/soap/exception/1.0/exception"/>
+      <input>
+        <soap:body use="literal" namespace="http://besim.pl/soap/exception/1.0/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://besim.pl/soap/exception/1.0/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="ExceptionService">
+    <port name="ExceptionPort" binding="tns:ExceptionBinding">
+      <soap:address location="http://localhost/soap/Exception"/>
+    </port>
+  </service>
+</definitions>
