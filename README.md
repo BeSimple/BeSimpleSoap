@@ -2,6 +2,22 @@
 
 Build SOAP and WSDL based web services
 
+# For EE/Orange m2m:
+
+Pass these options to SoapClient:
+
+```
+$options = array(
+    "trace" => true,
+    "exceptions" => false,
+    'curl_ssl_version' => 3,
+);
+```
+
+When you perform a `$soap->peekMessages()` follow it up with `$soap->__getLastResponse()` which will return the XML response. Otherwise you may get an error: `SoapFault: looks like we got no XML document`
+
+
+
 # Components
 
 BeSimpleSoap consists of five components ...
