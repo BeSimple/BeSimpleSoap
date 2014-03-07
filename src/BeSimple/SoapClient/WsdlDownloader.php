@@ -91,7 +91,7 @@ class WsdlDownloader
         // resolve remote XSD includes
         $isRemoteFile = $this->isRemoteFile($wsdl);
         if ($isRemoteFile || $this->resolveRemoteIncludes) {
-            $cacheFilePath = $this->cacheDir.DIRECTORY_SEPARATOR.'wsdl_'.md5($wsdl).'.cache';
+            $cacheFilePath = $this->cacheDir.'/wsdl_'.md5($wsdl).'.cache';
 
             if (!$this->cacheEnabled || !file_exists($cacheFilePath) || (filemtime($cacheFilePath) + $this->cacheTtl) < time()) {
                 if ($isRemoteFile) {
