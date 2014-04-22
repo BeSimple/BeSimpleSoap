@@ -113,6 +113,11 @@ class SoapClient extends \SoapClient
             $this->cliWebserverWorkaround = $options['cli_webserver_workaround'];
         }
         $this->curl = new Curl($options);
+
+        if (isset($options['extra_options'])) {
+            unset($options['extra_options']);
+        }
+
         $wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new SoapKernel();
