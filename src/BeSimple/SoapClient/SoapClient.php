@@ -178,6 +178,8 @@ class SoapClient extends \SoapClient
             $headers = array();
         }
 
+        $headers = $this->filterRequestHeaders($soapRequest, $headers);
+
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
             $location,
@@ -256,6 +258,19 @@ class SoapClient extends \SoapClient
         $this->soapKernel->filterResponse($soapResponse);
 
         return $soapResponse;
+    }
+
+    /**
+     * Filters HTTP headers which will be sent
+     *
+     * @param SoapRequest $soapRequest SOAP request object
+     * @param array       $headers     An array of HTTP headers
+     *
+     * @return array
+     */
+    protected function filterRequestHeaders(SoapRequest $soapRequest, array $headers)
+    {
+        return $headers;
     }
 
     /**
