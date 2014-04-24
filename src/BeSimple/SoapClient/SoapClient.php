@@ -354,7 +354,7 @@ class SoapClient extends \SoapClient
      *
      * @return string
      */
-    private function loadWsdl($wsdl, array $options)
+    protected function loadWsdl($wsdl, array $options)
     {
         // option to resolve wsdl/xsd includes
         $resolveRemoteIncludes = true;
