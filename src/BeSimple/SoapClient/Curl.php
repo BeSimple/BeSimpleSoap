@@ -95,6 +95,12 @@ class Curl
             curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
             curl_setopt($this->ch, CURLOPT_SSLCERTPASSWD, $options['passphrase']);
         }
+        if (isset($options['ca_info'])) {
+            curl_setopt($this->ch, CURLOPT_CAINFO, $options['ca_info']);
+        }
+        if (isset($options['ca_path'])) {
+            curl_setopt($this->ch, CURLOPT_CAPATH, $options['ca_path']);
+        }
     }
 
     /**
