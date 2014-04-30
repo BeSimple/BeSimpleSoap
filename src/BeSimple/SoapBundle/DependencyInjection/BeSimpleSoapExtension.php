@@ -104,12 +104,8 @@ class BeSimpleSoapExtension extends Extension
 
             $definition->replaceArgument(1, $defOptions);
 
-            if (!empty($options['classmap'])) {
-                $classmap = $this->createClientClassmap($client, $options['classmap'], $container);
-                $definition->replaceArgument(2, new Reference($classmap));
-            } else {
-                $definition->replaceArgument(2, null);
-            }
+            $classmap = $this->createClientClassmap($client, $options['classmap'], $container);
+            $definition->replaceArgument(2, new Reference($classmap));
 
             $this->createClient($client, $container);
         }
@@ -120,9 +116,11 @@ class BeSimpleSoapExtension extends Extension
         $definition = new DefinitionDecorator('besimple.soap.classmap');
         $container->setDefinition(sprintf('besimple.soap.classmap.%s', $client), $definition);
 
-        $definition->setMethodCalls(array(
-            array('set', array($classmap)),
-        ));
+        if (!empty($classmap)) {
+            $definition->setMethodCalls(array(
+                array('set', array($classmap)),
+            ));
+        }
 
         return sprintf('besimple.soap.classmap.%s', $client);
     }
