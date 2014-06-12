@@ -18,6 +18,7 @@ class ComplexType extends Configuration
     private $name;
     private $value;
     private $isNillable = false;
+    private $tagType = 'element';
 
     public function getName()
     {
@@ -34,6 +35,11 @@ class ComplexType extends Configuration
         return $this->isNillable;
     }
 
+    public function getTagType()
+    {
+        return $this->tagType;
+    }
+
     public function setName($name)
     {
         $this->name = $name;
@@ -47,6 +53,11 @@ class ComplexType extends Configuration
     public function setNillable($isNillable)
     {
         $this->isNillable = (bool) $isNillable;
+    }
+
+    public function setTagType($tagType)
+    {
+        $this->tagType = $tagType;
     }
 
     public function getAliasName()

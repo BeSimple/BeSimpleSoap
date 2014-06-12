@@ -20,6 +20,7 @@ class ComplexType
     private $name;
     private $value;
     private $isNillable = false;
+    private $tagType = 'element';
 
     public function getName()
     {
@@ -36,6 +37,11 @@ class ComplexType
         return $this->isNillable;
     }
 
+    public function getTagType()
+    {
+        return $this->tagType;
+    }
+
     public function setName($name)
     {
         $this->name = $name;
@@ -49,5 +55,10 @@ class ComplexType
     public function setNillable($isNillable)
     {
         $this->isNillable = (bool) $isNillable;
+    }
+
+    public function setTagType($tagType)
+    {
+        $this->tagType = $tagType;
     }
 }
