@@ -118,10 +118,11 @@ class Curl
      * @param string $location       HTTP location
      * @param string $request        Request body
      * @param array  $requestHeaders Request header strings
+     * @param array  $requestOptions An array of request options
      *
      * @return bool
      */
-    public function exec($location, $request = null, $requestHeaders = array())
+    public function exec($location, $request = null, $requestHeaders = array(), $requestOptions = array())
     {
         curl_setopt($this->ch, CURLOPT_URL, $location);
 
@@ -132,6 +133,10 @@ class Curl
 
         if (count($requestHeaders) > 0) {
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $requestHeaders);
+        }
+
+        if (count($requestOptions) > 0) {
+            curl_setopt_array($this->ch, $requestOptions);
         }
 
         $this->response = $this->execManualRedirect();

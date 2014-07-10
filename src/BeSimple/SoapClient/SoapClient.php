@@ -180,11 +180,14 @@ class SoapClient extends \SoapClient
 
         $headers = $this->filterRequestHeaders($soapRequest, $headers);
 
+        $options = $this->filterRequestOptions($soapRequest);
+
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
             $location,
             $content,
-            $headers
+            $headers,
+            $options
         );
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
@@ -271,6 +274,18 @@ class SoapClient extends \SoapClient
     protected function filterRequestHeaders(SoapRequest $soapRequest, array $headers)
     {
         return $headers;
+    }
+
+    /**
+     * Adds additional cURL options for the request
+     *
+     * @param SoapRequest $soapRequest SOAP request object
+     *
+     * @return array
+     */
+    protected function filterRequestOptions(SoapRequest $soapRequest)
+    {
+        return array();
     }
 
     /**
