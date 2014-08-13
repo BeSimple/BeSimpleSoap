@@ -47,9 +47,9 @@ Controller
         /**
          * @Soap\Method("sendAssocArray")
          * @Soap\Param("assocArray", phpType = "BeSimple\SoapCommon\Type\KeyValue\String[]")
-         * @Soap\Return(phpType = "BeSimple\SoapCommon\Type\KeyValue\String[]")
+         * @Soap\Result(phpType = "BeSimple\SoapCommon\Type\KeyValue\String[]")
          */
-        public function assocArrayOfStringAction(array $assocArray)
+        public function sendAssocArrayOfStringAction(array $assocArray)
         {
             // The $assocArray it's a real associative array
             // var_dump($assocArray);die;
@@ -97,3 +97,4 @@ How to create my Associative Array?
                 'user2' => new User('user2', 'user2@user.com'),
             );
         }
+    }
