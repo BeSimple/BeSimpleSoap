@@ -146,9 +146,19 @@ You can expose only the properties (public, protected or private) of a complex t
             return $this->createdAt;
         }
 
+        public function setCreatedAt(\DateTime $createdAt)
+        {
+            $this->createdAt = $createdAt;
+        }
+
         public function getUpdatedAt()
         {
             return this->updatedAt;
+        }
+
+        public function setUpdatedAt(\DateTime $updatedAt)
+        {
+            $this->updatedAt = $updatedAt;
         }
     }
 
