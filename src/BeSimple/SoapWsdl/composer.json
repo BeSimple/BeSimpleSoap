@@ -24,7 +24,7 @@
     "target-dir": "BeSimple/SoapWsdl",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.2-dev"
+            "dev-master": "0.3-dev"
         }
     }
 }
