@@ -28,7 +28,7 @@
     },
     "require-dev": {
         "mikey179/vfsStream": "~1.0",
-        "symfony/filesystem": "~2.0",
+        "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3"
     },
     "autoload": {
