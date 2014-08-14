@@ -22,16 +22,16 @@
     "require": {
         "php": ">=5.3.0",
         "ext-soap": "*",
-        "besimple/soap-common": "0.2.*",
-        "besimple/soap-wsdl": "0.2.*",
+        "besimple/soap-common": "0.3.*",
+        "besimple/soap-wsdl": "0.3.*",
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.0",
         "symfony/twig-bundle": "~2.0",
         "zendframework/zend-mime": "2.1.*"
     },
     "suggest": {
-        "besimple/soap-client": "0.2.*",
-        "besimple/soap-server": "0.2.*"
+        "besimple/soap-client": "0.3.*",
+        "besimple/soap-server": "0.3.*"
     },
     "autoload": {
         "psr-0": { "BeSimple\\SoapBundle": "" }
