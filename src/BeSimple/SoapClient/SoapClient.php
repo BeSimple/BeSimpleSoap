@@ -42,15 +42,6 @@ class SoapClient extends \SoapClient
     protected $tracingEnabled = false;
 
     /**
-     * Work around missing header/php://input access in PHP cli webserver by
-     * setting headers additionally as GET parameters and SOAP request body
-     * explicitly as POST variable.
-     *
-     * @var boolean
-     */
-    private $cliWebserverWorkaround = false;
-
-    /**
      * cURL instance.
      *
      * @var \BeSimple\SoapClient\Curl
@@ -108,10 +99,7 @@ class SoapClient extends \SoapClient
         if (isset($options['soap_version'])) {
             $this->soapVersion = $options['soap_version'];
         }
-        // activate cli webserver workaround
-        if (isset($options['cli_webserver_workaround'])) {
-            $this->cliWebserverWorkaround = $options['cli_webserver_workaround'];
-        }
+
         $this->curl = new Curl($options);
 
         if (isset($options['extra_options'])) {
@@ -158,25 +146,6 @@ class SoapClient extends \SoapClient
 
         $location = $soapRequest->getLocation();
         $content = $soapRequest->getContent();
-        /*
-         * Work around missing header/php://input access in PHP cli webserver by
-         * setting headers additionally as GET parameters and SOAP request body
-         * explicitly as POST variable
-         */
-        if ($this->cliWebserverWorkaround === true) {
-            if (strpos($location, '?') === false) {
-                $location .= '?';
-            } else {
-                $location .= '&';
-            }
-            $location .= SoapMessage::CONTENT_TYPE_HEADER.'='.urlencode($soapRequest->getContentType());
-            $location .= '&';
-            $location .= SoapMessage::SOAP_ACTION_HEADER.'='.urlencode($soapRequest->getAction());
-
-            $content = http_build_query(array('request' => $content));
-
-            $headers = array();
-        }
 
         $headers = $this->filterRequestHeaders($soapRequest, $headers);
 
@@ -189,6 +158,7 @@ class SoapClient extends \SoapClient
             $headers,
             $options
         );
+
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
             $this->lastRequestHeaders = $this->curl->getRequestHeaders();
