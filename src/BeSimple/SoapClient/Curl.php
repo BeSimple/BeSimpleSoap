@@ -74,6 +74,9 @@ class Curl
             CURLINFO_HEADER_OUT => true,
         );
         curl_setopt_array($this->ch, $curlOptions);
+        if (isset($options['curl_ssl_version'])){
+            curl_setopt($this->ch, CURLOPT_SSLVERSION, $options['curl_ssl_version']);
+        }
         if (isset($options['compression']) && !($options['compression'] & SOAP_COMPRESSION_ACCEPT)) {
             curl_setopt($this->ch, CURLOPT_ENCODING, 'identity');
         }

@@ -124,7 +124,7 @@ class SoapClient extends \SoapClient
         // set up type converter and mime filter
         $this->configureMime($options);
         // we want the exceptions option to be set
-        $options['exceptions'] = true;
+        //$options['exceptions'] = true;
         // disable obsolete trace option for native SoapClient as we need to do our own tracing anyways
         $options['trace'] = false;
         // disable WSDL caching as we handle WSDL caching for remote URLs ourself
@@ -158,6 +158,7 @@ class SoapClient extends \SoapClient
 
         $location = $soapRequest->getLocation();
         $content = $soapRequest->getContent();
+
         /*
          * Work around missing header/php://input access in PHP cli webserver by
          * setting headers additionally as GET parameters and SOAP request body
@@ -231,14 +232,18 @@ class SoapClient extends \SoapClient
      */
     public function __doRequest($request, $location, $action, $version, $oneWay = 0)
     {
+
         // wrap request data in SoapRequest object
         $soapRequest = SoapRequest::create($request, $location, $action, $version);
 
         // do actual SOAP request
         $soapResponse = $this->__doRequest2($soapRequest);
+        $xml = explode('\r\n', $soapResponse->getContent());
+        //print_r($xml);
 
+        $response = preg_replace( '/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\xFE\xFF|\xFF\xFE|\xEF\xBB\xBF)/', "", $soapResponse->getContent() );
         // return SOAP response to ext/soap
-        return $soapResponse->getContent();
+        return $response;
     }
 
     /**
