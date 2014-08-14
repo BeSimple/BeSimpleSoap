@@ -27,7 +27,7 @@
         "ass/xmlsecurity": "~1.0"
     },
     "require-dev": {
-        "mikey179/vfsStream": "dev-master",
+        "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "~2.0",
         "symfony/process": "~2.3"
     },
