@@ -14,13 +14,13 @@ $options = array(
     'cache_wsdl'      => WSDL_CACHE_NONE,
     'classmap'        => array(
         'base64Binary'      => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary',
-        'AttachmentRequest' => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest',
+        'AttachmentType' => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest',
     ),
 );
 
 class Mtom
 {
-    public function attachment(AttachmentRequest $attachment)
+    public function attachment(Fixtures\AttachmentRequest $attachment)
     {
         $b64 = $attachment->binaryData;
 
