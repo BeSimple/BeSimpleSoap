@@ -42,6 +42,8 @@ class SwaServerInteropTest extends TestCase
         $result = $sc->downloadFile($download);
 
         $this->assertEquals($upload->data, $result->data);
+
+        unlink(__DIR__.'/../ServerInterop/'.$download->name);
     }
 
     public function testUploadDownloadImage()
@@ -60,5 +62,7 @@ class SwaServerInteropTest extends TestCase
         $result = $sc->downloadFile($download);
 
         $this->assertEquals($upload->data, $result->data);
+
+        unlink(__DIR__.'/../ServerInterop/'.$download->name);
     }
 }

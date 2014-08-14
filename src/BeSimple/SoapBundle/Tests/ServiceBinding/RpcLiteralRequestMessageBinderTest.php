@@ -16,66 +16,70 @@ use BeSimple\SoapBundle\ServiceBinding\RpcLiteralRequestMessageBinder;
 use BeSimple\SoapBundle\ServiceDefinition as Definition;
 use BeSimple\SoapBundle\Tests\fixtures\ServiceBinding as Fixtures;
 use BeSimple\SoapBundle\Util\Collection;
+use BeSimple\SoapCommon\Definition\Type\ComplexType;
+use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 
 class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider messageProvider
      */
-    public function testProcessMessage(Definition\Method $method, $message, $assert)
+    public function testProcessMessage(Definition\Method $method, array $message, array $assert)
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
-        $result        = $messageBinder->processMessage($method, $message);
+        $result        = $messageBinder->processMessage($method, $message, $this->getTypeRepository());
 
         $this->assertSame($assert, $result);
     }
 
     public function testProcessMessageWithComplexType()
     {
+        $typeRepository = $this->addComplexTypes($this->getTypeRepository());
         $messageBinder = new RpcLiteralRequestMessageBinder();
+
+        $method = new Definition\Method('complextype_argument', null);
+        $method->addInput('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo');
 
         $foo    = new Fixtures\Foo('foobar', 19395);
         $result = $messageBinder->processMessage(
-            new Definition\Method('complextype_argument', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo')),
-            )),
+            $method,
             array($foo),
-            $this->getDefinitionComplexTypes()
+            $typeRepository
         );
 
         $this->assertEquals(array('foo' => $foo), $result);
-
 
         $foo1 = new Fixtures\Foo('foobar', 29291);
         $foo2 = new Fixtures\Foo('barfoo', 39392);
         $foos = new \stdClass();
         $foos->item = array($foo1, $foo2);
 
+        $method = new Definition\Method('complextype_argument', null);
+        $method->addInput('foos', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]');
+
         $result = $messageBinder->processMessage(
-            new Definition\Method('complextype_argument', null, array(), array(
-                new Definition\Argument('foos', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]')),
-            )),
+            $method,
             array($foos),
-            $this->getDefinitionComplexTypes()
+            $typeRepository
         );
 
         $this->assertEquals(array('foos' => array($foo1, $foo2)), $result);
     }
 
-    /**
-     * @expectedException SoapFault
-     */
     public function testProcessMessageSoapFault()
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
 
+        $method = new Definition\Method('complextype_argument', null);
+        $method->addInput('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo');
+
         $foo = new Fixtures\Foo('foo', null);
-        $result = $messageBinder->processMessage(
-            new Definition\Method('complextype_argument', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo')),
-            )),
+
+        $this->setExpectedException('SoapFault');
+        $messageBinder->processMessage(
+            $method,
             array($foo),
-            $this->getDefinitionComplexTypes()
+            $this->addComplexTypes($this->getTypeRepository())
         );
     }
 
@@ -83,16 +87,17 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
 
+        $method = new Definition\Method('complextype_argument', null);
+        $method->addInput('foos', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]');
+
         $foo  = new Fixtures\Foo('foo', 2499104);
         $foos = new \stdClass();
         $foos->item = array($foo, $foo);
 
         $result = $messageBinder->processMessage(
-            new Definition\Method('complextype_argument', null, array(), array(
-                new Definition\Argument('foos', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]')),
-            )),
+            $method,
             array($foos),
-            $this->getDefinitionComplexTypes()
+            $this->addComplexTypes($this->getTypeRepository())
         );
 
         $this->assertEquals(array('foos' => array($foo, $foo)), $result);
@@ -102,16 +107,17 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
 
+        $method = new Definition\Method('complextype_argument', null);
+        $method->addInput('fooBar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar');
+
         $foo    = new Fixtures\Foo('foo', 38845);
         $bar    = new Fixtures\Bar('bar', null);
         $fooBar = new Fixtures\FooBar($foo, $bar);
 
         $result = $messageBinder->processMessage(
-            new Definition\Method('complextype_argument', null, array(), array(
-                new Definition\Argument('fooBar', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar')),
-            )),
+            $method,
             array($fooBar),
-            $this->getDefinitionComplexTypes()
+            $this->addComplexTypes($this->getTypeRepository())
         );
 
         $this->assertEquals(array('fooBar' => $fooBar), $result);
@@ -121,17 +127,18 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
 
+        $method = new Definition\Method('complextype_with_array', null);
+        $method->addInput('simple_arrays', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\SimpleArrays');
+
         $array          = array(1, 2, 3, 4);
         $stdClass       = new \stdClass();
         $stdClass->item = $array;
         $simpleArrays   = new Fixtures\SimpleArrays(null, new \stdClass(), $stdClass);
 
         $result = $messageBinder->processMessage(
-            new Definition\Method('complextype_with_array', null, array(), array(
-                new Definition\Argument('simple_arrays', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\SimpleArrays')),
-            )),
+            $method,
             array($simpleArrays),
-            $this->getDefinitionComplexTypes()
+            $this->addComplexTypes($this->getTypeRepository())
         );
 
         $result = $result['simple_arrays'];
@@ -144,12 +151,13 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
 
+        $method = new Definition\Method('empty_array_complex_type', null);
+        $method->addInput('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]');
+
         $result = $messageBinder->processMessage(
-            new Definition\Method('empty_array_complex_type', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]')),
-            )),
+            $method,
             array(new \stdClass()),
-            $this->getDefinitionComplexTypes()
+            $this->addComplexTypes($this->getTypeRepository())
         );
 
         $this->assertEquals(array('foo' => array()), $result);
@@ -159,16 +167,17 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
 
+        $method = new Definition\Method('prevent_infinite_recursion', null);
+        $method->addInput('foo_recursive', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive');
+
         $foo = new Fixtures\FooRecursive('foo', '');
         $bar = new Fixtures\BarRecursive($foo, 10394);
         $foo->bar = $bar;
 
         $result = $messageBinder->processMessage(
-            new Definition\Method('prevent_infinite_recursion', null, array(), array(
-                new Definition\Argument('foo_recursive', new Definition\Type('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive')),
-            )),
+            $method,
             array($foo),
-            $this->getDefinitionComplexTypes()
+            $this->addComplexTypes($this->getTypeRepository())
         );
 
         $this->assertEquals(array('foo_recursive' => $foo), $result);
@@ -179,43 +188,43 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $messages = array();
 
         $messages[] = array(
-            new Definition\Method('no_argument'),
+            new Definition\Method('no_argument', null),
             array(),
             array(),
         );
 
+        $method = new Definition\Method('string_argument', null);
+        $method->addInput('foo', 'string');
         $messages[] = array(
-            new Definition\Method('string_argument', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('string')),
-            )),
+            $method,
             array('bar'),
             array('foo' => 'bar'),
         );
 
+        $method = new Definition\Method('string_int_arguments', null);
+        $method->addInput('foo', 'string');
+        $method->addInput('bar', 'int');
         $messages[] = array(
-            new Definition\Method('string_int_arguments', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('string')),
-                new Definition\Argument('bar', new Definition\Type('int')),
-            )),
+            $method,
             array('test', 20),
             array('foo' => 'test', 'bar' => 20),
         );
 
+        $method = new Definition\Method('array_string_arguments', null);
+        $method->addInput('foo', 'string[]');
+        $method->addInput('bar', 'int');
         $strings = new \stdClass();
         $strings->item = array('foo', 'bar', 'barfoo');
         $messages[] = array(
-            new Definition\Method('array_string_arguments', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('string[]')),
-                new Definition\Argument('bar', new Definition\Type('int')),
-            )),
+            $method,
             array($strings, 4),
             array('foo' => array('foo', 'bar', 'barfoo'), 'bar' => 4),
         );
 
+        $method = new Definition\Method('empty_array', null);
+        $method->addInput('foo', 'string[]');
         $messages[] = array(
-            new Definition\Method('empty_array', null, array(), array(
-                new Definition\Argument('foo', new Definition\Type('string[]')),
-            )),
+            $method,
             array(new \stdClass()),
             array('foo' => array()),
         );
@@ -223,40 +232,38 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         return $messages;
     }
 
-    private function getDefinitionComplexTypes()
+    private function addComplexTypes(TypeRepository $typeRepository)
     {
-        $definitionComplexTypes = array();
+        $foo = new ComplexType('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo', 'Foo');
+        $foo->add('foo', 'string');
+        $foo->add('bar', 'int');
+        $typeRepository->addComplexType($foo);
 
-        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo'] = $this->createComplexTypeCollection(array(
-            array('foo', 'string'),
-            array('bar', 'int'),
-        ));
+        $bar = new ComplexType('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar', 'Bar');
+        $bar->add('foo', 'string');
+        $bar->add('bar', 'int', true);
+        $typeRepository->addComplexType($bar);
 
-        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar'] = $this->createComplexTypeCollection(array(
-            array('foo', 'string'),
-            array('bar', 'int', true),
-        ));
+        $fooBar = new ComplexType('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar', 'FooBar');
+        $fooBar->add('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo');
+        $fooBar->add('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar');
+        $typeRepository->addComplexType($fooBar);
 
-        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooBar'] = $this->createComplexTypeCollection(array(
-            array('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo'),
-            array('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Bar'),
-        ));
+        $simpleArrays = new ComplexType('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\SimpleArrays', 'SimpleArrays');
+        $simpleArrays->add('array1', 'string[]', true);
+        $simpleArrays->add('array2', 'string[]');
+        $simpleArrays->add('array3', 'string[]');
+        $typeRepository->addComplexType($simpleArrays);
 
-        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\SimpleArrays'] = $this->createComplexTypeCollection(array(
-            array('array1', 'string[]', true),
-            array('array2', 'string[]'),
-            array('array3', 'string[]'),
-        ));
+        $fooRecursive = new ComplexType('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive', 'FooRecursive');
+        $fooRecursive->add('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\BarRecursive');
+        $typeRepository->addComplexType($fooRecursive);
 
-        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive'] = $this->createComplexTypeCollection(array(
-            array('bar', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\BarRecursive'),
-        ));
+        $barRecursive = new ComplexType('BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\BarRecursive', 'BarRecursive');
+        $barRecursive->add('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive');
+        $typeRepository->addComplexType($barRecursive);
 
-        $definitionComplexTypes['BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\BarRecursive'] = $this->createComplexTypeCollection(array(
-            array('foo', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\FooRecursive'),
-        ));
-
-        return $definitionComplexTypes;
+        return $typeRepository;
     }
 
     private function createComplexTypeCollection(array $properties)
@@ -276,5 +283,19 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         }
 
         return array('properties' => $collection);
+    }
+
+    private function getTypeRepository()
+    {
+        $typeRepository = new TypeRepository();
+        $typeRepository->addXmlNamespace('xsd', 'http://www.w3.org/2001/XMLSchema');
+        $typeRepository->addType('string', 'xsd:string');
+        $typeRepository->addType('boolean', 'xsd:boolean');
+        $typeRepository->addType('int', 'xsd:int');
+        $typeRepository->addType('float', 'xsd:float');
+        $typeRepository->addType('date', 'xsd:date');
+        $typeRepository->addType('dateTime', 'xsd:dateTime');
+
+        return $typeRepository;
     }
 }

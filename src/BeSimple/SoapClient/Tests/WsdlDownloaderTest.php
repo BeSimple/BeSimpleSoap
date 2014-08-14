@@ -41,7 +41,9 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         Cache::setDirectory($wsdlCacheUrl);
         $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
 
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )));
         $this->assertCount(0, $wsdlCacheDir->getChildren());
 
         $cacheFileName = $wsdlDownloader->download($source);
@@ -272,7 +274,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
             $content = file_get_contents(self::$fixturesPath.$file);
             $content = preg_replace('#'.preg_quote('%location%').'#', sprintf('localhost:%d', WEBSERVER_PORT), $content);
 
-            self::$filesystem->dumpFile(self::$fixturesPath.'build_include'.DIRECTORY_SEPARATOR.pathinfo($file, PATHINFO_BASENAME), $content);
+            file_put_contents(self::$fixturesPath.'build_include'.DIRECTORY_SEPARATOR.pathinfo($file, PATHINFO_BASENAME), $content);
         }
     }
 

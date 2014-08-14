@@ -37,7 +37,6 @@
         "psr-0": { "BeSimple\\SoapBundle": "" }
     },
     "target-dir": "BeSimple/SoapBundle",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "0.2-dev"
