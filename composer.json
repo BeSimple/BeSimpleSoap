@@ -38,7 +38,7 @@
     "require-dev": {
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "dev-master",
-        "symfony/filesystem": "~2.3",
+        "symfony/filesystem": "~2.0",
         "symfony/process": "~2.3"
     },
     "autoload": {
