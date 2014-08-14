@@ -10,10 +10,14 @@ env:
   - SYMFONY_VERSION=2.1.*
   - SYMFONY_VERSION=2.2.*
   - SYMFONY_VERSION=2.3.*
-  - SYMFONY_VERSION=dev-master
+  - SYMFONY_VERSION=2.4.*
+  - SYMFONY_VERSION=2.5.*
+  - SYMFONY_VERSION=dev-master symfony/debug:~2.6@dev symfony/http-kernel:~2.6@dev
 
 before_script:
-  - composer require symfony/http-foundation:${SYMFONY_VERSION} --no-interaction --prefer-source
+  - composer self-update
+  - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
+  - composer update --no-interaction --prefer-source
   - ./src/BeSimple/SoapClient/Tests/bin/phpwebserver.sh
   - ./src/BeSimple/SoapClient/Tests/bin/axis.sh
 
