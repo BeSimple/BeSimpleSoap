@@ -15,7 +15,7 @@ namespace BeSimple\SoapCommon;
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class Cache
+final class Cache
 {
     const DISABLED = 0;
     const ENABLED  = 1;
