@@ -39,7 +39,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase
 
         $dir = vfsStream::url('Fixtures/foo');
         $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('foo'));
-        $cache->setDirectory($dir);
+        $this->assertInstanceOf('BeSimple\SoapCommon\Cache', $cache->setDirectory($dir));
         $this->assertEquals($dir, $cache->getDirectory());
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
 

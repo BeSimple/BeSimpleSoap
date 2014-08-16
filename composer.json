@@ -26,6 +26,7 @@
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.3",
         "symfony/twig-bundle": "~2.3",
+        "mikey179/vfsStream": "~1.0",
         "zendframework/zend-mime": "2.1.*"
     },
     "replace": {
@@ -37,7 +38,6 @@
     },
     "require-dev": {
         "ext-mcrypt": "*",
-        "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3"
     },

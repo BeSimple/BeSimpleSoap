@@ -12,6 +12,7 @@
 
 namespace BeSimple\SoapClient;
 
+use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Converter\MtomTypeConverter;
 use BeSimple\SoapCommon\Converter\SwaTypeConverter;
@@ -47,6 +48,13 @@ class SoapClient extends \SoapClient
      * @var \BeSimple\SoapClient\Curl
      */
     protected $curl = null;
+
+    /**
+     * A Cache instance
+     *
+     * @var Cache
+     */
+    protected $cache;
 
     /**
      * Last request headers.
@@ -89,7 +97,7 @@ class SoapClient extends \SoapClient
      * @param string               $wsdl    WSDL file
      * @param array(string=>mixed) $options Options array
      */
-    public function __construct($wsdl, array $options = array())
+    public function __construct($wsdl, array $options = array(), Cache $cache = null)
     {
         // tracing enabled: store last request/response header and body
         if (isset($options['trace']) && $options['trace'] === true) {
@@ -106,6 +114,7 @@ class SoapClient extends \SoapClient
             unset($options['extra_options']);
         }
 
+        $this->cache = $cache;
         $wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new SoapKernel();
@@ -115,8 +124,10 @@ class SoapClient extends \SoapClient
         $options['exceptions'] = true;
         // disable obsolete trace option for native SoapClient as we need to do our own tracing anyways
         $options['trace'] = false;
-        // disable WSDL caching as we handle WSDL caching for remote URLs ourself
-        $options['cache_wsdl'] = WSDL_CACHE_NONE;
+
+
+        $options['cache_wsdl'] = \WSDL_CACHE_NONE;
+
         parent::__construct($wsdlFile, $options);
     }
 
@@ -366,12 +377,9 @@ class SoapClient extends \SoapClient
         if (isset($options['resolve_wsdl_remote_includes'])) {
             $resolveRemoteIncludes = $options['resolve_wsdl_remote_includes'];
         }
-        // option to enable cache
-        $wsdlCache = WSDL_CACHE_DISK;
-        if (isset($options['cache_wsdl'])) {
-            $wsdlCache = $options['cache_wsdl'];
-        }
-        $wsdlDownloader = new WsdlDownloader($this->curl, $resolveRemoteIncludes, $wsdlCache);
+
+        $wsdlDownloader = new WsdlDownloader($this->curl, $resolveRemoteIncludes, $this->cache);
+
         try {
             $cacheFileName = $wsdlDownloader->download($wsdl);
         } catch (\RuntimeException $e) {

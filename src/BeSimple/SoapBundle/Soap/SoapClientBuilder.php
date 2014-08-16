@@ -2,6 +2,7 @@
 
 namespace BeSimple\SoapBundle\Soap;
 
+use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Classmap;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 use BeSimple\SoapClient\SoapClientBuilder as BaseSoapClientBuilder;
@@ -10,7 +11,7 @@ class SoapClientBuilder extends BaseSoapClientBuilder
 {
     protected $soapClient;
 
-    public function __construct($wsdl, array $options, Classmap $classmap = null, TypeConverterCollection $converters = null)
+    public function __construct($wsdl, array $options, Classmap $classmap = null, TypeConverterCollection $converters = null, Cache $cache = null)
     {
         parent::__construct();
 
@@ -36,6 +37,10 @@ class SoapClientBuilder extends BaseSoapClientBuilder
         if ($converters) {
             $this->withTypeConverters($converters);
         }
+
+        if ($cache) {
+            $this->withCache($cache);
+        }
     }
 
     public function build()
@@ -51,7 +56,6 @@ class SoapClientBuilder extends BaseSoapClientBuilder
     {
         $checkOptions = array(
             'debug'      => false,
-            'cache_type' => null,
             'exceptions' => true,
             'user_agent' => 'BeSimpleSoap',
         );

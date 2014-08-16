@@ -23,6 +23,7 @@ abstract class AbstractSoapBuilder
 {
     protected $wsdl;
     protected $soapOptions = array();
+    protected $cache;
 
     /**
      * @return AbstractSoapBuilder
@@ -97,53 +98,12 @@ abstract class AbstractSoapBuilder
         return $this;
     }
 
-    public function withWsdlCache($cache)
-    {
-        if (!in_array($cache, Cache::getTypes(), true)) {
-            throw new \InvalidArgumentException();
-        }
-
-        $this->soapOptions['cache_wsdl'] = $cache;
-
-        return $this;
-    }
-
     /**
      * @return AbstractSoapBuilder
      */
-    public function withWsdlCacheNone()
+    public function withCache(Cache $cache)
     {
-        $this->soapOptions['cache_wsdl'] = Cache::TYPE_NONE;
-
-        return $this;
-    }
-
-    /**
-     * @return AbstractSoapBuilder
-     */
-    public function withWsdlCacheDisk()
-    {
-        $this->soapOptions['cache_wsdl'] = Cache::TYPE_DISK;
-
-        return $this;
-    }
-
-    /**
-     * @return AbstractSoapBuilder
-     */
-    public function withWsdlCacheMemory()
-    {
-        $this->soapOptions['cache_wsdl'] = Cache::TYPE_MEMORY;
-
-        return $this;
-    }
-
-    /**
-     * @return AbstractSoapBuilder
-     */
-    public function withWsdlCacheDiskAndMemory()
-    {
-        $this->soapOptions['cache_wsdl'] = Cache::TYPE_DISK_MEMORY;
+        $this->cache = $cache;
 
         return $this;
     }

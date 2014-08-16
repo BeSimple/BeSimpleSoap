@@ -50,7 +50,7 @@ class SoapClientBuilder extends AbstractSoapBuilder
     {
         $this->validateOptions();
 
-        return new SoapClient($this->wsdl, $this->getSoapOptions());
+        return new SoapClient($this->wsdl, $this->getSoapOptions(), $this->cache);
     }
 
     /**

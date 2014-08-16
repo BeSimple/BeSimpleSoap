@@ -24,10 +24,10 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "besimple/soap-common": "0.3.*",
-        "ass/xmlsecurity": "~1.0"
+        "ass/xmlsecurity": "~1.0",
+        "mikey179/vfsStream": "~1.0"
     },
     "require-dev": {
-        "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3"
     },

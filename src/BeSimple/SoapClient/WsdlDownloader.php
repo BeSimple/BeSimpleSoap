@@ -14,6 +14,8 @@ namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamWrapper;
 
 /**
  * Downloads WSDL files with cURL. Uses the WSDL_CACHE_* constants and the
@@ -26,25 +28,9 @@ use BeSimple\SoapCommon\Helper;
 class WsdlDownloader
 {
     /**
-     * Cache enabled.
-     *
-     * @var bool
+     * @var Cache
      */
-    protected $cacheEnabled;
-
-    /**
-     * Cache dir.
-     *
-     * @var string
-     */
-    protected $cacheDir;
-
-    /**
-     * Cache TTL.
-     *
-     * @var int
-     */
-    protected $cacheTtl;
+    protected $cache;
 
     /**
      * cURL instance for downloads.
@@ -65,17 +51,13 @@ class WsdlDownloader
      *
      * @param \BeSimple\SoapClient\Curl $curl                  Curl instance
      * @param boolean                   $resolveRemoteIncludes WSDL/XSD include enabled?
-     * @param boolean                   $cacheWsdl             Cache constant
+     * @param boolean                   $cache                 A Cache instance
      */
-    public function __construct(Curl $curl, $resolveRemoteIncludes = true, $cacheWsdl = Cache::TYPE_DISK)
+    public function __construct(Curl $curl, $resolveRemoteIncludes = true, Cache $cache = null)
     {
         $this->curl                  = $curl;
-        $this->resolveRemoteIncludes = (Boolean) $resolveRemoteIncludes;
-
-        // get current WSDL caching config
-        $this->cacheEnabled = $cacheWsdl === Cache::TYPE_NONE ? Cache::DISABLED : Cache::ENABLED == Cache::isEnabled();
-        $this->cacheDir = Cache::getDirectory();
-        $this->cacheTtl = Cache::getLifetime();
+        $this->resolveRemoteIncludes = (bool) $resolveRemoteIncludes;
+        $this->cache = $cache;
     }
 
     /**
@@ -91,9 +73,16 @@ class WsdlDownloader
         // resolve remote XSD includes
         $isRemoteFile = $this->isRemoteFile($wsdl);
         if ($isRemoteFile || $this->resolveRemoteIncludes) {
-            $cacheFilePath = $this->cacheDir.DIRECTORY_SEPARATOR.'wsdl_'.md5($wsdl).'.cache';
+            $filename = 'wsdl_'.md5($wsdl).'.cache';
 
-            if (!$this->cacheEnabled || !file_exists($cacheFilePath) || (filemtime($cacheFilePath) + $this->cacheTtl) < time()) {
+            if (null === $this->cache || !$this->cache->isEnabled()) {
+                vfsStream::setup('root');
+                $pathname = vfsStream::url('root/'.$filename);
+            } else {
+                $pathname = $this->cache->getDirectory().DIRECTORY_SEPARATOR.$cacheFile;
+            }
+
+            if (!file_exists($pathname) || (filemtime($pathname) + $this->config->getLifetime()) < time()) {
                 if ($isRemoteFile) {
                     // execute request
                     $responseSuccessfull = $this->curl->exec($wsdl);
@@ -102,22 +91,22 @@ class WsdlDownloader
                         $response = $this->curl->getResponseBody();
 
                         if ($this->resolveRemoteIncludes) {
-                            $this->resolveRemoteIncludes($response, $cacheFilePath, $wsdl);
+                            $this->resolveRemoteIncludes($response, $pathname, $wsdl);
                         } else {
-                            file_put_contents($cacheFilePath, $response);
+                            file_put_contents($pathname, $response);
                         }
                     } else {
                         throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl ."'");
                     }
                 } elseif (file_exists($wsdl)) {
                     $response = file_get_contents($wsdl);
-                    $this->resolveRemoteIncludes($response, $cacheFilePath);
+                    $this->resolveRemoteIncludes($response, $pathname);
                 } else {
                     throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl ."'");
                 }
             }
 
-            return $cacheFilePath;
+            return $pathname;
         } elseif (file_exists($wsdl)) {
             return realpath($wsdl);
         }
