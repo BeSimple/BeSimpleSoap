@@ -17,95 +17,67 @@ namespace BeSimple\SoapCommon;
  */
 final class Cache
 {
-    const DISABLED = 0;
-    const ENABLED  = 1;
-
-    const TYPE_NONE        = WSDL_CACHE_NONE;
-    const TYPE_DISK        = WSDL_CACHE_DISK;
-    const TYPE_MEMORY      = WSDL_CACHE_MEMORY;
-    const TYPE_DISK_MEMORY = WSDL_CACHE_BOTH;
+    const TYPE_NONE   = 0;
+    const TYPE_DISK   = 1;
+    const TYPE_MEMORY = 2;
 
     static protected $types = array(
         self::TYPE_NONE,
         self::TYPE_DISK,
         self::TYPE_MEMORY,
-        self::TYPE_DISK_MEMORY,
     );
+
+    protected $type;
+
+    protected $directory;
+
+    protected $lifetime;
 
     static public function getTypes()
     {
         return self::$types;
     }
 
-    static public function isEnabled()
+    public function isEnabled()
     {
-        return self::iniGet('soap.wsdl_cache_enabled');
+        return self::TYPE_NONE !== $this->type;
     }
 
-    static public function setEnabled($enabled)
+    public function getType()
     {
-        if (!in_array($enabled, array(self::ENABLED, self::DISABLED), true)) {
-            throw new \InvalidArgumentException();
-        }
-
-        self::iniSet('soap.wsdl_cache_enabled', $enabled);
+        return $this->type;
     }
 
-    static public function getType()
-    {
-        return self::iniGet('soap.wsdl_cache');
-    }
-
-    static public function setType($type)
+    public function setType($type)
     {
         if (!in_array($type, self::getTypes(), true)) {
-            throw new \InvalidArgumentException('The cache type has to be either Cache::TYPE_NONE, Cache::TYPE_DISK, Cache::TYPE_MEMORY or Cache::TYPE_DISK_MEMORY');
+            throw new \InvalidArgumentException('The cache type has to be either TYPE_NONE, TYPE_DISK or TYPE_MEMORY');
         }
 
-        self::iniSet('soap.wsdl_cache', $type);
+        $this->type = $type;
     }
 
-    static public function getDirectory()
+    public function getDirectory()
     {
-        return self::iniGet('soap.wsdl_cache_dir');
+        return $this->directory;
     }
 
-    static public function setDirectory($directory)
+    public function setDirectory($directory)
     {
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
 
-        self::iniSet('soap.wsdl_cache_dir', $directory);
+        $this->directory = $directory;
     }
 
-    static public function getLifetime()
+    public function getLifetime()
     {
-        return self::iniGet('soap.wsdl_cache_ttl');
+        $this->lifetime = $lifetime;
     }
 
-    static public function setLifetime($lifetime)
+    public function setLifetime($lifetime)
     {
-        self::iniSet('soap.wsdl_cache_ttl', $lifetime);
-    }
-
-    static public function getLimit()
-    {
-        return self::iniGet('soap.wsdl_cache_limit');
-    }
-
-    static public function setLimit($limit)
-    {
-        self::iniSet('soap.wsdl_cache_limit', $limit);
-    }
-
-    static protected function iniGet($key)
-    {
-        return ini_get($key);
-    }
-
-    static protected function iniSet($key, $value)
-    {
-        ini_set($key, $value);
+        return (int) $this->lifetime;
     }
 }
