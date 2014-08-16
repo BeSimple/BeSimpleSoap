@@ -16,7 +16,7 @@ use BeSimple\SoapCommon\Cache;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 
-class SoapRequestTest extends \PHPUnit_Framework_TestCase
+class CacheTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetEnabled()
     {
