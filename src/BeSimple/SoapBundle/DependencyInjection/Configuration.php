@@ -23,8 +23,6 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  */
 class Configuration
 {
-    private $cacheTypes = array('none', 'disk', 'memory', 'disk_memory');
-
     /**
      * Generates the configuration tree.
      *
@@ -56,15 +54,8 @@ class Configuration
                 ->arrayNode('cache')
                     ->addDefaultsIfNotSet()
                         ->children()
-                            ->scalarNode('type')
-                                ->defaultValue('disk')
-                                ->validate()
-                                    ->ifNotInArray($this->cacheTypes)
-                                    ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
-                                ->end()
-                            ->end()
-                            ->scalarNode('lifetime')->defaultNull()->end()
-                            ->scalarNode('limit')->defaultNull()->end()
+                            ->booleanNode('enabled')->defaultTrue()->end()
+                            ->scalarNode('lifetime')->defaultValue(0)->end()
                         ->end()
                     ->end()
                 ->end()
@@ -82,12 +73,7 @@ class Configuration
                             ->children()
                                 ->scalarNode('wsdl')->isRequired()->end()
                                 ->scalarNode('user_agent')->end()
-                                ->scalarNode('cache_type')
-                                    ->validate()
-                                        ->ifNotInArray($this->cacheTypes)
-                                        ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
-                                    ->end()
-                                ->end()
+                                ->booleanNode('cache_enabled')->defaultNull()->end()
                                 ->arrayNode('classmap')
                                     ->useAttributeAsKey('name')->prototype('scalar')->end()
                                 ->end()
@@ -117,12 +103,7 @@ class Configuration
                                     ->thenInvalid("Service binding style has to be either 'rpc-literal' or 'document-wrapped'")
                                 ->end()
                             ->end()
-                            ->scalarNode('cache_type')
-                                ->validate()
-                                    ->ifNotInArray($this->cacheTypes)
-                                    ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
-                                ->end()
-                            ->end()
+                            ->scalarNode('cache_enabled')->defaultNull()->end()
                         ->end()
                     ->end()
                 ->end()

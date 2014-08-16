@@ -71,10 +71,8 @@ class BeSimpleSoapExtension extends Extension
     {
         $loader->load('soap.xml');
 
-        $config['type'] = $this->getCacheType($config['type']);
-
-        foreach (array('type', 'lifetime', 'limit') as $key) {
-            $container->setParameter('besimple.soap.cache.'.$key, $config[$key]);
+        foreach ($config as $key => $value) {
+            $container->setParameter('besimple.soap.cache.'.$key, $value);
         }
     }
 
@@ -151,22 +149,5 @@ class BeSimpleSoapExtension extends Extension
             ->getArgument(2);
 
         $definition->replaceArgument(2, array_merge($options, $config));
-    }
-
-    private function getCacheType($type)
-    {
-        switch ($type) {
-            case 'none':
-                return Cache::TYPE_NONE;
-
-            case 'disk':
-                return Cache::TYPE_DISK;
-
-            case 'memory':
-                return Cache::TYPE_MEMORY;
-
-            case 'disk_memory':
-                return Cache::TYPE_DISK_MEMORY;
-        }
     }
 }
