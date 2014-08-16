@@ -18,77 +18,49 @@ use org\bovigo\vfs\vfsStreamWrapper;
 
 class CacheTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSetEnabled()
+    public function testEnabled()
     {
-        Cache::setEnabled(Cache::ENABLED);
-        $this->assertEquals(Cache::ENABLED, Cache::isEnabled());
+        $cache = $this->getCache();
+        $this->assertTrue($cache->isEnabled());
 
-        Cache::setEnabled(Cache::DISABLED);
-        $this->assertEquals(Cache::DISABLED, Cache::isEnabled());
-    }
+        $this->assertInstanceOf('BeSimple\SoapCommon\Cache', $cache->setEnabled(false));
+        $this->assertFalse($cache->isEnabled());
 
-    public function testSetEnabledBadValue()
-    {
-        $this->setExpectedException('InvalidArgumentException');
-        Cache::setEnabled('foo');
-    }
-
-    public function testSetType()
-    {
-        Cache::setType(Cache::TYPE_DISK);
-        $this->assertEquals(Cache::TYPE_DISK, Cache::getType());
-
-        Cache::setType(Cache::TYPE_NONE);
-        $this->assertEquals(Cache::TYPE_NONE, Cache::getType());
-    }
-
-    public function testSetTypeBadValue()
-    {
-        $this->setExpectedException('InvalidArgumentException');
-        Cache::setType('foo');
+        $cache->setEnabled(true);
+        $this->assertTrue($cache->isEnabled());
     }
 
     public function testSetDirectory()
     {
+        $cache = $this->getCache();
+        $this->assertSame(sys_get_temp_dir(), $cache->getDirectory());
+
         vfsStream::setup('Fixtures');
 
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('foo'));
         $dir = vfsStream::url('Fixtures/foo');
-        Cache::setDirectory($dir);
-        $this->assertEquals($dir, Cache::getDirectory());
+        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $cache->setDirectory($dir);
+        $this->assertEquals($dir, $cache->getDirectory());
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
 
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('bar'));
         $dir = vfsStream::url('Fixtures/bar');
-        Cache::setDirectory($dir);
-        $this->assertEquals($dir, Cache::getDirectory());
+        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('bar'));
+        $cache->setDirectory($dir);
+        $this->assertEquals($dir, $cache->getDirectory());
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('bar'));
     }
 
-    public function testSetLifetime()
+    public function testLifetime()
     {
-        Cache::setLifetime(1234);
-        $this->assertEquals(1234, Cache::getLifetime());
+        $cache = $this->getCache();
+        $this->assertSame(0, $cache->getLifetime());
 
-        Cache::setLifetime(4321);
-        $this->assertEquals(4321, Cache::getLifetime());
+        $this->assertInstanceOf('BeSimple\SoapCommon\Cache', $cache->setLifetime(86400)); // 1 day
+        $this->assertSame(86400, $cache->getLifetime());
     }
 
-    public function testSetLimit()
+    private function getCache()
     {
-        Cache::setLimit(10);
-        $this->assertEquals(10, Cache::getLimit());
-
-        Cache::setLimit(1);
-        $this->assertEquals(1, Cache::getLimit());
-    }
-
-    public function setUp()
-    {
-        ini_restore('soap.wsdl_cache_enabled');
-        ini_restore('soap.wsdl_cache');
-        ini_restore('soap.wsdl_cache_dir');
-        ini_restore('soap.wsdl_cache_ttl');
-        ini_restore('soap.wsdl_cache_limit');
+        return new Cache();
     }
 }

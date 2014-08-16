@@ -17,44 +17,38 @@ namespace BeSimple\SoapCommon;
  */
 final class Cache
 {
-    const TYPE_NONE   = 0;
-    const TYPE_DISK   = 1;
-    const TYPE_MEMORY = 2;
+    /**
+     * @var bool
+     */
+    private $enabled;
 
-    static protected $types = array(
-        self::TYPE_NONE,
-        self::TYPE_DISK,
-        self::TYPE_MEMORY,
-    );
+    /**
+     * @var string
+     */
+    private $directory;
 
-    protected $type;
+    /**
+     * @var int
+     */
+    private $lifetime;
 
-    protected $directory;
-
-    protected $lifetime;
-
-    static public function getTypes()
+    public function __construct()
     {
-        return self::$types;
+        $this->enabled = true;
+        $this->directory = sys_get_temp_dir();
+        $this->lifetime = 0;
     }
 
     public function isEnabled()
     {
-        return self::TYPE_NONE !== $this->type;
+        return $this->enabled;
     }
 
-    public function getType()
+    public function setEnabled($enabled)
     {
-        return $this->type;
-    }
+        $this->enabled = (bool) $enabled;
 
-    public function setType($type)
-    {
-        if (!in_array($type, self::getTypes(), true)) {
-            throw new \InvalidArgumentException('The cache type has to be either TYPE_NONE, TYPE_DISK or TYPE_MEMORY');
-        }
-
-        $this->type = $type;
+        return $this;
     }
 
     public function getDirectory()
@@ -69,15 +63,19 @@ final class Cache
         }
 
         $this->directory = $directory;
+
+        return $this;
     }
 
     public function getLifetime()
     {
-        $this->lifetime = $lifetime;
+        return (int) $this->lifetime;
     }
 
     public function setLifetime($lifetime)
     {
-        return (int) $this->lifetime;
+        $this->lifetime = (int) $lifetime;
+
+        return $this;
     }
 }
