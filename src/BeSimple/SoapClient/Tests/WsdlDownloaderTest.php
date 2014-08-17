@@ -34,22 +34,22 @@ class WsdlDownloaderTest extends AbstractWebserverTest
      */
     public function testDownload($source, $regexp, $nbDownloads)
     {
-        $wsdlCacheDir = vfsStream::setup('wsdl');
-        $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
+        $cacheDirectory = vfsStream::setup('wsdl');
+        $cacheUrl = vfsStream::url('wsdl');
 
-        Cache::setEnabled(Cache::ENABLED);
-        Cache::setDirectory($wsdlCacheUrl);
-        $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
+        $cache = new Cache();
+        $cache->setEnabled(true);
+        $cache->setDirectory($cacheUrl);
 
         $wsdlDownloader = new WsdlDownloader(new Curl(array(
             'proxy_host' => false,
-        )));
-        $this->assertCount(0, $wsdlCacheDir->getChildren());
+        )), true, $cache);
 
-        $cacheFileName = $wsdlDownloader->download($source);
-        $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
+        $this->assertCount(0, $cacheDirectory->getChildren());
+        $cacheFilePath = $wsdlDownloader->download($source);
+        $this->assertCount($nbDownloads, $cacheDirectory->getChildren());
 
-        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFileName));
+        $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFilePath));
     }
 
     public function provideDownload()
@@ -99,6 +99,8 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertTrue($m->invoke($wsdlDownloader, 'https://localhost/dir/test.html'));
         $this->assertTrue($m->invoke($wsdlDownloader, 'https://mylocaldomain/dir/test.html'));
         $this->assertFalse($m->invoke($wsdlDownloader, 'c:/dir/test.html'));
+        $this->assertFalse($m->invoke($wsdlDownloader, 'c:\dir\test.html'));
+        $this->assertFalse($m->invoke($wsdlDownloader, 'file:///c:/dir/test.html'));
         $this->assertFalse($m->invoke($wsdlDownloader, '/dir/test.html'));
         $this->assertFalse($m->invoke($wsdlDownloader, '../dir/test.html'));
     }
@@ -108,25 +110,25 @@ class WsdlDownloaderTest extends AbstractWebserverTest
      */
     public function testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
-        $wsdlCacheDir = vfsStream::setup('wsdl');
-        $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
+        $cacheDirectory = vfsStream::setup('wsdl');
+        $cacheUrl = vfsStream::url('wsdl');
 
-        Cache::setEnabled(Cache::ENABLED);
-        Cache::setDirectory($wsdlCacheUrl);
-        $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
+        $cache = new Cache();
+        $cache->setEnabled(true);
+        $cache->setDirectory($cacheUrl);
 
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(), true, $cache);
         $r = new \ReflectionClass($wsdlDownloader);
         $m = $r->getMethod('resolveRemoteIncludes');
         $m->setAccessible(true);
 
-        $this->assertCount(0, $wsdlCacheDir->getChildren());
+        $this->assertCount(0, $cacheDirectory->getChildren());
 
-        $cacheFile = sprintf($cacheFile, $wsdlCacheUrl);
+        $cacheFile = sprintf($cacheFile, $cacheUrl);
         $m->invoke($wsdlDownloader, file_get_contents($source), $cacheFile, $remoteParentUrl);
-        $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
+        $this->assertCount($nbDownloads, $cacheDirectory->getChildren());
 
-        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFile));
+        $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFile));
     }
 
     public function provideResolveWsdlIncludes()
@@ -171,25 +173,25 @@ class WsdlDownloaderTest extends AbstractWebserverTest
      */
     public function testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
-        $wsdlCacheDir = vfsStream::setup('wsdl');
-        $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
+        $cacheDirectory = vfsStream::setup('wsdl');
+        $cacheUrl = vfsStream::url('wsdl');
 
-        Cache::setEnabled(Cache::ENABLED);
-        Cache::setDirectory($wsdlCacheUrl);
-        $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
+        $cache = new Cache();
+        $cache->setEnabled(true);
+        $cache->setDirectory($cacheUrl);
 
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(), true, $cache);
         $r = new \ReflectionClass($wsdlDownloader);
         $m = $r->getMethod('resolveRemoteIncludes');
         $m->setAccessible(true);
 
-        $this->assertCount(0, $wsdlCacheDir->getChildren());
+        $this->assertCount(0, $cacheDirectory->getChildren());
 
-        $cacheFile = sprintf($cacheFile, $wsdlCacheUrl);
+        $cacheFile = sprintf($cacheFile, $cacheUrl);
         $m->invoke($wsdlDownloader, file_get_contents($source), $cacheFile, $remoteParentUrl);
-        $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
+        $this->assertCount($nbDownloads, $cacheDirectory->getChildren());
 
-        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFile));
+        $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFile));
     }
 
     public function provideResolveXsdIncludes()
