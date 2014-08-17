@@ -76,8 +76,8 @@ class WsdlDownloader
             $filename = 'wsdl_'.md5($wsdl).'.cache';
 
             if (null === $this->cache || !$this->cache->isEnabled()) {
-                vfsStream::setup('root');
-                $pathname = vfsStream::url('root/'.$filename);
+                vfsStream::setup('BeSimpleSoap');
+                $pathname = vfsStream::url('BeSimpleSoap/'.$filename);
             } else {
                 $pathname = $this->cache->getDirectory().DIRECTORY_SEPARATOR.$filename;
             }
