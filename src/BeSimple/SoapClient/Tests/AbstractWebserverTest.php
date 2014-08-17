@@ -29,7 +29,7 @@ abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
-            self::markTestSkipped('PHP Webserver is available from PHP 5.4');
+            return;
         }
 
         $phpFinder = new PhpExecutableFinder();
@@ -52,5 +52,12 @@ abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
     {
         self::$webserver->stop(0);
         usleep(100000);
+    }
+
+    protected function skipIfNotPhp54()
+    {
+        if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+            self::markTestSkipped('PHP Webserver is available from PHP 5.4');
+        }
     }
 }

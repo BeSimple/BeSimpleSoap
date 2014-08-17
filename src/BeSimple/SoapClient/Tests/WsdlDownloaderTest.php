@@ -30,9 +30,56 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     static protected $fixturesPath;
 
     /**
-     * @dataProvider provideDownload
+     * @dataProvider provideDownloadLocalFile
      */
-    public function testDownload($source, $regexp, $nbDownloads)
+    public function testDownloadWithLocalFile($source, $regexp, $nbDownloads)
+    {
+        $this->testDownload($source, $regexp, $nbDownloads);
+    }
+
+    /**
+     * @dataProvider provideDownloadRemoteFile
+     */
+    public function testDownloadWithRemoteFile($source, $regexp, $nbDownloads)
+    {
+        $this->skipIfNotPhp54();
+
+        $this->testDownload($source, $regexp, $nbDownloads);
+    }
+
+    public function provideDownloadLocalFile()
+    {
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
+                '\.\./type_include\.xsd',
+                1,
+            ),
+        );
+    }
+
+    public function provideDownloadRemoteFile()
+    {
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/xsdinctest_absolute.xml',
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
+            ),
+            array(
+                sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT),
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
+            ),
+            array(
+                sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT),
+                '%s/wsdl_[a-f0-9]{32}\.cache',
+                2,
+            ),
+        );
+    }
+
+    protected function testDownload($source, $regexp, $nbDownloads)
     {
         $cacheDirectory = vfsStream::setup('wsdl');
         $cacheUrl = vfsStream::url('wsdl');
@@ -50,32 +97,6 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertCount($nbDownloads, $cacheDirectory->getChildren());
 
         $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFilePath));
-    }
-
-    public function provideDownload()
-    {
-        return array(
-            array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/xsdinctest_absolute.xml',
-                '%s/wsdl_[a-f0-9]{32}\.cache',
-                2,
-            ),
-            array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
-                '\.\./type_include\.xsd',
-                1,
-            ),
-            array(
-                sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT),
-                '%s/wsdl_[a-f0-9]{32}\.cache',
-                2,
-            ),
-            array(
-                sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT),
-                '%s/wsdl_[a-f0-9]{32}\.cache',
-                2,
-            ),
-        );
     }
 
     public function testIsRemoteFile()
@@ -106,32 +127,37 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     }
 
     /**
-     * @dataProvider provideResolveWsdlIncludes
+     * @dataProvider provideResolveWsdlIncludesLocalFile
      */
-    public function testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    public function testResolveWsdlIncludesWithLocalFile($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
-        $cacheDirectory = vfsStream::setup('wsdl');
-        $cacheUrl = vfsStream::url('wsdl');
-
-        $cache = new Cache();
-        $cache->setEnabled(true);
-        $cache->setDirectory($cacheUrl);
-
-        $wsdlDownloader = new WsdlDownloader(new Curl(), true, $cache);
-        $r = new \ReflectionClass($wsdlDownloader);
-        $m = $r->getMethod('resolveRemoteIncludes');
-        $m->setAccessible(true);
-
-        $this->assertCount(0, $cacheDirectory->getChildren());
-
-        $cacheFile = sprintf($cacheFile, $cacheUrl);
-        $m->invoke($wsdlDownloader, file_get_contents($source), $cacheFile, $remoteParentUrl);
-        $this->assertCount($nbDownloads, $cacheDirectory->getChildren());
-
-        $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFile));
+        $this->testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
     }
 
-    public function provideResolveWsdlIncludes()
+    /**
+     * @dataProvider provideResolveWsdlIncludesRemoteFile
+     */
+    public function testResolveWsdlIncludesWithRemoteFile($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    {
+        $this->skipIfNotPhp54();
+
+        $this->testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+    }
+
+    public function provideResolveWsdlIncludesLocalFile()
+    {
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_relative.xml',
+                '%s/cache_local_relative.xml',
+                null,
+                '\.\./wsdl_include\.wsdl',
+                1,
+            ),
+        );
+    }
+
+    public function provideResolveWsdlIncludesRemoteFile()
     {
         $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/wsdlinctest_absolute.xml', WEBSERVER_PORT);
         $remoteUrlRelative = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_relative.xml', WEBSERVER_PORT);
@@ -143,13 +169,6 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 null,
                 '%s/wsdl_[a-f0-9]{32}.cache',
                 2,
-            ),
-            array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/wsdlinclude/wsdlinctest_relative.xml',
-                '%s/cache_local_relative.xml',
-                null,
-                '\.\./wsdl_include\.wsdl',
-                1,
             ),
             array(
                 $remoteUrlAbsolute,
@@ -168,10 +187,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         );
     }
 
-    /**
-     * @dataProvider provideResolveXsdIncludes
-     */
-    public function testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    protected function testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
         $cacheDirectory = vfsStream::setup('wsdl');
         $cacheUrl = vfsStream::url('wsdl');
@@ -180,7 +196,9 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $cache->setEnabled(true);
         $cache->setDirectory($cacheUrl);
 
-        $wsdlDownloader = new WsdlDownloader(new Curl(), true, $cache);
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )), true, $cache);
         $r = new \ReflectionClass($wsdlDownloader);
         $m = $r->getMethod('resolveRemoteIncludes');
         $m->setAccessible(true);
@@ -194,7 +212,38 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFile));
     }
 
-    public function provideResolveXsdIncludes()
+    /**
+     * @dataProvider provideResolveXsdIncludesLocalFile
+     */
+    public function testResolveXsdIncludesWithLocalFile($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    {
+        $this->testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+    }
+
+    /**
+     * @dataProvider provideResolveXsdIncludesRemoteFile
+     */
+    public function testResolveXsdIncludesWithRemoteFile($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    {
+        $this->skipIfNotPhp54();
+
+        $this->testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+    }
+
+    public function provideResolveXsdIncludesLocalFile()
+    {
+        return array(
+            array(
+                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
+                '%s/cache_local_relative.xml',
+                null,
+                '\.\./type_include\.xsd',
+                1,
+            ),
+        );
+    }
+
+    public function provideResolveXsdIncludesRemoteFile()
     {
         $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT);
         $remoteUrlRelative = sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT);
@@ -206,13 +255,6 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 null,
                 '%s/wsdl_[a-f0-9]{32}\.cache',
                 2,
-            ),
-            array(
-                __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
-                '%s/cache_local_relative.xml',
-                null,
-                '\.\./type_include\.xsd',
-                1,
             ),
             array(
                 $remoteUrlAbsolute,
@@ -231,9 +273,36 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         );
     }
 
+    protected function testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    {
+        $cacheDirectory = vfsStream::setup('wsdl');
+        $cacheUrl = vfsStream::url('wsdl');
+
+        $cache = new Cache();
+        $cache->setEnabled(true);
+        $cache->setDirectory($cacheUrl);
+
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )), true, $cache);
+        $r = new \ReflectionClass($wsdlDownloader);
+        $m = $r->getMethod('resolveRemoteIncludes');
+        $m->setAccessible(true);
+
+        $this->assertCount(0, $cacheDirectory->getChildren());
+
+        $cacheFile = sprintf($cacheFile, $cacheUrl);
+        $m->invoke($wsdlDownloader, file_get_contents($source), $cacheFile, $remoteParentUrl);
+        $this->assertCount($nbDownloads, $cacheDirectory->getChildren());
+
+        $this->assertRegExp('#'.sprintf($regexp, preg_quote($cacheUrl, '#')).'#', file_get_contents($cacheFile));
+    }
+
     public function testResolveRelativePathInUrl()
     {
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )));
 
         $r = new \ReflectionClass($wsdlDownloader);
         $m = $r->getMethod('resolveRelativePathInUrl');
