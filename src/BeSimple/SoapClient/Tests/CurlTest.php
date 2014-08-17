@@ -19,6 +19,13 @@ use BeSimple\SoapClient\Curl;
  */
 class CurlTest extends AbstractWebserverTest
 {
+    public static function setUpBeforeClass()
+    {
+        self::skipIfNotPhp54();
+
+        parent::setUpBeforeClass();
+    }
+
     public function testExec()
     {
         $curl = new Curl(array(

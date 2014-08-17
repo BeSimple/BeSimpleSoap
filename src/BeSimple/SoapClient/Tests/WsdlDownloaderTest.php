@@ -34,7 +34,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
      */
     public function testDownloadWithLocalFile($source, $regexp, $nbDownloads)
     {
-        $this->testDownload($source, $regexp, $nbDownloads);
+        $this->download($source, $regexp, $nbDownloads);
     }
 
     /**
@@ -44,7 +44,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         $this->skipIfNotPhp54();
 
-        $this->testDownload($source, $regexp, $nbDownloads);
+        $this->download($source, $regexp, $nbDownloads);
     }
 
     public function provideDownloadLocalFile()
@@ -79,7 +79,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         );
     }
 
-    protected function testDownload($source, $regexp, $nbDownloads)
+    private function download($source, $regexp, $nbDownloads)
     {
         $cacheDirectory = vfsStream::setup('wsdl');
         $cacheUrl = vfsStream::url('wsdl');
@@ -131,7 +131,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
      */
     public function testResolveWsdlIncludesWithLocalFile($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
-        $this->testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+        $this->resolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
     }
 
     /**
@@ -141,7 +141,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         $this->skipIfNotPhp54();
 
-        $this->testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+        $this->resolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
     }
 
     public function provideResolveWsdlIncludesLocalFile()
@@ -187,7 +187,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         );
     }
 
-    protected function testResolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    private function resolveWsdlIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
         $cacheDirectory = vfsStream::setup('wsdl');
         $cacheUrl = vfsStream::url('wsdl');
@@ -217,7 +217,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
      */
     public function testResolveXsdIncludesWithLocalFile($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
-        $this->testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+        $this->resolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
     }
 
     /**
@@ -227,7 +227,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         $this->skipIfNotPhp54();
 
-        $this->testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
+        $this->resolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads);
     }
 
     public function provideResolveXsdIncludesLocalFile()
@@ -273,7 +273,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         );
     }
 
-    protected function testResolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
+    private function resolveXsdIncludes($source, $cacheFile, $remoteParentUrl, $regexp, $nbDownloads)
     {
         $cacheDirectory = vfsStream::setup('wsdl');
         $cacheUrl = vfsStream::url('wsdl');

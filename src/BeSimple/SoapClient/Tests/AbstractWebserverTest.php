@@ -50,8 +50,10 @@ abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        self::$webserver->stop(0);
-        usleep(100000);
+        if (self::$webserver) {
+            self::$webserver->stop(0);
+            usleep(100000);
+        }
     }
 
     protected function skipIfNotPhp54()
