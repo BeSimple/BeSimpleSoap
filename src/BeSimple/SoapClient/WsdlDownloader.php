@@ -75,11 +75,11 @@ class WsdlDownloader
         if ($isRemoteFile || $this->resolveRemoteIncludes) {
             $filename = 'wsdl_'.md5($wsdl).'.cache';
 
-            if (null === $this->cache || !$this->cache->isEnabled()) {
+            if (null !== $this->cache && $this->cache->isEnabled()) {
+                $pathname = $this->cache->getDirectory().DIRECTORY_SEPARATOR.$filename;
+            } else {
                 vfsStream::setup('BeSimpleSoap');
                 $pathname = vfsStream::url('BeSimpleSoap/'.$filename);
-            } else {
-                $pathname = $this->cache->getDirectory().DIRECTORY_SEPARATOR.$filename;
             }
 
             if (!file_exists($pathname) || (filemtime($pathname) + $this->config->getLifetime()) < time()) {
