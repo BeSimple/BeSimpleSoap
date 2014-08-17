@@ -79,7 +79,7 @@ class WsdlDownloader
                 vfsStream::setup('root');
                 $pathname = vfsStream::url('root/'.$filename);
             } else {
-                $pathname = $this->cache->getDirectory().DIRECTORY_SEPARATOR.$cacheFile;
+                $pathname = $this->cache->getDirectory().DIRECTORY_SEPARATOR.$filename;
             }
 
             if (!file_exists($pathname) || (filemtime($pathname) + $this->config->getLifetime()) < time()) {
