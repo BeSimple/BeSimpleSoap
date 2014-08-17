@@ -38,16 +38,16 @@ class CacheTest extends \PHPUnit_Framework_TestCase
         vfsStream::setup('Fixtures');
 
         $dir = vfsStream::url('Fixtures/foo');
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $this->assertFileNotExists($dir);
         $this->assertInstanceOf('BeSimple\SoapCommon\Cache', $cache->setDirectory($dir));
         $this->assertEquals($dir, $cache->getDirectory());
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('foo'));
+        $this->assertFileExists($dir);
 
         $dir = vfsStream::url('Fixtures/bar');
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild('bar'));
+        $this->assertFileNotExists($dir);
         $cache->setDirectory($dir);
         $this->assertEquals($dir, $cache->getDirectory());
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild('bar'));
+        $this->assertFileExists($dir);
     }
 
     public function testLifetime()
