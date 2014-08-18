@@ -28,6 +28,7 @@ class MtomAxisInteropTest extends TestCase
             'base64Binary'      => 'BeSimple\SoapClient\Tests\AxisInterop\Fixtures\base64Binary',
             'AttachmentRequest' => 'BeSimple\SoapClient\Tests\AxisInterop\Fixtures\AttachmentRequest',
         ),
+        'proxy_host' => false,
     );
 
     public function testAttachment()
