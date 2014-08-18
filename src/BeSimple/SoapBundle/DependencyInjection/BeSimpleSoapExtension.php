@@ -98,6 +98,23 @@ class BeSimpleSoapExtension extends Extension
                 }
             }
 
+            $proxy = $options['proxy'];
+            if (false !== $proxy['host']) {
+                if (null !== $proxy['auth']) {
+                    if ('basic' === $proxy['auth']) {
+                        $proxy['auth'] = \CURLAUTH_BASIC;
+                    } elseif ('ntlm' === $proxy['auth']) {
+                        $proxy['auth'] = \CURLAUTH_NTLM;
+                    }
+                }
+
+                $definition->addMethodCall('withProxy', array(
+                    $proxy['host'], $proxy['port'],
+                    $proxy['login'], $proxy['password'],
+                    $proxy['auth']
+                ));
+            }
+
             if (isset($defOptions['cache_type'])) {
                 $defOptions['cache_type'] = $this->getCacheType($defOptions['cache_type']);
             }

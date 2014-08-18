@@ -1,8 +1,8 @@
 Configuration
 =============
 
-Minimal client configuration
-----------------------------
+Client configuration
+--------------------
 
 Configure your first client in your config file:
 
@@ -12,8 +12,20 @@ Configure your first client in your config file:
     be_simple_soap:
         clients:
             DemoApi:
-                wsdl: http://localhost:8086/app_dev.php/ws/DemoApi?wsdl
+                # required
+                wsdl: http://localhost/app_dev.php/ws/DemoApi?wsdl
 
+                # classmap (optional)
+                classmap:
+                    type_name: "Full\Class\Name"
+
+                # proxy (optional)
+                proxy:
+                    host:     proxy.domain.name # required to enable proxy configuration
+                    port:     3128
+                    login:    ~
+                    password: ~
+                    auth:     ~ # can be 'basic' or 'ntlm'
 
 Using client
 ------------

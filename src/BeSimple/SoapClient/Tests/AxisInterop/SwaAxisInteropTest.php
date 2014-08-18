@@ -37,6 +37,7 @@ class SwaAxisInteropTest extends TestCase
             'uploadFile'           => 'BeSimple\SoapClient\Tests\AxisInterop\Fixtures\uploadFile',
             'uploadFileResponse'   => 'BeSimple\SoapClient\Tests\AxisInterop\Fixtures\uploadFileResponse',
         ),
+        'proxy_host' => false,
     );
 
     public function testUploadDownloadText()

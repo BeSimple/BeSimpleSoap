@@ -20,6 +20,7 @@ class MtomServerInteropTest extends TestCase
             'base64Binary'      => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary',
             'AttachmentRequest' => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest',
         ),
+        'proxy_host' => false,
     );
 
     public function testAttachment()

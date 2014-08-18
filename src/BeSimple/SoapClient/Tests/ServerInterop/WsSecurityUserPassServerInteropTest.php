@@ -29,6 +29,7 @@ class WsSecurityUserPassServerInteropTest extends TestCase
             'addBookResponse'        => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBookResponse',
             'BookInformation'        => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\BookInformation',
         ),
+        'proxy_host' => false,
     );
 
     public function testUserPassText()

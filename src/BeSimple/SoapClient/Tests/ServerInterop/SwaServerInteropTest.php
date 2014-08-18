@@ -23,6 +23,7 @@ class SwaServerInteropTest extends TestCase
             'uploadFile'           => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFile',
             'uploadFileResponse'   => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFileResponse',
         ),
+        'proxy_host' => false,
     );
 
     public function testUploadDownloadText()
