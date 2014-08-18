@@ -80,6 +80,7 @@ class Curl
         if (isset($options['connection_timeout'])) {
             curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $options['connection_timeout']);
         }
+
         if (isset($options['proxy_host'])) {
             if (false !== $options['proxy_host']) {
                 $proxyHost = $options['proxy_host'].(isset($options['proxy_port']) ? $options['proxy_port'] : 8080);
@@ -88,10 +89,12 @@ class Curl
             }
 
             curl_setopt($this->ch, CURLOPT_PROXY, $proxyHost);
+
+            if ($proxyHost && isset($options['proxy_user'])) {
+                curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_user'].':'.$options['proxy_pass']);
+            }
         }
-        if (isset($options['proxy_user'])) {
-            curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_user'] . ':' . $options['proxy_password']);
-        }
+
         if (isset($options['login'])) {
             curl_setopt($this->ch, CURLOPT_HTTPAUTH, isset($options['extra_options']['http_auth']) ? $options['extra_options']['http_auth'] : CURLAUTH_ANY);
             curl_setopt($this->ch, CURLOPT_USERPWD, $options['login'].':'.$options['password']);
