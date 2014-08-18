@@ -90,8 +90,8 @@ class Curl
 
             curl_setopt($this->ch, CURLOPT_PROXY, $proxyHost);
 
-            if ($proxyHost && isset($options['proxy_user'])) {
-                curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_user'].':'.$options['proxy_pass']);
+            if (false !== $proxyHost && isset($options['proxy_login'])) {
+                curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_login'].':'.$options['proxy_password']);
             }
         }
 

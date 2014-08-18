@@ -175,19 +175,19 @@ class SoapClientBuilder extends AbstractSoapBuilder
      *
      * @param string $host     Host
      * @param int    $port     Port
-     * @param string $username Username
+     * @param string $login    Login
      * @param string $password Password
      *
      * @return \BeSimple\SoapClient\SoapClientBuilder
      */
-    public function withProxy($host, $port, $user = null, $pass = null)
+    public function withProxy($host, $port, $login = null, $password = null)
     {
         $this->soapOptions['proxy_host'] = $host;
         $this->soapOptions['proxy_port'] = $port;
 
-        if ($user) {
-            $this->soapOptions['proxy_user'] = $user;
-            $this->soapOptions['proxy_pass'] = $pass;
+        if ($login) {
+            $this->soapOptions['proxy_login'] = $login;
+            $this->soapOptions['proxy_password'] = $password;
         }
 
         return $this;

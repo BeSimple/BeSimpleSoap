@@ -95,7 +95,7 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->mergeOptions(array('proxy_host' => 'localhost', 'proxy_port' => 8080)), $builder->getSoapOptions());
 
         $builder->withProxy('127.0.0.1', 8585, 'foo', 'bar');
-        $this->assertEquals($this->mergeOptions(array('proxy_host' => '127.0.0.1', 'proxy_port' => 8585, 'proxy_user' => 'foo', 'proxy_pass' => 'bar')), $builder->getSoapOptions());
+        $this->assertEquals($this->mergeOptions(array('proxy_host' => '127.0.0.1', 'proxy_port' => 8585, 'proxy_login' => 'foo', 'proxy_password' => 'bar')), $builder->getSoapOptions());
     }
 
     public function testCreateWithDefaults()
