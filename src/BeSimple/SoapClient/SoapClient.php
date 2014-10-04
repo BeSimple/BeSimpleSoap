@@ -208,7 +208,15 @@ class SoapClient extends \SoapClient
         $soapResponse = $this->__doRequest2($soapRequest);
 
         // return SOAP response to ext/soap
-        return $soapResponse->getContent();
+		//Fix for php soap multipart message bug
+        $response =  $soapResponse->getContent();
+		if (strpos($response ,'uuid') !== false) {
+			$response = explode("</soap:Envelope>",stristr($response,"<soap:Envelope"));
+			return $response[0] . "</soap:Envelope>";
+		}
+		else{
+			return $response;
+		}
     }
 
     /**
