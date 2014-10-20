@@ -18,6 +18,7 @@ class Param extends Configuration implements TypedElementInterface
     private $value;
     private $phpType;
     private $xmlType;
+    private $isNillable = false;
 
     public function getValue()
     {
@@ -34,6 +35,11 @@ class Param extends Configuration implements TypedElementInterface
         return $this->xmlType;
     }
 
+    public function isNillable()
+    {
+        return $this->isNillable;
+    }
+
     public function setValue($value)
     {
         $this->value = $value;
@@ -47,6 +53,11 @@ class Param extends Configuration implements TypedElementInterface
     public function setXmlType($xmlType)
     {
         $this->xmlType = $xmlType;
+    }
+
+    public function setNillable($isNillable)
+    {
+        $this->isNillable = (bool) $isNillable;
     }
 
     public function getAliasName()

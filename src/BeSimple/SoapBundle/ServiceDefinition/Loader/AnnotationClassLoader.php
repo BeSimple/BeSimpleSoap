@@ -73,14 +73,17 @@ class AnnotationClassLoader extends Loader
         foreach ($class->getMethods() as $method) {
             $serviceHeaders   = $sharedHeaders;
             $serviceArguments = array();
-            $serviceMethod    =
-            $serviceReturn    = null;
+            $serviceMethod    = null;
+            $serviceReturn    = [];
 
             foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
                 if ($annotation instanceof Annotation\Header) {
                     $serviceHeaders[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
                 } elseif ($annotation instanceof Annotation\Param) {
-                    $serviceArguments[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
+                    $serviceArguments[$annotation->getValue()] = [
+                        'type'     => $this->loadType($annotation->getPhpType()),
+                        'nillable' => $annotation->isNillable()
+                    ];
                 } elseif ($annotation instanceof Annotation\Method) {
                     if ($serviceMethod) {
                         throw new \LogicException(sprintf('@Soap\Method defined twice for "%s".', $method->getName()));
@@ -95,7 +98,7 @@ class AnnotationClassLoader extends Loader
                         throw new \LogicException(sprintf('@Soap\Result defined twice for "%s".', $method->getName()));
                     }
 
-                    $serviceReturn = $annotation->getPhpType();
+                    $serviceReturn[$annotation->getValue()] = $annotation->getPhpType();
                 }
             }
 
@@ -108,15 +111,17 @@ class AnnotationClassLoader extends Loader
                     $serviceMethod->addHeader($name, $type);
                 }
 
-                foreach ($serviceArguments as $name => $type) {
-                    $serviceMethod->addInput($name, $type);
+                /*foreach ($serviceArguments as $name => $type) {
+                    $serviceMethod->addInput($name, $type);*/
+                foreach ($serviceArguments as $name => $argument) {
+                    $serviceMethod->addInput($name, $argument['type'], $argument['nillable']);
                 }
 
                 if (!$serviceReturn) {
                     throw new \LogicException(sprintf('@Soap\Result non-existent for "%s".', $method->getName()));
                 }
 
-                $serviceMethod->setOutput($this->loadType($serviceReturn));
+                $serviceMethod->setOutput(key($serviceReturn), $this->loadType(current($serviceReturn)));
 
                 $definition->addMethod($serviceMethod);
             }

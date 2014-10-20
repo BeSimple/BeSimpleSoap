@@ -22,6 +22,9 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+if (!defined('SOAP_LITERAL_WRAPPED')) {
+    define('SOAP_LITERAL_WRAPPED', 3);
+}
 /**
  * BeSimpleSoapExtension.
  *
@@ -35,6 +38,15 @@ class BeSimpleSoapExtension extends Extension
         'rpc-literal'      => 'rpcliteral',
         'document-wrapped' => 'documentwrapped',
     );
+    private $styleMap = [
+        'rpc'      => \SOAP_RPC,
+        'document' => \SOAP_DOCUMENT,
+    ];
+    private $useMap = [
+        'encoded' => \SOAP_ENCODED,
+        'literal' => \SOAP_LITERAL,
+        'wrapped' => \SOAP_LITERAL_WRAPPED,
+    ];
 
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -152,7 +164,10 @@ class BeSimpleSoapExtension extends Extension
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)
     {
-        $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
+        $bindingSuffix     = $this->bindingConfigToServiceSuffixMap[$config['binding']];
+        list($style, $use) = explode('-', $config['binding']);
+        $config['style']   = $this->styleMap[$style];
+        $config['use']     = $this->useMap[$use];
         unset($config['binding']);
 
         $contextId  = 'besimple.soap.context.'.$config['name'];
