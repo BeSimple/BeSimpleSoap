@@ -170,10 +170,17 @@ class SoapWebServiceController extends ContainerAware
     public function __call($method, $arguments)
     {
         if ($this->serviceBinder->isServiceMethod($method)) {
-            // @TODO Add all SoapHeaders in SoapRequest
-            foreach ($this->headers as $name => $value) {
-                if ($this->serviceBinder->isServiceHeader($method, $name)) {
-                    $this->soapRequest->getSoapHeaders()->add($this->serviceBinder->processServiceHeader($method, $name, $value));
+            if (!empty($this->headers)) {
+                $firstHeaderName = array_keys($this->headers)[0];
+                if ((count($this->headers) === 1) && (substr($firstHeaderName, -6) === 'Header')) {
+                    // headers are wrapped and returned as stdClass!
+                    $this->headers = (array) $this->headers[$firstHeaderName];
+                }
+                // @TODO Add all SoapHeaders in SoapRequest
+                foreach ($this->headers as $name => $value) {
+                    if ($this->serviceBinder->isServiceHeader($method, $name)) {
+                        $this->soapRequest->getSoapHeaders()->add($this->serviceBinder->processServiceHeader($method, $name, $value));
+                    }
                 }
             }
             $this->headers = null;
