@@ -105,7 +105,10 @@ class Curl
         }
         if (isset($options['local_cert'])) {
             curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
-            curl_setopt($this->ch, CURLOPT_SSLCERTPASSWD, $options['passphrase']);
+
+            if (isset($options['passphrase'])) {
+                curl_setopt($this->ch, CURLOPT_SSLCERTPASSWD, $options['passphrase']);
+            }
         }
         if (isset($options['ca_info'])) {
             curl_setopt($this->ch, CURLOPT_CAINFO, $options['ca_info']);
