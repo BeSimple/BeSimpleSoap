@@ -32,29 +32,19 @@ class SoapRequest extends CommonSoapRequest
      */
     public static function create($content, $version)
     {
-        $location = self::getCurrentUrl();
-        /*
-         * Work around missing header/php://input access in PHP cli webserver by
-         * setting headers additionally as GET parameters and SOAP request body
-         * explicitly as POST variable
-         */
-        if (php_sapi_name() == "cli-server") {
-            $content = is_null($content) ? $_POST['request'] : $content;
-            $action = $_GET[SoapMessage::SOAP_ACTION_HEADER];
-            $contentType = $_GET[SoapMessage::CONTENT_TYPE_HEADER];
-        } else {
-            $content = is_null($content) ? file_get_contents("php://input") : $content;
-            $action = isset($_SERVER[SoapMessage::SOAP_ACTION_HEADER]) ? $_SERVER[SoapMessage::SOAP_ACTION_HEADER] : null;
-            $contentType = $_SERVER[SoapMessage::CONTENT_TYPE_HEADER];
-        }
-
         $request = new SoapRequest();
+
         // $content is if unmodified from SoapClient not a php string type!
-        $request->setContent((string) $content);
-        $request->setLocation($location);
-        $request->setAction($action);
+        $request->setContent((string) (null === $content ? file_get_contents("php://input") : $content));
+        $request->setLocation(self::getCurrentUrl());
+        $request->setAction(isset($_SERVER[SoapMessage::SOAP_ACTION_HEADER]) ? $_SERVER[SoapMessage::SOAP_ACTION_HEADER] : null);
         $request->setVersion($version);
-        $request->setContentType($contentType);
+
+        if (isset($_SERVER[SoapMessage::CONTENT_TYPE_HEADER])) {
+            $request->setContentType($_SERVER[SoapMessage::CONTENT_TYPE_HEADER]);
+        } elseif (isset($_SERVER[SoapMessage::HTTP_CONTENT_TYPE_HEADER])) {
+            $request->setContentType($_SERVER[SoapMessage::HTTP_CONTENT_TYPE_HEADER]);
+        }
 
         return $request;
     }

@@ -22,10 +22,9 @@
         "psr-0": { "BeSimple\\SoapWsdl": "" }
     },
     "target-dir": "BeSimple/SoapWsdl",
-    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.2-dev"
+            "dev-master": "0.3-dev"
         }
     }
 }

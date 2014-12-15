@@ -23,12 +23,12 @@ if [ ! -f "$DIR/$ZIP_RAMPART" ]; then
     curl -O -s $PATH_RAMPART
 fi
 
-unzip -qq "$DIR/$ZIP_AXIS"
+unzip -o -qq "$DIR/$ZIP_AXIS"
 
 AXIS_DIR=$DIR/axis2-$VERSION_AXIS
 
-unzip -qq -j "$DIR/$ZIP_RAMPART" '*/lib/*.jar' -d $AXIS_DIR/lib
-unzip -qq -j "$DIR/$ZIP_RAMPART" '*/modules/*.mar' -d $AXIS_DIR/repository/modules
+unzip -o -qq -j "$DIR/$ZIP_RAMPART" '*/lib/*.jar' -d $AXIS_DIR/lib
+unzip -o -qq -j "$DIR/$ZIP_RAMPART" '*/modules/*.mar' -d $AXIS_DIR/repository/modules
 
 cp -r $DIR/../AxisInterop/axis_services/* $AXIS_DIR/repository/services
 

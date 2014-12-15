@@ -29,6 +29,13 @@ abstract class SoapMessage
     const CONTENT_TYPE_HEADER = 'CONTENT_TYPE';
 
     /**
+     * $_SERVER key for 'Content-Type' header (with PHP cli-webserver)
+     *
+     * @var string
+     */
+    const HTTP_CONTENT_TYPE_HEADER = 'HTTP_CONTENT_TYPE';
+
+    /**
      * $_SERVER key for 'SOAPAction' header.
      *
      * @var string

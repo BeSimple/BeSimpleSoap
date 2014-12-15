@@ -40,6 +40,7 @@ class WsSecurityUserPassAxisInteropTest extends TestCase
             'addBookResponse'        => 'BeSimple\SoapClient\Tests\AxisInterop\Fixtures\addBookResponse',
             'BookInformation'        => 'BeSimple\SoapClient\Tests\AxisInterop\Fixtures\BookInformation',
         ),
+        'proxy_host' => false,
     );
 
     public function testUserPassText()

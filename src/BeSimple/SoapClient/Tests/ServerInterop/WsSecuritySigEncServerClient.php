@@ -31,7 +31,6 @@ $options = array(
         'addBookResponse'        => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBookResponse',
         'BookInformation'        => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\BookInformation',
     ),
-    'cli_webserver_workaround' => true, // Work around missing header access in PHP cli webserver by setting headers additionally as GET parameters.
 );
 
 $sc = new BeSimpleSoapClient(__DIR__.'/Fixtures/WsSecuritySigEnc.wsdl', $options);

@@ -41,7 +41,9 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         Cache::setDirectory($wsdlCacheUrl);
         $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
 
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )));
         $this->assertCount(0, $wsdlCacheDir->getChildren());
 
         $cacheFileName = $wsdlDownloader->download($source);
@@ -113,7 +115,9 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         Cache::setDirectory($wsdlCacheUrl);
         $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
 
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )));
         $r = new \ReflectionClass($wsdlDownloader);
         $m = $r->getMethod('resolveRemoteIncludes');
         $m->setAccessible(true);
@@ -176,7 +180,9 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         Cache::setDirectory($wsdlCacheUrl);
         $cacheDirForRegExp = preg_quote($wsdlCacheUrl, '#');
 
-        $wsdlDownloader = new WsdlDownloader(new Curl());
+        $wsdlDownloader = new WsdlDownloader(new Curl(array(
+            'proxy_host' => false,
+        )));
         $r = new \ReflectionClass($wsdlDownloader);
         $m = $r->getMethod('resolveRemoteIncludes');
         $m->setAccessible(true);

@@ -86,6 +86,16 @@ You can expose only the properties (public, protected or private) of a complex t
          */
         private $newsletter;
 
+        /**
+         * @Soap\ComplexType("date")
+         */
+        private $createdAt:
+
+        /**
+         * @Soap\ComplexType("datetime")
+         */
+        private $updatedAt;
+
         public function getId()
         {
             return $this->id;
@@ -128,7 +138,27 @@ You can expose only the properties (public, protected or private) of a complex t
 
         public function setNewsletter($newsletter)
         {
-            $this->newletter = (Boolean) $newsletter
+            $this->newletter = (Boolean) $newsletter;
+        }
+
+        public function getCreatedAt()
+        {
+            return $this->createdAt;
+        }
+
+        public function setCreatedAt(\DateTime $createdAt)
+        {
+            $this->createdAt = $createdAt;
+        }
+
+        public function getUpdatedAt()
+        {
+            return this->updatedAt;
+        }
+
+        public function setUpdatedAt(\DateTime $updatedAt)
+        {
+            $this->updatedAt = $updatedAt;
         }
     }
 

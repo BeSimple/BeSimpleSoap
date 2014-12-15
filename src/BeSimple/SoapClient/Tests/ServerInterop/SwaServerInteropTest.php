@@ -23,7 +23,7 @@ class SwaServerInteropTest extends TestCase
             'uploadFile'           => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFile',
             'uploadFileResponse'   => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFileResponse',
         ),
-        'cli_webserver_workaround' => true, // Work around missing header access in PHP cli webserver by setting headers additionally as GET parameters.
+        'proxy_host' => false,
     );
 
     public function testUploadDownloadText()
@@ -42,6 +42,8 @@ class SwaServerInteropTest extends TestCase
         $result = $sc->downloadFile($download);
 
         $this->assertEquals($upload->data, $result->data);
+
+        unlink(__DIR__.'/../ServerInterop/'.$download->name);
     }
 
     public function testUploadDownloadImage()
@@ -60,5 +62,7 @@ class SwaServerInteropTest extends TestCase
         $result = $sc->downloadFile($download);
 
         $this->assertEquals($upload->data, $result->data);
+
+        unlink(__DIR__.'/../ServerInterop/'.$download->name);
     }
 }

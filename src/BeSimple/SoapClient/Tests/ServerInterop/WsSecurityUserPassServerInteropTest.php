@@ -29,7 +29,7 @@ class WsSecurityUserPassServerInteropTest extends TestCase
             'addBookResponse'        => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBookResponse',
             'BookInformation'        => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\BookInformation',
         ),
-        'cli_webserver_workaround' => true, // Work around missing header access in PHP cli webserver by setting headers additionally as GET parameters.
+        'proxy_host' => false,
     );
 
     public function testUserPassText()

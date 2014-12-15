@@ -33,4 +33,8 @@ SoapServer
 SoapClient
 ----------
 
-Coming soon.
+.. toctree::
+    :maxdepth: 1
+    :numbered:
+
+    soapclient/configuration
