@@ -29,8 +29,8 @@
         "zendframework/zend-mime": "2.1.*"
     },
     "replace": {
-        "besimple/soap-bundle": "self.version",
-        "besimple/soap-client": "self.version",
+        "besimple/soap-bundle": "0.5-dev",
+        "besimple/soap-client": "0.5-dev",
         "besimple/soap-common": "self.version",
         "besimple/soap-server": "self.version",
         "besimple/soap-wsdl":   "self.version"
