@@ -26,11 +26,13 @@
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.3",
         "symfony/twig-bundle": "~2.3",
-        "zendframework/zend-mime": "2.1.*"
+        "zendframework/zend-mime": "2.1.*",
+		"besimple/soap-bundle": "0.5-dev",
+        "besimple/soap-client": "0.5-dev",
     },
     "replace": {
-        "besimple/soap-bundle": "0.5-dev",
-        "besimple/soap-client": "0.5-dev",
+        "besimple/soap-bundle": "self.version",
+        "besimple/soap-client": "self.version",
         "besimple/soap-common": "self.version",
         "besimple/soap-server": "self.version",
         "besimple/soap-wsdl":   "self.version"
