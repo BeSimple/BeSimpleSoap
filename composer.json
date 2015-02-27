@@ -28,7 +28,7 @@
         "symfony/twig-bundle": "~2.3",
         "zendframework/zend-mime": "2.1.*",
 		"besimple/soap-bundle": "0.5-dev",
-        "besimple/soap-client": "0.5-dev",
+        "besimple/soap-client": "0.5-dev"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
