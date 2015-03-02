@@ -120,7 +120,6 @@ class BeSimpleSoapExtension extends Extension
             }
 
             if (isset($options['attachment_type'])) {
-                echo "in here";
                 $definition->addMethodCall('withMtomAttachments');
             }
 
