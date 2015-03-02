@@ -106,7 +106,8 @@ class SoapClient extends \SoapClient
             unset($options['extra_options']);
         }
 
-        $wsdlFile = $this->loadWsdl($wsdl, $options);
+		// Doesnt work - causes segmentation fault - PM 27/02/2015
+        //$wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new SoapKernel();
         // set up type converter and mime filter
@@ -117,7 +118,7 @@ class SoapClient extends \SoapClient
         $options['trace'] = false;
         // disable WSDL caching as we handle WSDL caching for remote URLs ourself
         $options['cache_wsdl'] = WSDL_CACHE_NONE;
-        parent::__construct($wsdlFile, $options);
+        parent::__construct($wsdl, $options);
     }
 
 

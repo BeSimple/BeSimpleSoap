@@ -32,13 +32,13 @@ class BeSimpleSoapExtension extends Extension
 {
     // maps config options to service suffix
     private $bindingConfigToServiceSuffixMap = array(
-        'rpc-literal'      => 'rpcliteral',
+        'rpc-literal' => 'rpcliteral',
         'document-wrapped' => 'documentwrapped',
     );
 
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
         $loader->load('request.xml');
 
@@ -46,7 +46,7 @@ class BeSimpleSoapExtension extends Extension
         $loader->load('converters.xml');
         $loader->load('webservice.xml');
 
-        $processor     = new Processor();
+        $processor = new Processor();
         $configuration = new Configuration();
 
         $config = $processor->process($configuration->getConfigTree(), $configs);
@@ -59,7 +59,7 @@ class BeSimpleSoapExtension extends Extension
 
         $container->setParameter('besimple.soap.definition.dumper.options.stylesheet', $config['wsdl_dumper']['stylesheet']);
 
-        foreach($config['services'] as $name => $serviceConfig) {
+        foreach ($config['services'] as $name => $serviceConfig) {
             $serviceConfig['name'] = $name;
             $this->createWebServiceContext($serviceConfig, $container);
         }
@@ -74,7 +74,7 @@ class BeSimpleSoapExtension extends Extension
         $config['type'] = $this->getCacheType($config['type']);
 
         foreach (array('type', 'lifetime', 'limit') as $key) {
-            $container->setParameter('besimple.soap.cache.'.$key, $config[$key]);
+            $container->setParameter('besimple.soap.cache.' . $key, $config[$key]);
         }
     }
 
@@ -89,8 +89,8 @@ class BeSimpleSoapExtension extends Extension
             $definition->replaceArgument(0, $options['wsdl']);
 
             $defOptions = $container
-                    ->getDefinition('besimple.soap.client.builder')
-                    ->getArgument(1);
+                ->getDefinition('besimple.soap.client.builder')
+                ->getArgument(1);
 
             foreach (array('cache_type', 'user_agent') as $key) {
                 if (isset($options[$key])) {
@@ -117,6 +117,18 @@ class BeSimpleSoapExtension extends Extension
 
             if (isset($defOptions['cache_type'])) {
                 $defOptions['cache_type'] = $this->getCacheType($defOptions['cache_type']);
+            }
+
+            if (isset($options['attachment_type'])) {
+                echo "in here";
+                $definition->addMethodCall('withMtomAttachments');
+            }
+
+            $auth = $options['auth'];
+            if (false !== $auth['type']) {
+                $definition->addMethodCall('withBasicAuthentication', array(
+                    $auth['login'], $auth['password']
+                ));
             }
 
             $definition->replaceArgument(1, $defOptions);
@@ -155,8 +167,8 @@ class BeSimpleSoapExtension extends Extension
         $bindingSuffix = $this->bindingConfigToServiceSuffixMap[$config['binding']];
         unset($config['binding']);
 
-        $contextId  = 'besimple.soap.context.'.$config['name'];
-        $definition = new DefinitionDecorator('besimple.soap.context.'.$bindingSuffix);
+        $contextId = 'besimple.soap.context.' . $config['name'];
+        $definition = new DefinitionDecorator('besimple.soap.context.' . $bindingSuffix);
         $container->setDefinition($contextId, $definition);
 
         if (isset($config['cache_type'])) {
@@ -164,7 +176,7 @@ class BeSimpleSoapExtension extends Extension
         }
 
         $options = $container
-            ->getDefinition('besimple.soap.context.'.$bindingSuffix)
+            ->getDefinition('besimple.soap.context.' . $bindingSuffix)
             ->getArgument(2);
 
         $definition->replaceArgument(2, array_merge($options, $config));
