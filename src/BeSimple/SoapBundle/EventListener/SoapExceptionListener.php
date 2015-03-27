@@ -51,7 +51,9 @@ class SoapExceptionListener extends ExceptionListener
         }
 
         $request = $event->getRequest();
-        if ('soap' !== $request->getRequestFormat()) {
+        if (!in_array($request->getRequestFormat(), array('soap', 'xml'))) {
+            return;
+        } elseif ('xml' === $request->getRequestFormat() && '_webservice_call' !== $request->attributes->get('_route')) {
             return;
         }
 
