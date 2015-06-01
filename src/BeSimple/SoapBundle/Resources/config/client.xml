@@ -19,7 +19,9 @@
             <argument type="service" id="besimple.soap.cache" /> <!-- hack to load besimple cache configuration -->
         </service>
 
-        <service id="besimple.soap.client" factory-service="besimple.soap.client.builder" factory-method="build" class="%besimple.soap.client.builder.class%" abstract="true" />
+        <service id="besimple.soap.client" class="%besimple.soap.client.builder.class%" abstract="true">
+            <factory class="besimple.soap.client.builder" method="build" />
+        </service>
 
         <service id="besimple.soap.classmap" class="%besimple.soap.classmap.class%" abstract="true" />
     </services>
