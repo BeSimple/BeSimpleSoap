@@ -77,6 +77,13 @@ class SoapClient extends \SoapClient
     private $lastResponse = '';
 
     /**
+     * Additional cURLs options.
+     *
+     * @var array
+     */
+    private $requestOptions = array();
+
+    /**
      * Soap kernel.
      *
      * @var \BeSimple\SoapClient\SoapKernel
@@ -255,7 +262,20 @@ class SoapClient extends \SoapClient
      */
     protected function filterRequestOptions(SoapRequest $soapRequest)
     {
-        return array();
+        return $this->requestOptions;
+    }
+
+    /**
+     * Sets an additional cURL option for request.
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return void
+     */
+    public function setRequestOption($key, $value)
+    {
+        $this->requestOptions[$key] = $value;
     }
 
     /**
