@@ -214,30 +214,30 @@ class Curl
     protected function getErrorCodeMapping()
     {
         return array(
-            1 => 'Unknown protocol. Only http and https are allowed.', //CURLE_UNSUPPORTED_PROTOCOL
-            3 => 'Unable to parse URL', //CURLE_URL_MALFORMAT
-            5 => 'Could not connect to host', //CURLE_COULDNT_RESOLVE_PROXY
-            6 => 'Could not connect to host', //CURLE_COULDNT_RESOLVE_HOST
-            7 => 'Could not connect to host', //CURLE_COULDNT_CONNECT
-            9 => 'Could not connect to host', //CURLE_REMOTE_ACCESS_DENIED
-            28 => 'Failed Sending HTTP SOAP request', //CURLE_OPERATION_TIMEDOUT
-            35 => 'Could not connect to host', //CURLE_SSL_CONNECT_ERROR
-            41 => 'Can\'t uncompress compressed response', //CURLE_FUNCTION_NOT_FOUND
-            51 => 'Could not connect to host', //CURLE_PEER_FAILED_VERIFICATION
-            52 => 'Error Fetching http body, No Content-Length, connection closed or chunked data', //CURLE_GOT_NOTHING
-            53 => 'SSL support is not available in this build', //CURLE_SSL_ENGINE_NOTFOUND
-            54 => 'SSL support is not available in this build', //CURLE_SSL_ENGINE_SETFAILED
-            55 => 'Failed Sending HTTP SOAP request', //CURLE_SEND_ERROR
-            56 => 'Error Fetching http body, No Content-Length, connection closed or chunked data', //CURLE_RECV_ERROR
-            58 => 'Could not connect to host', //CURLE_SSL_CERTPROBLEM
-            59 => 'Could not connect to host', //CURLE_SSL_CIPHER
-            60 => 'Could not connect to host', //CURLE_SSL_CACERT
-            61 => 'Unknown Content-Encoding', //CURLE_BAD_CONTENT_ENCODING
-            65 => 'Failed Sending HTTP SOAP request', //CURLE_SEND_FAIL_REWIND
-            66 => 'SSL support is not available in this build', //CURLE_SSL_ENGINE_INITFAILED
-            67 => 'Could not connect to host', //CURLE_LOGIN_DENIED
-            77 => 'Could not connect to host', //CURLE_SSL_CACERT_BADFILE
-            80 => 'Error Fetching http body, No Content-Length, connection closed or chunked data', //CURLE_SSL_SHUTDOWN_FAILED
+            1 => 'Unknown protocol. Only http and https are allowed. (CURLE_UNSUPPORTED_PROTOCOL)',
+            3 => 'Unable to parse URL (CURLE_URL_MALFORMAT)',
+            5 => 'Could not connect to host (CURLE_COULDNT_RESOLVE_PROXY)',
+            6 => 'Could not connect to host (CURLE_COULDNT_RESOLVE_HOST)',
+            7 => 'Could not connect to host (CURLE_COULDNT_CONNECT)',
+            9 => 'Could not connect to host (CURLE_REMOTE_ACCESS_DENIED)',
+            28 => 'Failed Sending HTTP SOAP request (CURLE_OPERATION_TIMEDOUT)',
+            35 => 'Could not connect to host (CURLE_SSL_CONNECT_ERROR)',
+            41 => 'Can\'t uncompress compressed response (CURLE_FUNCTION_NOT_FOUND)',
+            51 => 'Could not connect to host (CURLE_PEER_FAILED_VERIFICATION)',
+            52 => 'Error Fetching http body, No Content-Length, connection closed or chunked data (CURLE_GOT_NOTHING)',
+            53 => 'SSL support is not available in this build (CURLE_SSL_ENGINE_NOTFOUND)',
+            54 => 'SSL support is not available in this build (CURLE_SSL_ENGINE_SETFAILED)',
+            55 => 'Failed Sending HTTP SOAP request (CURLE_SEND_ERROR)',
+            56 => 'Error Fetching http body, No Content-Length, connection closed or chunked data (CURLE_RECV_ERROR)',
+            58 => 'Could not connect to host (CURLE_SSL_CERTPROBLEM)',
+            59 => 'Could not connect to host (CURLE_SSL_CIPHER)',
+            60 => 'Could not connect to host (CURLE_SSL_CACERT)',
+            61 => 'Unknown Content-Encoding (CURLE_BAD_CONTENT_ENCODING)',
+            65 => 'Failed Sending HTTP SOAP request (CURLE_SEND_FAIL_REWIND)',
+            66 => 'SSL support is not available in this build (CURLE_SSL_ENGINE_INITFAILED)',
+            67 => 'Could not connect to host (CURLE_LOGIN_DENIED)',
+            77 => 'Could not connect to host (CURLE_SSL_CACERT_BADFILE)',
+            80 => 'Error Fetching http body, No Content-Length, connection closed or chunked data (CURLE_SSL_SHUTDOWN_FAILED)',
         );
     }
 
