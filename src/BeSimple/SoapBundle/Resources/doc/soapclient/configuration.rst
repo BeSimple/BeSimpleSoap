@@ -14,6 +14,11 @@ Configure your first client in your config file:
             DemoApi:
                 # required
                 wsdl: http://localhost/app_dev.php/ws/DemoApi?wsdl
+			# (optional)
+            auth:
+                    type: basic # need to define as basic
+                    login: my_http_auth_username
+                    password: my_http_auth_password
 
                 # classmap (optional)
                 classmap:

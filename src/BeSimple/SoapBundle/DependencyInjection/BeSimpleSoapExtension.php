@@ -97,6 +97,13 @@ class BeSimpleSoapExtension extends Extension
                     $defOptions[$key] = $options[$key];
                 }
             }
+			
+			$auth = $options['auth'];
+			if((false !== $auth['type']) && ($auth['type'] === 'basic')) {
+			$definition->addMethodCall('withBasicAuthentication', array(
+                    $auth['login'], $auth['password']
+                ));
+			}
 
             $proxy = $options['proxy'];
             if (false !== $proxy['host']) {
