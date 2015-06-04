@@ -11,26 +11,48 @@
 namespace BeSimple\SoapBundle\Converter;
 
 use BeSimple\SoapBundle\Soap\SoapRequest;
-use BeSimple\SoapBundle\Soap\SoapResponse;
 use BeSimple\SoapBundle\Util\String;
+use BeSimple\SoapCommon\Converter\RequestAwareInterface;
 use BeSimple\SoapCommon\Converter\TypeConverterInterface;
 
 /**
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class XopIncludeTypeConverter implements TypeConverterInterface
+class XopIncludeTypeConverter implements TypeConverterInterface, RequestAwareInterface
 {
+    /**
+     * @var SoapRequest
+     */
+    protected $request;
+
+    /**
+     * {@inheritdoc}
+     */
+    function setRequest(SoapRequest $request)
+    {
+        $this->request = $request;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTypeNamespace()
     {
         return 'http://www.w3.org/2001/XMLSchema';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTypeName()
     {
         return 'base64Binary';
     }
 
-    public function convertXmlToPhp(SoapRequest $request, $data)
+    /**
+     * {@inheritdoc}
+     */
+    public function convertXmlToPhp($data)
     {
         $doc = new \DOMDocument();
         $doc->loadXML($data);
@@ -43,13 +65,20 @@ class XopIncludeTypeConverter implements TypeConverterInterface
         if (String::startsWith($ref, 'cid:')) {
             $cid = urldecode(substr($ref, 4));
 
-            return $request->getSoapAttachments()->get($cid)->getContent();
+            if (!$this->request) {
+                throw new \InvalidArgumentException('Request is missing');
+            }
+
+            return $this->request->getSoapAttachments()->get($cid)->getContent();
         }
 
         return $data;
     }
 
-    public function convertPhpToXml(SoapResponse $response, $data)
+    /**
+     * {@inheritdoc}
+     */
+    public function convertPhpToXml($data)
     {
         return $data;
     }
