@@ -111,6 +111,10 @@ class WebServiceContext
             if (null !== $this->options['cache_type']) {
                 $this->serverBuilder->withWsdlCache($this->options['cache_type']);
             }
+
+            if (null !== $this->options['encoding']) {
+                $this->serverBuilder->withEncoding($this->options['encoding']);
+            }
         }
 
         return $this->serverBuilder;
