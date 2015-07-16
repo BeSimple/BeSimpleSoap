@@ -199,6 +199,7 @@ class WsdlDownloader
         }
 
         $doc->save($cacheFilePath);
+        chmod($cacheFilePath, 0664);
     }
 
     /**
