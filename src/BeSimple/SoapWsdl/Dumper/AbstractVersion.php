@@ -89,7 +89,7 @@ abstract class AbstractVersion implements VersionInterface
         $operation->setAttribute('name', $method->getName());
 
         $soapOperation = $this->document->createElement($this->soapNs.':operation');
-        $soapOperation->setAttribute('soapAction', $this->namespace.$method->getName());
+        $soapOperation->setAttribute('soapAction', $this->namespace.'/#'.$method->getName());
         $operation->appendChild($soapOperation);
 
         $this->getBindingNode()->appendChild($operation);
@@ -109,8 +109,8 @@ abstract class AbstractVersion implements VersionInterface
         if (!$headers->isEmpty()) {
             foreach ($headers->all() as $part) {
                 $soapHeader = $this->document->createElement($this->soapNs.':header');
-                $soapHeader->setAttribute('part', $part->getName());
                 $soapHeader->setAttribute('message', $this->typeNs.':'.$headers->getName());
+                $soapHeader->setAttribute('part', \SOAP_RPC === $this->style ? $part->getName() : 'parameters');
                 $soapHeader->setAttribute('use', $use);
                 $soapHeader->setAttribute('namespace', $this->namespace);
                 $soapHeader->setAttribute('encodingStyle', $this->getEncodingStyle());

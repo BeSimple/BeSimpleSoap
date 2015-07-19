@@ -34,13 +34,14 @@ class Dumper
     const SOAP12_NS = 'soap12';
     const SOAP12_NS_URI = 'http://schemas.xmlsoap.org/wsdl/soap12/';
 
-    const SOAP_ENC_NS = 'soap-enc';
+    const SOAP_ENC_NS = 'soapenc';
     const SOAP_ENC_URI = 'http://schemas.xmlsoap.org/soap/encoding/';
 
     const XSD_NS = 'xsd';
     const XSD_NS_URI = 'http://www.w3.org/2001/XMLSchema';
 
-    const TYPES_NS = 'tns';
+    const TARGET_NS = 'tns';
+    const TYPES_NS = 'ns';
 
     protected $definition;
     protected $options;
@@ -153,28 +154,30 @@ class Dumper
     protected function addDefinitions()
     {
         $this->domDefinitions = $this->document->createElement('definitions');
+
+        $this->domDefinitions->setAttribute('name', $this->definition->getName());
+        $this->domDefinitions->setAttribute('targetNamespace', $this->definition->getNamespace());
+
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS, static::WSDL_NS_URI);
-        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::TYPES_NS, $this->definition->getNamespace());
+        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::TARGET_NS, $this->definition->getNamespace());
+        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::TYPES_NS, $this->definition->getNamespace().'/types');
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::SOAP_NS, static::SOAP_NS_URI);
-        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::SOAP12_NS, static::SOAP12_NS_URI);
+        //$this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::SOAP12_NS, static::SOAP12_NS_URI);
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::XSD_NS, static::XSD_NS_URI);
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::SOAP_ENC_NS, static::SOAP_ENC_URI);
-        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::WSDL_NS, static::WSDL_NS_URI);
+        //$this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::WSDL_NS, static::WSDL_NS_URI);
 
         foreach ($this->definition->getTypeRepository()->getXmlNamespaces() as $prefix => $uri) {
             $this->domDefinitions->setAttributeNs(static::XML_NS_URI, static::XML_NS.':'.$prefix, $uri);
         }
-
-        $this->domDefinitions->setAttribute('name', $this->definition->getName());
-        $this->domDefinitions->setAttribute('targetNamespace', $this->definition->getNamespace());
 
         $this->document->appendChild($this->domDefinitions);
     }
 
     protected function addMethods()
     {
-        $this->addPortType();
         $this->addComplexTypes();
+        $this->addPortType();
         $this->addMessages($this->definition->getMessages());
 
         foreach ($this->definition->getMethods() as $method) {
@@ -196,19 +199,43 @@ class Dumper
             $messageElement = $this->document->createElement('message');
             $messageElement->setAttribute('name', $message->getName());
 
-            foreach ($message->all() as $part) {
-                $type = $this->definition->getTypeRepository()->getType($part->getType());
+            if ($this->definition->getOption('style') === \SOAP_RPC) {
 
-                $partElement = $this->document->createElement('part');
-                $partElement->setAttribute('name', $part->getName());
+                foreach ($message->all() as $part) {
+                    $type = $this->definition->getTypeRepository()->getType($part->getType());
 
-                if ($type instanceof ComplexType) {
-                    $partElement->setAttribute('type', static::TYPES_NS.':'.$type->getXmlType());
-                } else {
-                    $partElement->setAttribute('type', $type);
+                    $partElement = $this->document->createElement('part');
+                    $partElement->setAttribute('name', $part->getName());
+
+                    if ($type instanceof ComplexType) {
+                        $partElement->setAttribute('type', static::TYPES_NS.':'.$type->getXmlType());
+                    } else {
+                        $partElement->setAttribute('type', $type);
+                    }
+
+                    $messageElement->appendChild($partElement);
                 }
 
+            } else { // \SOAP_DOCUMENT (literal-wrapped)
+
+                $partElement = $this->document->createElement('part');
+                $partElement->setAttribute('name', 'parameters');
+                $partElement->setAttribute('element', static::TYPES_NS.':'.$message->getName());
+
                 $messageElement->appendChild($partElement);
+
+                $paramsComplexType = new ComplexType('array', $message->getName());
+                foreach ($message->all() as $part) {
+                    $paramsComplexType->add($part->getName(), $part->getType(), $part->isNillable());
+                }
+
+                $this->addComplexType($paramsComplexType);
+
+                $paramsElement = $this->document->createElement(static::XSD_NS.':element');
+                $paramsElement->setAttribute('name', $paramsComplexType->getXmlType());
+                $paramsElement->setAttribute('type', static::TYPES_NS.':'.$paramsComplexType->getXmlType());
+
+                $this->domSchema->appendChild($paramsElement);
             }
 
             $this->domDefinitions->appendChild($messageElement);
@@ -220,8 +247,10 @@ class Dumper
         $types = $this->document->createElement('types');
         $this->domDefinitions->appendChild($types);
 
+        $nsTypes         = $this->definition->getNamespace() . '/types';
         $this->domSchema = $this->document->createElement(static::XSD_NS.':schema');
-        $this->domSchema->setAttribute('targetNamespace', $this->definition->getNamespace());
+        $this->domSchema->setAttribute('targetNamespace', $nsTypes);
+        $this->domSchema->setAttribute(static::XML_NS, $nsTypes);
         $types->appendChild($this->domSchema);
 
         foreach ($this->definition->getTypeRepository()->getComplexTypes() as $type) {
@@ -251,6 +280,7 @@ class Dumper
                     $name = $childType->getName();
                 }
 
+                //$element->setAttribute('element', static::TYPES_NS.':'.$name);
                 $element->setAttribute('type', static::TYPES_NS.':'.$name);
             } else {
                 $element->setAttribute('type', $childType);
@@ -290,7 +320,8 @@ class Dumper
             }
 
             $node = $this->document->createElement($type);
-            $node->setAttribute('message', static::TYPES_NS.':'.$message->getName());
+            $node->setAttribute('message', static::TARGET_NS.':'.$message->getName());
+            //$node->setAttribute('name', $message->getName());
 
             $operation->appendChild($node);
         }
@@ -311,11 +342,11 @@ class Dumper
 
     protected function getVersion($version)
     {
-        if (\SOAP_1_2 === $version) {
+        /*if (\SOAP_1_2 === $version) {
             return $this->getVersion12();
-        }
+        }*/
 
-        return $this->getVersion11();
+        return (\SOAP_1_2 === $version)? $this->getVersion12() : $this->getVersion11();
     }
 
     protected function getVersion11()
@@ -323,10 +354,10 @@ class Dumper
         if (!$this->version11) {
             $this->version11 = new $this->options['version11_class'](
                 static::SOAP_NS,
-                static::TYPES_NS,
+                static::TARGET_NS,
                 $this->options['version11_name'],
                 $this->definition->getNamespace(),
-                static::TYPES_NS.':'.$this->definition->getName().'PortType',
+                static::TARGET_NS.':'.$this->definition->getName().'PortType',
                 $this->definition->getOption('location'),
                 $this->definition->getOption('style')
             );
@@ -340,10 +371,10 @@ class Dumper
         if (!$this->version12) {
             $this->version12 = new $this->options['version12_class'](
                 static::SOAP12_NS,
-                static::TYPES_NS,
+                static::TARGET_NS,
                 $this->options['version12_name'],
                 $this->definition->getNamespace(),
-                static::TYPES_NS.':'.$this->definition->getName().'PortType',
+                static::TARGET_NS.':'.$this->definition->getName().'PortType',
                 $this->definition->getOption('location'),
                 $this->definition->getOption('style')
             );
