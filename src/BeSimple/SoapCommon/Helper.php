@@ -144,7 +144,7 @@ class Helper
     /**
      * Describing Media Content of Binary Data in XML namespace prefix.
      */
-    const PFX_XMLMIME = 'xmlmime';
+    const PFX_XMLMIME = 'xmime';
 
     /**
      * XML Schema namespace prefix.
