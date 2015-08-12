@@ -83,7 +83,7 @@ class Curl
 
         if (isset($options['proxy_host'])) {
             if (false !== $options['proxy_host']) {
-                $proxyHost = $options['proxy_host'].(isset($options['proxy_port']) ? $options['proxy_port'] : 8080);
+                $proxyHost = $options['proxy_host'].':'.(isset($options['proxy_port']) ? $options['proxy_port'] : 8080);
             } else {
                 $proxyHost = false;
             }
