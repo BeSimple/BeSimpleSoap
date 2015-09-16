@@ -26,7 +26,7 @@
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.6",
         "symfony/twig-bundle": "~2.6",
-        "zendframework/zend-mime": "2.1.*"
+        "zendframework/zend-mime": "~2.1"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
