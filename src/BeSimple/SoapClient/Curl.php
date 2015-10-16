@@ -59,6 +59,9 @@ class Curl
         if (!isset($options['user_agent'])) {
             $options['user_agent'] = self::USER_AGENT;
         }
+        if (!isset($options['timeout']) {
+            $options['timeout'] = ini_get('default_socket_timeout');
+        }
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
 
         // make http request
@@ -72,6 +75,7 @@ class Curl
             CURLOPT_HEADER => true,
             CURLOPT_USERAGENT => $options['user_agent'],
             CURLINFO_HEADER_OUT => true,
+            CURLOPT_TIMEOUT => $options['timeout'],
         );
         curl_setopt_array($this->ch, $curlOptions);
         if (isset($options['compression']) && !($options['compression'] & SOAP_COMPRESSION_ACCEPT)) {
