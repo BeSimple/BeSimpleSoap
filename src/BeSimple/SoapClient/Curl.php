@@ -75,7 +75,6 @@ class Curl
             CURLOPT_HEADER => true,
             CURLOPT_USERAGENT => $options['user_agent'],
             CURLINFO_HEADER_OUT => true,
-            CURLOPT_TIMEOUT => $options['timeout'],
         );
         curl_setopt_array($this->ch, $curlOptions);
         if (isset($options['compression']) && !($options['compression'] & SOAP_COMPRESSION_ACCEPT)) {
@@ -83,6 +82,9 @@ class Curl
         }
         if (isset($options['connection_timeout'])) {
             curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $options['connection_timeout']);
+        }
+        if (!empty($options['timeout'])) {
+             curl_setopt($this->ch, CURLOPT_TIMEOUT, $options['timeout']);
         }
 
         if (isset($options['proxy_host'])) {
