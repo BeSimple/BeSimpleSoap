@@ -59,6 +59,9 @@ class Curl
         if (!isset($options['user_agent'])) {
             $options['user_agent'] = self::USER_AGENT;
         }
+        if (!isset($options['timeout']) {
+            $options['timeout'] = ini_get('default_socket_timeout');
+        }
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
 
         // make http request
@@ -79,6 +82,9 @@ class Curl
         }
         if (isset($options['connection_timeout'])) {
             curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $options['connection_timeout']);
+        }
+        if (!empty($options['timeout'])) {
+             curl_setopt($this->ch, CURLOPT_TIMEOUT, $options['timeout']);
         }
 
         if (isset($options['proxy_host'])) {
