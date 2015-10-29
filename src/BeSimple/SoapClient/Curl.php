@@ -59,13 +59,17 @@ class Curl
         if (!isset($options['user_agent'])) {
             $options['user_agent'] = self::USER_AGENT;
         }
+        // set the default ssl peer verification
+        if (!isset($options['verify_peer'])) {
+            $options['verify_peer'] = (version_compare(PHP_VERSION, '5.6.0') >= 0);
+        }
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
 
         // make http request
         $this->ch = curl_init();
         $curlOptions = array(
             CURLOPT_ENCODING => '',
-            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYPEER =>  $options['verify_peer'],
             CURLOPT_FAILONERROR => false,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
