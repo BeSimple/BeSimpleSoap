@@ -1,5 +1,5 @@
 {
-    "name": "cybermo-besimple/soap-bundle",
+    "name": "besimple/soap-bundle",
     "type": "symfony-bundle",
     "description": "Build and consume SOAP and WSDL based web services with Symfony2",
     "keywords": [ "soap", "soap-bundle" ],
