@@ -1,5 +1,5 @@
 {
-    "name": "cybermo-besimple/soap-server",
+    "name": "besimple/soap-server",
     "type": "library",
     "description": "Build and consume SOAP Server based web services",
     "keywords": [ "soap", "soap-server" ],
