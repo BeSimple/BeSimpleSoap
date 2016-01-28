@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * BeSimpleSoapExtension.
@@ -80,7 +81,11 @@ class BeSimpleSoapExtension extends Extension
 
     private function registerClientConfiguration(array $config, ContainerBuilder $container, XmlFileLoader $loader)
     {
-        $loader->load('client.xml');
+        if (3 === Kernel::MAJOR_VERSION) {
+            $loader->load('client3.xml');
+        } else {
+            $loader->load('client.xml');
+        }
 
         foreach ($config as $client => $options) {
             $definition = new DefinitionDecorator('besimple.soap.client.builder');
@@ -147,7 +152,14 @@ class BeSimpleSoapExtension extends Extension
         $definition = new DefinitionDecorator('besimple.soap.client');
         $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
 
-        $definition->setFactoryService(sprintf('besimple.soap.client.builder.%s', $client));
+        if (3 === Kernel::MAJOR_VERSION) {
+            $definition->setFactory(array(
+                new Reference(sprintf('besimple.soap.client.builder.%s', $client)),
+                'build'
+            ));
+        } else {
+            $definition->setFactoryService(sprintf('besimple.soap.client.builder.%s', $client));
+        }
     }
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)
