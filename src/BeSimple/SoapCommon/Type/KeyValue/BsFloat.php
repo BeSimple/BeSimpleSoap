@@ -5,10 +5,10 @@ namespace BeSimple\SoapCommon\Type\KeyValue;
 use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
 use BeSimple\SoapCommon\Type\AbstractKeyValue;
 
-class Boolean extends AbstractKeyValue
+class BsFloat extends AbstractKeyValue
 {
     /**
-     * @Soap\ComplexType("boolean")
+     * @Soap\ComplexType("float")
      */
     protected $value;
 }
