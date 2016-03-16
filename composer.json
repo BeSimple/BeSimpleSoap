@@ -1,5 +1,5 @@
 {
-    "name": "besimple/soap",
+    "name": "smartbox/besimple/soap",
     "type": "library",
     "description": "Build and consume SOAP and WSDL based web services",
     "keywords": ["soap"],
@@ -42,7 +42,7 @@
         "symfony/process": "~2.3"
     },
     "autoload": {
-        "psr-0": { "BeSimple\\": "src/" }
+        "psr-0": { "Smartbox\\BeSimple\\": "src/" }
     },
     "extra": {
         "branch-alias": {
