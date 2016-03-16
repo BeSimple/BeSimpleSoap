@@ -31,21 +31,21 @@ class Curl
      *
      * @var resource
      */
-    private $ch;
+    protected $ch;
 
     /**
      * Maximum number of location headers to follow.
      *
      * @var int
      */
-    private $followLocationMaxRedirects;
+    protected $followLocationMaxRedirects;
 
     /**
      * Request response data.
      *
      * @var string
      */
-    private $response;
+    protected $response;
 
     /**
      * Constructor.
@@ -123,6 +123,10 @@ class Curl
         curl_close($this->ch);
     }
 
+    public function setOption($curlOption, $curlOptionValue){
+        curl_setopt($this->ch,$curlOption,$curlOptionValue);
+    }
+
     /**
      * Execute HTTP request.
      * Returns true if request was successfull.
@@ -164,7 +168,7 @@ class Curl
      *
      * @return mixed
      */
-    private function execManualRedirect($redirects = 0)
+    protected function execManualRedirect($redirects = 0)
     {
         if ($redirects > $this->followLocationMaxRedirects) {
 
@@ -252,7 +256,7 @@ class Curl
         $errorNumber = curl_errno($this->ch);
         if (isset($errorCodeMapping[$errorNumber])) {
 
-            return $errorCodeMapping[$errorNumber];
+            return $errorCodeMapping[$errorNumber].': '.curl_error($this->ch);
         }
 
         return curl_error($this->ch);
