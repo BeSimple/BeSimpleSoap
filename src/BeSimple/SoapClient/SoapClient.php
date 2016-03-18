@@ -53,28 +53,28 @@ class SoapClient extends \SoapClient
      *
      * @var string
      */
-    private $lastRequestHeaders = '';
+    protected $lastRequestHeaders = '';
 
     /**
      * Last request.
      *
      * @var string
      */
-    private $lastRequest = '';
+    protected $lastRequest = '';
 
     /**
      * Last response headers.
      *
      * @var string
      */
-    private $lastResponseHeaders = '';
+    protected $lastResponseHeaders = '';
 
     /**
      * Last response.
      *
      * @var string
      */
-    private $lastResponse = '';
+    protected $lastResponse = '';
 
     /**
      * Soap kernel.
@@ -128,7 +128,7 @@ class SoapClient extends \SoapClient
      *
      * @return SoapResponse
      */
-    private function __doHttpRequest(SoapRequest $soapRequest)
+    protected function __doHttpRequest(SoapRequest $soapRequest)
     {
         // HTTP headers
         $soapVersion = $soapRequest->getVersion();
@@ -161,7 +161,11 @@ class SoapClient extends \SoapClient
 
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
-            $this->lastRequestHeaders = $this->curl->getRequestHeaders();
+            $this->lastRequestHeaders .= "POST ".$soapRequest->getLocation()."\n";
+            $this->lastRequestHeaders .= "SOAPAction: ".$soapRequest->getAction()."\n";
+            $this->lastRequestHeaders .= "SOAPVersion: ".$soapRequest->getVersion()."\n";
+            $this->lastRequestHeaders .= "Content-Type: ".$soapRequest->getContentType()."\n";
+            $this->lastRequestHeaders .= $this->curl->getRequestHeaders();
             $this->lastRequest = $soapRequest->getContent();
         }
         // in case of an error while making the http request throw a soapFault
@@ -315,7 +319,7 @@ class SoapClient extends \SoapClient
     *
     * @return void
     */
-    private function configureMime(array &$options)
+    protected function configureMime(array &$options)
     {
         if (isset($options['attachment_type']) && Helper::ATTACHMENTS_TYPE_BASE64 !== $options['attachment_type']) {
             // register mime filter in SoapKernel
@@ -379,5 +383,15 @@ class SoapClient extends \SoapClient
         }
 
         return $cacheFileName;
+    }
+
+    /**
+     * @param $value
+     */
+    public function setExecutionTimeout($value){
+        if(!is_numeric($value)){
+            throw new \InvalidArgumentException("Expected integer as an input");
+        }
+        $this->curl->setOption(CURLOPT_TIMEOUT,$value);
     }
 }
