@@ -61,6 +61,8 @@ class Curl
         }
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
 
+        $headers = [];
+
         // make http request
         $this->ch = curl_init();
         $curlOptions = array(
@@ -100,8 +102,18 @@ class Curl
         }
 
         if (isset($options['login'])) {
+            $curlUserPwd = $options['login'].':'.$options['password'];
             curl_setopt($this->ch, CURLOPT_HTTPAUTH, isset($options['extra_options']['http_auth']) ? $options['extra_options']['http_auth'] : CURLAUTH_ANY);
-            curl_setopt($this->ch, CURLOPT_USERPWD, $options['login'].':'.$options['password']);
+            curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
+
+            // use preemptive authentication
+            if (
+                isset($options['preemptive_auth']) &&
+                true === $options['preemptive_auth']
+            ) {
+                $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
+            }
+
         }
         if (isset($options['local_cert'])) {
             curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
@@ -112,6 +124,10 @@ class Curl
         }
         if (isset($options['ca_path'])) {
             curl_setopt($this->ch, CURLOPT_CAPATH, $options['ca_path']);
+        }
+
+        if (!empty($headers)) {
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
         }
     }
 
