@@ -1,3 +1,5 @@
+## This project is a continuation from @BeSimple/BeSimpleSoap because it was discontinued.
+
 # BeSimpleSoap
 
 Build SOAP and WSDL based web services
