@@ -1,5 +1,5 @@
 {
-    "name": "besimple/soap",
+    "name": "vox-tecnologia/besimplesoap",
     "type": "library",
     "description": "Build and consume SOAP and WSDL based web services",
     "keywords": ["soap"],
