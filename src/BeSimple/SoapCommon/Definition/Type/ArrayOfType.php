@@ -17,7 +17,7 @@ namespace BeSimple\SoapCommon\Definition\Type;
  */
 class ArrayOfType extends ComplexType
 {
-    public function __construct($phpType, $arrayOf, $xmlTypeOf)
+    public function __construct($phpType, $arrayOf, $xmlTypeOf, $nillable = null, $minOccurs = null, $maxOccurs = null, $pattern = null)
     {
         if ($arrayOf instanceof TypeInterface) {
             $arrayOf = $arrayOf->getPhpType();
@@ -25,6 +25,6 @@ class ArrayOfType extends ComplexType
 
         parent::__construct($phpType, 'ArrayOf'.ucfirst($xmlTypeOf ?: $arrayOf));
 
-        $this->add('item', $arrayOf);
+        $this->add('item', $arrayOf, $nillable, $minOccurs, $maxOccurs, $pattern);
     }
 }

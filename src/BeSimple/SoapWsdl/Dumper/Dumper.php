@@ -14,6 +14,7 @@ namespace BeSimple\SoapWsdl\Dumper;
 
 use BeSimple\SoapCommon\Definition\Definition;
 use BeSimple\SoapCommon\Definition\Method;
+use BeSimple\SoapCommon\Definition\Part;
 use BeSimple\SoapCommon\Definition\Type\ArrayOfType;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 
@@ -256,14 +257,7 @@ class Dumper
                 $element->setAttribute('type', $childType);
             }
 
-            if ($child->isNillable()) {
-                $element->setAttribute('nillable', 'true');
-            }
-
-            if ($type instanceof ArrayOfType) {
-                $element->setAttribute('minOccurs', 0);
-                $element->setAttribute('maxOccurs', 'unbounded');
-            }
+            $this->setAttributes($child, $element, $type);
 
             $all->appendChild($element);
         }
@@ -350,5 +344,28 @@ class Dumper
         }
 
         return $this->version12;
+    }
+
+    private function setAttributes(Part $child, \DOMElement $element, $type)
+    {
+        if ($child->isNillable()) {
+            $element->setAttribute('nillable', 'true');
+        }
+        if (null !== $child->getMinOccurs() || $type instanceof ArrayOfType) {
+            if ($child->getMaxOccurs() < $child->getMinOccurs()) {
+                throw new \InvalidArgumentException('maxOccurs must not be less than minOccurs.');
+            }
+            $element->setAttribute('minOccurs', (int) $child->getMinOccurs());
+        }
+        if (null !== $child->getMaxOccurs() || $type instanceof ArrayOfType) {
+            if ($child->getMaxOccurs() < $child->getMinOccurs()) {
+                throw new \InvalidArgumentException('maxOccurs must not be less than minOccurs.');
+            }
+            $element->setAttribute('maxOccurs', (int) $child->getMaxOccurs());
+        }
+
+        if ($child->getPattern()) {
+            $element->setAttribute('pattern', $child->getPattern());
+        }
     }
 }

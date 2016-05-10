@@ -140,13 +140,13 @@ class AnnotationClassLoader extends Loader
         }
     }
 
-    private function loadType($phpType)
+    private function loadType($phpType, $property = null)
     {
         if (false !== $arrayOf = $this->typeRepository->getArrayOf($phpType)) {
             $this->loadType($arrayOf);
         }
 
-        if (!$this->typeRepository->hasType($phpType)) {
+        if (!$this->typeRepository->hasType($phpType, $property)) {
             $complexTypeResolver = $this->resolve($phpType, 'annotation_complextype');
             if (!$complexTypeResolver) {
                 throw new \Exception();
@@ -155,7 +155,14 @@ class AnnotationClassLoader extends Loader
             $loaded = $complexTypeResolver->load($phpType);
             $complexType = new ComplexType($phpType, isset($loaded['alias']) ? $loaded['alias'] : $phpType);
             foreach ($loaded['properties'] as $name => $property) {
-                $complexType->add($name, $this->loadType($property->getValue()), $property->isNillable());
+                $complexType->add(
+                    $name,
+                    $this->loadType($property->getValue(), $property),
+                    $property->isNillable(),
+                    $property->getMinOccurs(),
+                    $property->getMaxOccurs(),
+                    $property->getPattern()
+                );
             }
 
             $this->typeRepository->addComplexType($complexType);

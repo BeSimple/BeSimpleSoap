@@ -80,7 +80,7 @@ class TypeRepository
         $this->addClassmap($type->getXmlType(), $phpType);
     }
 
-    public function hasType($type)
+    public function hasType($type, $property = null)
     {
         if ($type instanceof TypeInterface) {
             $phpType = $type->getPhpType();
@@ -100,7 +100,20 @@ class TypeRepository
                     $xmlTypeOf = $arrayOfType->getXmlType();
                 }
 
-                $arrayType = new ArrayOfType($type, $arrayOf, $xmlTypeOf);
+                $minOccurs = $maxOccurs = $nillable = null;
+                if ($property) {
+                    $nillable = $property->isNillable();
+                    $minOccurs = $property->getMinOccurs();
+                    $maxOccurs = $property->getMaxOccurs();
+                }
+                $arrayType = new ArrayOfType(
+                    $type,
+                    $arrayOf,
+                    $xmlTypeOf,
+                    $nillable,
+                    $minOccurs,
+                    $maxOccurs
+                );
                 $this->addType($type, $arrayType);
 
                 return true;

@@ -20,12 +20,24 @@ class Part
     protected $name;
     protected $type;
     protected $nillable;
+    protected $minOccurs = null;
+    protected $maxOccurs = null;
+    protected $pattern = '';
 
-    public function __construct($name, $type, $nillable = false)
-    {
+    public function __construct(
+        $name,
+        $type,
+        $nillable = false,
+        $minOccurs = null,
+        $maxOccurs = null,
+        $pattern = null
+    ) {
         $this->name = $name;
         $this->type = $type;
         $this->setNillable($nillable);
+        $this->setMinOccurs($minOccurs);
+        $this->setMaxOccurs($maxOccurs);
+        $this->setPattern($pattern);
     }
 
     public function getName()
@@ -52,4 +64,35 @@ class Part
     {
         $this->nillable = (boolean) $nillable;
     }
+
+    public function getMinOccurs()
+    {
+        return $this->minOccurs;
+    }
+
+    public function setMinOccurs($minOccurs)
+    {
+        $this->minOccurs = $minOccurs;
+    }
+
+    public function getMaxOccurs()
+    {
+        return $this->maxOccurs;
+    }
+
+    public function setMaxOccurs($maxOccurs)
+    {
+        $this->maxOccurs = $maxOccurs;
+    }
+
+    public function getPattern()
+    {
+        return $this->pattern;
+    }
+
+    public function setPattern($pattern)
+    {
+        $this->pattern = $pattern;
+    }
+
 }

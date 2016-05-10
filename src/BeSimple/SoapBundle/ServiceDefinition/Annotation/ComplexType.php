@@ -18,6 +18,9 @@ class ComplexType extends Configuration
     private $name;
     private $value;
     private $isNillable = false;
+    private $minOccurs = null;
+    private $maxOccurs = null;
+    private $pattern = '';
 
     public function getName()
     {
@@ -53,4 +56,36 @@ class ComplexType extends Configuration
     {
         return 'complextype';
     }
+
+    public function getMinOccurs()
+    {
+        return $this->minOccurs;
+    }
+
+    public function setMinOccurs($minOccurs)
+    {
+        $this->minOccurs = $minOccurs;
+    }
+
+    public function getMaxOccurs()
+    {
+        return $this->maxOccurs;
+    }
+
+    public function setMaxOccurs($maxOccurs)
+    {
+        $this->maxOccurs = $maxOccurs;
+    }
+
+    public function getPattern()
+    {
+        return $this->pattern;
+    }
+
+    public function setPattern($pattern)
+    {
+        $this->pattern = $pattern;
+    }
+
+
 }
