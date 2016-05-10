@@ -1,4 +1,4 @@
-## This project is a continuation from @BeSimple/BeSimpleSoap because it was discontinued.
+## This project is a continuation from @BeSimple/BeSimpleSoap because it was discontinued / no support.
 
 # BeSimpleSoap
 
