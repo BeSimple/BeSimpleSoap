@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/vox-tecnologia/BeSimpleSoap.svg?branch=master)](https://travis-ci.org/vox-tecnologia/BeSimpleSoap)
 ## This project is a continuation from @BeSimple/BeSimpleSoap because it was discontinued / no support.
 
 # BeSimpleSoap
