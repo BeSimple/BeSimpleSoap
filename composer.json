@@ -1,7 +1,7 @@
 {
     "name": "vox-tecnologia/besimplesoap",
     "type": "library",
-    "description": "Build and consume SOAP and WSDL based web services",
+    "description": "Forked project BeSimple/Soap with added support for WSDL document/literal-wrapped, and more small things",
     "keywords": ["soap"],
     "homepage": "http://besim.pl",
     "license": "MIT",
@@ -20,20 +20,13 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.4.0",
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.6",
         "symfony/twig-bundle": "~2.6",
         "zendframework/zend-mime": "2.1.*"
-    },
-    "replace": {
-        "besimple/soap-bundle": "self.version",
-        "besimple/soap-client": "self.version",
-        "besimple/soap-common": "self.version",
-        "besimple/soap-server": "self.version",
-        "besimple/soap-wsdl":   "self.version"
     },
     "require-dev": {
         "ext-mcrypt": "*",
