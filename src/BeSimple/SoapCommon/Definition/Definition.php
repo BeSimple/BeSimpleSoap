@@ -114,6 +114,7 @@ class Definition
             $messages[] = $method->getHeaders();
             $messages[] = $method->getInput();
             $messages[] = $method->getOutput();
+            $messages[] = $method->getFault();
         }
 
         return $messages;

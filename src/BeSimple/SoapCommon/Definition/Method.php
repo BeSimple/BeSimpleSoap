@@ -96,4 +96,9 @@ class Method
     {
         return $this->fault;
     }
+
+    public function setFault($name, $type)
+    {
+        $this->fault->add($name, $type);
+    }
 }

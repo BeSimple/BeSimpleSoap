@@ -315,7 +315,7 @@ class Dumper
 
             $node = $this->document->createElement($type);
             $node->setAttribute('message', static::TARGET_NS.':'.$message->getName());
-            //$node->setAttribute('name', $message->getName());
+            $node->setAttribute('name', $message->getName());
 
             $operation->appendChild($node);
         }
@@ -377,19 +377,25 @@ class Dumper
         return $this->version12;
     }
 
+    /**
+     * @author Ayrton Ricardo<ayrton@voxtecnologia.com.br>
+     * @param Part $child
+     * @param \DOMElement $element
+     * @param $type
+     */
     private function setAttributes(Part $child, \DOMElement $element, $type)
     {
         if ($child->isNillable()) {
             $element->setAttribute('nillable', 'true');
         }
         if (null !== $child->getMinOccurs() || $type instanceof ArrayOfType) {
-            if ($child->getMaxOccurs() < $child->getMinOccurs()) {
+            if ((int) $child->getMaxOccurs() < (int) $child->getMinOccurs()) {
                 throw new \InvalidArgumentException('maxOccurs must not be less than minOccurs.');
             }
             $element->setAttribute('minOccurs', (int) $child->getMinOccurs());
         }
         if (null !== $child->getMaxOccurs() || $type instanceof ArrayOfType) {
-            if ($child->getMaxOccurs() < $child->getMinOccurs()) {
+            if ((int) $child->getMaxOccurs() < (int) $child->getMinOccurs()) {
                 throw new \InvalidArgumentException('maxOccurs must not be less than minOccurs.');
             }
             $element->setAttribute('maxOccurs', (int) $child->getMaxOccurs());

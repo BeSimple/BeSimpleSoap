@@ -75,6 +75,7 @@ class AnnotationClassLoader extends Loader
             $serviceArguments = array();
             $serviceMethod    = null;
             $serviceReturn    = [];
+            $serviceFault     = [];
 
             foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
                 if ($annotation instanceof Annotation\Header) {
@@ -99,6 +100,12 @@ class AnnotationClassLoader extends Loader
                     }
 
                     $serviceReturn[$annotation->getValue()] = $annotation->getPhpType();
+                } elseif ($annotation instanceof Annotation\Fault) {
+                    if ($serviceFault) {
+                        throw new \LogicException(sprintf('@Soap\Result defined twice for "%s".', $method->getName()));
+                    }
+
+                    $serviceFault[$annotation->getValue()] = $annotation->getPhpType();
                 }
             }
 
@@ -122,6 +129,7 @@ class AnnotationClassLoader extends Loader
                 }
 
                 $serviceMethod->setOutput(key($serviceReturn), $this->loadType(current($serviceReturn)));
+                $serviceMethod->setFault(key($serviceFault), $this->loadType(current($serviceFault)));
 
                 $definition->addMethod($serviceMethod);
             }
