@@ -47,10 +47,10 @@ abstract class SoapMessage
      *
      * @var array(string=>string)
      */
-    static protected $versionToContentTypeMap = array(
+    static protected $versionToContentTypeMap = [
         SOAP_1_1 => 'text/xml; charset=utf-8',
-        SOAP_1_2 => 'application/soap+xml; charset=utf-8'
-    );
+        SOAP_1_2 => 'application/soap+xml; charset=utf-8',
+    ];
 
     /**
      * SOAP action.
@@ -64,7 +64,7 @@ abstract class SoapMessage
      *
      * @var array(\BeSimple\SoapCommon\Mime\Part)
      */
-    protected $attachments = array();
+    protected $attachments = [];
 
     /**
      * Message content (MIME Message or SOAP Envelope).
@@ -102,16 +102,16 @@ abstract class SoapMessage
     protected $version;
 
     /**
-    * Get content type for given SOAP version.
-    *
-    * @param string $version SOAP version constant SOAP_1_1|SOAP_1_2
-    *
-    * @return string
-    * @throws \InvalidArgumentException
-    */
+     * Get content type for given SOAP version.
+     *
+     * @param string $version SOAP version constant SOAP_1_1|SOAP_1_2
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
     public static function getContentTypeForVersion($version)
     {
-        if (!in_array($version, array(SOAP_1_1, SOAP_1_2))) {
+        if (!in_array($version, [SOAP_1_1, SOAP_1_2])) {
             throw new \InvalidArgumentException("The 'version' argument has to be either 'SOAP_1_1' or 'SOAP_1_2'!");
         }
 
@@ -169,6 +169,7 @@ abstract class SoapMessage
             $this->content = $this->contentDomDocument->saveXML();
             $this->contentDomDocument = null;
         }
+
         return $this->content;
     }
 
@@ -194,7 +195,7 @@ abstract class SoapMessage
     {
         if (null === $this->contentDomDocument) {
             $this->contentDomDocument = new \DOMDocument();
-            $this->contentDomDocument->loadXML($this->content);
+            $this->content && $this->contentDomDocument->loadXML($this->content);
         }
 
         return $this->contentDomDocument;
