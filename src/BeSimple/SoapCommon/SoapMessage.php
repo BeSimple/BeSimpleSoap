@@ -182,7 +182,7 @@ abstract class SoapMessage
     {
         $this->content = $content;
         if (null !== $this->contentDomDocument) {
-            $this->contentDomDocument->loadXML($this->content);
+            $this->content && $this->contentDomDocument->loadXML($this->content);
         }
     }
 
