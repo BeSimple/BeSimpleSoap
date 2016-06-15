@@ -108,7 +108,9 @@ class Parser
                         }
                         $multipart->addPart($currentPart, $isMain);
                         $content = '';
-                    }
+                    } else {
+                        $content .= $line . "\r\n";                        
+                    } 
                 } else {
                     if ($hitFirstBoundary === false) {
                         if (trim($line) != '') {

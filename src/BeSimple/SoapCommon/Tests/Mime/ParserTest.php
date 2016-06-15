@@ -124,6 +124,17 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $mp = Parser::parseMimeMessage($mimeMessage, $headers);
         $this->assertsForWsiMtomRequest($mp);
     }
+    
+    public function testParserWithHContentHyphens() {
+        $filename = dirname(__DIR__).DIRECTORY_SEPARATOR.'Fixtures/WS-I-MTOM-response-hyphen.txt';
+        $mimeMessage = file_get_contents($filename);
+
+        $mp = Parser::parseMimeMessage($mimeMessage);
+
+        $p1 = $mp->getPart('http://tempuri.org/1/632618206527087310');
+        $this->assertInstanceOf('BeSimple\SoapCommon\Mime\Part', $p1);
+        $this->assertEquals(96, strlen($p1->getContent()));
+    }
 
     /*
      * used in:
