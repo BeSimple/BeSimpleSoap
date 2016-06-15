@@ -16,9 +16,9 @@ use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Mime\MultiPart as MimeMultiPart;
 use BeSimple\SoapCommon\Mime\Parser as MimeParser;
 use BeSimple\SoapCommon\Mime\Part as MimePart;
-use BeSimple\SoapCommon\SoapRequest;
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;
-use BeSimple\SoapCommon\SoapResponse;
+use BeSimple\SoapCommon\SoapResponse as CommonSoapResponse;
 use BeSimple\SoapCommon\SoapResponseFilter;
 
 /**
@@ -60,7 +60,7 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
      *
      * @return void
      */
-    public function filterRequest(SoapRequest $request)
+    public function filterRequest(CommonSoapRequest $request)
     {
         // get attachments from request object
         $attachmentsToSend = $request->getAttachments();
@@ -103,7 +103,7 @@ class MimeFilter implements SoapRequestFilter, SoapResponseFilter
      *
      * @return void
      */
-    public function filterResponse(SoapResponse $response)
+    public function filterResponse(CommonSoapResponse $response)
     {
         // array to store attachments
         $attachmentsRecieved = array();

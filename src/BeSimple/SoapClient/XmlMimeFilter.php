@@ -14,7 +14,7 @@ namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\FilterHelper;
 use BeSimple\SoapCommon\Helper;
-use BeSimple\SoapCommon\SoapRequest;
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapRequestFilter;
 
 /**
@@ -38,7 +38,7 @@ class XmlMimeFilter implements SoapRequestFilter
      *
      * @return void
      */
-    public function filterRequest(SoapRequest $request)
+    public function filterRequest(CommonSoapRequest $request)
     {
         // get \DOMDocument from SOAP request
         $dom = $request->getContentDocument();
