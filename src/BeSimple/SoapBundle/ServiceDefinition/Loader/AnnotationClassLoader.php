@@ -48,7 +48,7 @@ class AnnotationClassLoader extends Loader
      * Loads a ServiceDefinition from annotations from a class.
      *
      * @param string $class A class name
-     * @param string $type  The resource type
+     * @param string $type The resource type
      *
      * @return \BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition A ServiceDefinition instance
      *
@@ -60,7 +60,7 @@ class AnnotationClassLoader extends Loader
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
-        $class      = new \ReflectionClass($class);
+        $class = new \ReflectionClass($class);
         $definition = new Definition\Definition($this->typeRepository);
 
         $sharedHeaders = array();
@@ -71,20 +71,20 @@ class AnnotationClassLoader extends Loader
         }
 
         foreach ($class->getMethods() as $method) {
-            $serviceHeaders   = $sharedHeaders;
+            $serviceHeaders = $sharedHeaders;
             $serviceArguments = array();
-            $serviceMethod    = null;
-            $serviceReturn    = [];
-            $serviceFault     = [];
+            $serviceMethod = null;
+            $serviceReturn = array();
+            $serviceFault = array();
 
             foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
                 if ($annotation instanceof Annotation\Header) {
                     $serviceHeaders[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
                 } elseif ($annotation instanceof Annotation\Param) {
-                    $serviceArguments[$annotation->getValue()] = [
-                        'type'     => $this->loadType($annotation->getPhpType()),
-                        'nillable' => $annotation->isNillable()
-                    ];
+                    $serviceArguments[$annotation->getValue()] = array(
+                        'type' => $this->loadType($annotation->getPhpType()),
+                        'nillable' => $annotation->isNillable(),
+                    );
                 } elseif ($annotation instanceof Annotation\Method) {
                     if ($serviceMethod) {
                         throw new \LogicException(sprintf('@Soap\Method defined twice for "%s".', $method->getName()));
@@ -92,7 +92,9 @@ class AnnotationClassLoader extends Loader
 
                     $serviceMethod = new Definition\Method(
                         $annotation->getValue(),
-                        $this->getController($class, $method, $annotation)
+                        $this->getController($class, $method, $annotation),
+                        $annotation->getSoapAction(),
+                        $annotation->getSoapActionRequired()
                     );
                 } elseif ($annotation instanceof Annotation\Result) {
                     if ($serviceReturn) {
@@ -146,7 +148,7 @@ class AnnotationClassLoader extends Loader
      */
     private function getController(\ReflectionClass $class, \ReflectionMethod $method, Annotation\Method $annotation)
     {
-        if(null !== $annotation->getService()) {
+        if (null !== $annotation->getService()) {
             return $annotation->getService() . ':' . $method->name;
         } else {
             return $class->name . '::' . $method->name;
@@ -187,8 +189,8 @@ class AnnotationClassLoader extends Loader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string $type The resource type
      *
      * @return Boolean True if this class supports the given resource, false otherwise
      */

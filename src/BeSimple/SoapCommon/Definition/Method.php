@@ -12,8 +12,6 @@
 
 namespace BeSimple\SoapCommon\Definition;
 
-use BeSimple\SoapCommon\Definition\Type\TypeRepository;
-
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
@@ -25,15 +23,20 @@ class Method
     private $input;
     private $output;
     private $fault;
+    protected $methodOptions;
 
     public function __construct($name)
     {
         $this->name = $name;
+        $this->methodOptions = array(
+            'soapAction' => null,
+            'soapActionRequired' => null,
+        );
 
-        $this->headers = new Message($name.'Header');
-        $this->input = new Message($name.'Request');
-        $this->output = new Message($name.'Response');
-        $this->fault = new Message($name.'Fault');
+        $this->headers = new Message($name . 'Header');
+        $this->input = new Message($name . 'Request');
+        $this->output = new Message($name . 'Response');
+        $this->fault = new Message($name . 'Fault');
     }
 
     public function getName()
@@ -100,5 +103,31 @@ class Method
     public function setFault($name, $type)
     {
         $this->fault->add($name, $type);
+    }
+
+    /**
+     * @param $option
+     * @param $value
+     */
+    public function addOption($option, $value)
+    {
+        if (!array_key_exists($option, $this->methodOptions)) {
+            throw new \LogicException(sprintf('@Soap\Method option not valid for "%s".', $option));
+        }
+
+        $this->methodOptions[$option] = $value;
+    }
+
+    /**
+     * @param string $option
+     * @return mixed
+     */
+    public function getOption($option)
+    {
+        if (!array_key_exists($option, $this->methodOptions)) {
+            throw new \LogicException(sprintf('@Soap\Method option not valid for "%s".', $option));
+        }
+
+        return $this->methodOptions[$option];
     }
 }

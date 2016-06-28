@@ -17,6 +17,8 @@ class Method extends Configuration
 {
     private $value;
     private $service;
+    private $soapAction;
+    private $soapActionRequired;
 
     public function getValue()
     {
@@ -36,6 +38,38 @@ class Method extends Configuration
     public function setService($service)
     {
         $this->service = $service;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSoapAction()
+    {
+        return $this->soapAction;
+    }
+
+    /**
+     * @param string $soapAction
+     */
+    public function setSoapAction($soapAction)
+    {
+        $this->soapAction = $soapAction;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSoapActionRequired()
+    {
+        return $this->soapActionRequired;
+    }
+
+    /**
+     * @param bool $soapActionRequired
+     */
+    public function setSoapActionRequired($soapActionRequired)
+    {
+        $this->soapActionRequired = boolval($soapActionRequired);
     }
 
     public function getAliasName()
