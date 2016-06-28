@@ -72,6 +72,10 @@
                 <argument>xsd</argument>
                 <argument>http://www.w3.org/2001/XMLSchema</argument>
             </call>
+            <call method="addXmlNamespace">
+                <argument>wsdl</argument>
+                <argument>http://schemas.xmlsoap.org/wsdl/</argument>
+            </call>
             <call method="addType">
                 <argument>string</argument>
                 <argument>xsd:string</argument>

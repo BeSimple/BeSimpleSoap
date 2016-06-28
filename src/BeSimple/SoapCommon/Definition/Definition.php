@@ -24,7 +24,14 @@ class Definition
 
     protected $typeRepository;
 
-    protected $options;
+    protected $options = array(
+        'version' => \SOAP_1_1,
+        'style' => \SOAP_RPC,
+        'use' => \SOAP_LITERAL,
+        'location' => null,
+        'port_type' => null,
+    );
+
     protected $methods;
 
     public function __construct($name, $namespace, TypeRepository $typeRepository, array $options = array())
@@ -40,13 +47,6 @@ class Definition
 
     public function setOptions(array $options)
     {
-        $this->options = array(
-            'version' => \SOAP_1_1,
-            'style' => \SOAP_RPC,
-            'use' => \SOAP_LITERAL,
-            'location' => null,
-        );
-
         $invalid = array();
         foreach ($options as $key => $value) {
             if (array_key_exists($key, $this->options)) {
@@ -57,7 +57,9 @@ class Definition
         }
 
         if ($invalid) {
-            throw new \InvalidArgumentException(sprintf('The Definition does not support the following options: "%s"', implode('", "', $invalid)));
+            throw new \InvalidArgumentException(
+                sprintf('The Definition does not support the following options: "%s"', implode('", "', $invalid))
+            );
         }
 
         return $this;
