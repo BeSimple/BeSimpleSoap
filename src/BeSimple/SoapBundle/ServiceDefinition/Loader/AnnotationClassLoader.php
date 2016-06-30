@@ -94,7 +94,8 @@ class AnnotationClassLoader extends Loader
                         $annotation->getValue(),
                         $this->getController($class, $method, $annotation),
                         $annotation->getSoapAction(),
-                        $annotation->getSoapActionRequired()
+                        $annotation->getSoapActionRequired(),
+                        $annotation->getVersion()
                     );
                 } elseif ($annotation instanceof Annotation\Result) {
                     if ($serviceReturn) {
@@ -176,7 +177,7 @@ class AnnotationClassLoader extends Loader
                     $property->isNillable(),
                     $property->getMinOccurs(),
                     $property->getMaxOccurs(),
-                    $property->getPattern()
+                    $property->getRestriction()
                 );
             }
 

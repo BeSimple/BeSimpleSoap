@@ -12,6 +12,7 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
+use BeSimple\SoapBundle\ServiceDefinition\SimpleType;
 use BeSimple\SoapBundle\ServiceDefinition\ComplexType;
 use BeSimple\SoapBundle\Util\Collection;
 
@@ -26,6 +27,7 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
 {
     private $aliasClass       = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\Alias';
     private $complexTypeClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\ComplexType';
+    private $simpleTypeClass  = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\SimpleType';
 
     /**
      * Loads a ServiceDefinition from annotations from a class.
@@ -50,9 +52,10 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
             $annotations['alias'] = $alias->getValue();
         }
 
-        $annotations['properties'] = new Collection('getName', 'BeSimple\SoapBundle\ServiceDefinition\ComplexType');
+        $annotations['properties'] = new Collection('getName');
         foreach ($class->getProperties() as $property) {
             $complexType = $this->reader->getPropertyAnnotation($property, $this->complexTypeClass);
+            $simpleType = $this->reader->getPropertyAnnotation($property, $this->simpleTypeClass);
 
             if ($complexType) {
                 $propertyComplexType = new ComplexType();
@@ -61,7 +64,17 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
                 $propertyComplexType->setMinOccurs($complexType->getMinOccurs());
                 $propertyComplexType->setMaxOccurs($complexType->getMaxOccurs());
                 $propertyComplexType->setMaxOccurs($complexType->getMaxOccurs());
-                $propertyComplexType->setPattern($complexType->getPattern());
+                $propertyComplexType->setRestriction($complexType->getRestriction());
+                $propertyComplexType->setName($property->getName());
+                $annotations['properties']->add($propertyComplexType);
+            } elseif ($simpleType) {
+                $propertyComplexType = new SimpleType();
+                $propertyComplexType->setValue($simpleType->getValue());
+                $propertyComplexType->setNillable($simpleType->isNillable());
+                $propertyComplexType->setMinOccurs($simpleType->getMinOccurs());
+                $propertyComplexType->setMaxOccurs($simpleType->getMaxOccurs());
+                $propertyComplexType->setMaxOccurs($simpleType->getMaxOccurs());
+                $propertyComplexType->setRestriction($simpleType->getRestriction());
                 $propertyComplexType->setName($property->getName());
                 $annotations['properties']->add($propertyComplexType);
             }

@@ -31,6 +31,7 @@ class Method
         $this->methodOptions = array(
             'soapAction' => null,
             'soapActionRequired' => null,
+            'version' => null
         );
 
         $this->headers = new Message($name . 'Header');
@@ -51,6 +52,10 @@ class Method
 
     public function getVersions()
     {
+        if (null != $this->methodOptions['version']) {
+            return array($this->methodOptions['version']);
+        }
+
         return array(\SOAP_1_1, \SOAP_1_2);
     }
 

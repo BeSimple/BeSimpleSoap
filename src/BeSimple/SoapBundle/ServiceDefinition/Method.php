@@ -21,14 +21,16 @@ use BeSimple\SoapCommon\Definition\Method as BaseMethod;
 class Method extends BaseMethod
 {
     private $controller;
+    private $version;
 
-    public function __construct($name, $controller, $soapAction, $soapRequiredAction)
+    public function __construct($name, $controller, $soapAction, $soapRequiredAction, $version = \SOAP_1_1)
     {
         parent::__construct($name);
 
         $this->controller = $controller;
         $this->addOption('soapAction', $soapAction);
         $this->addOption('soapActionRequired', $soapRequiredAction);
+        $this->version = $version;
     }
 
     public function getController()
@@ -38,6 +40,6 @@ class Method extends BaseMethod
 
     public function getVersions()
     {
-        return array(\SOAP_1_1);
+        return array($this->version);
     }
 }

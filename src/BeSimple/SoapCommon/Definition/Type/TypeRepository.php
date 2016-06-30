@@ -50,7 +50,7 @@ class TypeRepository
     {
         $types = array();
         foreach ($this->types as $type) {
-            if ($type instanceof ComplexType) {
+            if ($type instanceof ComplexType || $type instanceof SimpleType) {
                 $types[] = $type;
             }
         }
