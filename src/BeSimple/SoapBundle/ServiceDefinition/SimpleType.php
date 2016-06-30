@@ -13,7 +13,8 @@
 namespace BeSimple\SoapBundle\ServiceDefinition;
 
 /**
- * @author Francis Besset <francis.besset@gmail.com>
+ * Class SimpleType
+ * @package BeSimple\SoapBundle\ServiceDefinition
  */
 class SimpleType
 {
