@@ -1,28 +1,27 @@
 <?php
-
 /*
- * This file is part of the BeSimpleSoap.
+ * This file is part of the BeSimpleSoapBundle.
  *
  * (c) Christian Kerl <christian-kerl@web.de>
- * (c) Francis Besset <francis.besset@gmail.com>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapBundle\ServiceDefinition;
+namespace BeSimple\SoapBundle\ServiceDefinition\Annotation;
 
 /**
- * @author Francis Besset <francis.besset@gmail.com>
+ * @Annotation
  */
-class ComplexType
+class SimpleType extends Configuration
 {
     private $name;
     private $value;
-    private $isNillable = false;
+    private $nillable = false;
     private $minOccurs = null;
     private $maxOccurs = null;
-    private $restriction = array();
+    /** @var array */
+    private $restriction;
 
     public function getName()
     {
@@ -36,7 +35,7 @@ class ComplexType
 
     public function isNillable()
     {
-        return $this->isNillable;
+        return $this->nillable;
     }
 
     public function setName($name)
@@ -52,6 +51,11 @@ class ComplexType
     public function setNillable($isNillable)
     {
         $this->isNillable = (bool) $isNillable;
+    }
+
+    public function getAliasName()
+    {
+        return 'complextype';
     }
 
     public function getMinOccurs()
@@ -74,14 +78,19 @@ class ComplexType
         $this->maxOccurs = $maxOccurs;
     }
 
+    /**
+     * @return array
+     */
     public function getRestriction()
     {
         return $this->restriction;
     }
 
+    /**
+     * @param array $restriction
+     */
     public function setRestriction($restriction)
     {
         $this->restriction = $restriction;
     }
-
 }

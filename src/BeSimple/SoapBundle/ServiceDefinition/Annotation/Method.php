@@ -19,6 +19,7 @@ class Method extends Configuration
     private $service;
     private $soapAction;
     private $soapActionRequired;
+    private $version;
 
     public function getValue()
     {
@@ -70,6 +71,22 @@ class Method extends Configuration
     public function setSoapActionRequired($soapActionRequired)
     {
         $this->soapActionRequired = boolval($soapActionRequired);
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param int $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = \SOAP_1_1 === (int) $version ? \SOAP_1_1 : \SOAP_1_2;
     }
 
     public function getAliasName()

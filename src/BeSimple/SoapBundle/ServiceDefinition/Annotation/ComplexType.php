@@ -20,7 +20,7 @@ class ComplexType extends Configuration
     private $isNillable = false;
     private $minOccurs = null;
     private $maxOccurs = null;
-    private $pattern = '';
+    private $restriction = array();
 
     public function getName()
     {
@@ -77,14 +77,14 @@ class ComplexType extends Configuration
         $this->maxOccurs = $maxOccurs;
     }
 
-    public function getPattern()
+    public function getRestriction()
     {
-        return $this->pattern;
+        return $this->restriction;
     }
 
-    public function setPattern($pattern)
+    public function setRestriction($restriction)
     {
-        $this->pattern = $pattern;
+        $this->restriction = $restriction;
     }
 
 

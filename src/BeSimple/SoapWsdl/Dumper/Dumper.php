@@ -41,6 +41,9 @@ class Dumper
     const XSD_NS = 'xsd';
     const XSD_NS_URI = 'http://www.w3.org/2001/XMLSchema';
 
+    const XS_NS = 'xs';
+    const XS_NS_URI = 'http://www.w3.org/2001/XMLSchema';
+
     const TARGET_NS = 'tns';
     const TYPES_NS = 'ns';
 
@@ -55,6 +58,14 @@ class Dumper
     protected $domSchema;
     protected $domService;
     protected $domPortType;
+    protected $primitiveTypes = array(
+        'string',
+        'boolean',
+        'int',
+        'float',
+        'date',
+        'dateTime',
+    );
 
     public function __construct(Definition $definition, array $options = array())
     {
@@ -162,8 +173,8 @@ class Dumper
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS, static::WSDL_NS_URI);
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::TARGET_NS, $this->definition->getNamespace());
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::TYPES_NS, $this->definition->getNamespace() . '/types');
-        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP_NS, static::SOAP_NS_URI);
-        //$this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::SOAP12_NS, static::SOAP12_NS_URI);
+        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP_NS, static::SOAP12_NS_URI);
+//        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP12_NS, static::SOAP12_NS_URI);
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::XSD_NS, static::XSD_NS_URI);
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP_ENC_NS, static::SOAP_ENC_URI);
         //$this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS.':'.static::WSDL_NS, static::WSDL_NS_URI);
@@ -249,9 +260,10 @@ class Dumper
         $this->domDefinitions->appendChild($types);
 
         $nsTypes = $this->definition->getNamespace() . '/types';
-        $this->domSchema = $this->document->createElement(static::XSD_NS . ':schema');
+        $this->domSchema = $this->document->createElement(static::XS_NS . ':schema');
         $this->domSchema->setAttribute('targetNamespace', $nsTypes);
         $this->domSchema->setAttribute(static::XML_NS, $nsTypes);
+        $this->domSchema->setAttribute(static::XML_NS . ':' . static::XS_NS, static::XS_NS_URI);
         $types->appendChild($this->domSchema);
 
         foreach ($this->definition->getTypeRepository()->getComplexTypes() as $type) {
@@ -263,17 +275,23 @@ class Dumper
 
     protected function addComplexType(ComplexType $type)
     {
-        $complexType = $this->document->createElement(static::XSD_NS . ':complexType');
+        $complexType = $this->document->createElement(static::XS_NS . ':complexType');
         $complexType->setAttribute('name', $type->getXmlType());
 
-        $all = $this->document->createElement(static::XSD_NS . ':' . ($type instanceof ArrayOfType ? 'sequence' : 'all'));
+        $all = $this->document->createElement(static::XS_NS . ':' . ($type instanceof ArrayOfType ? 'sequence' : 'all'));
         $complexType->appendChild($all);
 
         foreach ($type->all() as $child) {
             $childType = $this->definition->getTypeRepository()->getType($child->getType());
 
-            $element = $this->document->createElement(static::XSD_NS . ':element');
+            $element = $this->document->createElement(static::XS_NS . ':element');
             $element->setAttribute('name', $child->getName());
+
+            $tt = '';
+            if (is_string($childType)) {
+                $ex = explode(':', $childType);
+                $tt = end($ex);
+            }
 
             if ($childType instanceof ComplexType) {
                 $name = $childType->getXmlType();
@@ -283,6 +301,8 @@ class Dumper
 
                 //$element->setAttribute('element', static::TYPES_NS.':'.$name);
                 $element->setAttribute('type', static::TYPES_NS . ':' . $name);
+            } elseif (is_string($childType) && in_array($tt, $this->primitiveTypes) && $child->getRestriction()) {
+                $element->appendChild($this->addSimpleTypes($tt, $child));
             } else {
                 $element->setAttribute('type', $childType);
             }
@@ -368,7 +388,7 @@ class Dumper
     {
         if (!$this->version12) {
             $this->version12 = new $this->options['version12_class'](
-                static::SOAP12_NS,
+                static::SOAP_NS,
                 static::TARGET_NS,
                 $this->options['version12_name'],
                 $this->definition->getNamespace(),
@@ -404,9 +424,20 @@ class Dumper
             }
             $element->setAttribute('maxOccurs', (int) $child->getMaxOccurs());
         }
+    }
 
-        if ($child->getPattern()) {
-            $element->setAttribute('pattern', $child->getPattern());
+    private function addSimpleTypes($childType, $child)
+    {
+        $simpleType = $this->document->createElement('xs:simpleType');
+        $restr = $this->document->createElement('xs:restriction');
+        $restr->setAttribute('base', static::XS_NS . ':' . $childType);
+        foreach ($child->getRestriction() as $key => $restriction) {
+            $field = $this->document->createElement(static::XS_NS . ':' . $key);
+            $field->setAttribute('value', $restriction);
+            $restr->appendChild($field);
         }
+        $simpleType->appendChild($restr);
+
+        return $simpleType;
     }
 }

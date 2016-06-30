@@ -10,59 +10,48 @@
  * with this source code in the file LICENSE.
  */
 
-namespace BeSimple\SoapCommon\Definition;
+namespace BeSimple\SoapBundle\ServiceDefinition;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class Part
+class SimpleType
 {
-    protected $name;
-    protected $type;
-    protected $nillable;
-    protected $minOccurs = null;
-    protected $maxOccurs = null;
+    private $name;
+    private $value;
+    private $isNillable = false;
+    private $minOccurs = null;
+    private $maxOccurs = null;
     protected $restriction;
-
-    public function __construct(
-        $name,
-        $type,
-        $nillable = false,
-        $minOccurs = null,
-        $maxOccurs = null,
-        $restriction = array()
-    ) {
-        $this->name = $name;
-        $this->type = $type;
-        $this->setNillable($nillable);
-        $this->setMinOccurs($minOccurs);
-        $this->setMaxOccurs($maxOccurs);
-        $this->setRestriction($restriction);
-    }
 
     public function getName()
     {
         return $this->name;
     }
 
-    public function getType()
+    public function getValue()
     {
-        return $this->type;
-    }
-
-    public function setType($type)
-    {
-        $this->type = $type;
+        return $this->value;
     }
 
     public function isNillable()
     {
-        return $this->nillable;
+        return $this->isNillable;
     }
 
-    public function setNillable($nillable)
+    public function setName($name)
     {
-        $this->nillable = (boolean) $nillable;
+        $this->name = $name;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    public function setNillable($isNillable)
+    {
+        $this->isNillable = (bool) $isNillable;
     }
 
     public function getMinOccurs()
@@ -83,6 +72,16 @@ class Part
     public function setMaxOccurs($maxOccurs)
     {
         $this->maxOccurs = $maxOccurs;
+    }
+
+    public function getPattern()
+    {
+        return isset($this->restriction['pattern']) ? $this->restriction['pattern'] : null;
+    }
+
+    public function setPattern($pattern)
+    {
+        $this->restriction['pattern'] = $pattern;
     }
 
     /**
