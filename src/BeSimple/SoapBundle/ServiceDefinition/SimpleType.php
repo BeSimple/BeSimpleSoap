@@ -20,7 +20,7 @@ class SimpleType
 {
     private $name;
     private $value;
-    private $isNillable = false;
+    private $nillable = false;
     private $minOccurs = null;
     private $maxOccurs = null;
     protected $restriction;
@@ -37,7 +37,7 @@ class SimpleType
 
     public function isNillable()
     {
-        return $this->isNillable;
+        return $this->nillable;
     }
 
     public function setName($name)
@@ -52,7 +52,7 @@ class SimpleType
 
     public function setNillable($isNillable)
     {
-        $this->isNillable = (bool) $isNillable;
+        $this->nillable = (bool) $isNillable;
     }
 
     public function getMinOccurs()
