@@ -287,10 +287,10 @@ class Dumper
             $element = $this->document->createElement(static::XS_NS . ':element');
             $element->setAttribute('name', $child->getName());
 
-            $tt = '';
+            $primitiveType = '';
             if (is_string($childType)) {
                 $ex = explode(':', $childType);
-                $tt = end($ex);
+                $primitiveType = end($ex);
             }
 
             if ($childType instanceof ComplexType) {
@@ -301,8 +301,8 @@ class Dumper
 
                 //$element->setAttribute('element', static::TYPES_NS.':'.$name);
                 $element->setAttribute('type', static::TYPES_NS . ':' . $name);
-            } elseif (is_string($childType) && in_array($tt, $this->primitiveTypes) && $child->getRestriction()) {
-                $element->appendChild($this->addSimpleTypes($tt, $child));
+            } elseif (is_string($childType) && in_array($primitiveType, $this->primitiveTypes) && $child->getRestriction()) {
+                $element->appendChild($this->addSimpleTypes($primitiveType, $child));
             } else {
                 $element->setAttribute('type', $childType);
             }
