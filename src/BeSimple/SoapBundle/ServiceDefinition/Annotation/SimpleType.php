@@ -50,12 +50,12 @@ class SimpleType extends Configuration
 
     public function setNillable($isNillable)
     {
-        $this->isNillable = (bool) $isNillable;
+        $this->nillable = (bool) $isNillable;
     }
 
     public function getAliasName()
     {
-        return 'complextype';
+        return 'simplextype';
     }
 
     public function getMinOccurs()
