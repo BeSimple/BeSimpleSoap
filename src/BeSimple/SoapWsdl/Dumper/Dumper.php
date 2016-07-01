@@ -262,6 +262,7 @@ class Dumper
         $nsTypes = $this->definition->getNamespace() . '/types';
         $this->domSchema = $this->document->createElement(static::XS_NS . ':schema');
         $this->domSchema->setAttribute('targetNamespace', $nsTypes);
+        $this->domSchema->setAttribute('elementFormDefault', 'qualified');
         $this->domSchema->setAttribute(static::XML_NS, $nsTypes);
         $this->domSchema->setAttribute(static::XML_NS . ':' . static::XS_NS, static::XS_NS_URI);
         $types->appendChild($this->domSchema);
