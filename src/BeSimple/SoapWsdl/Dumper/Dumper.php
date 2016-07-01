@@ -387,6 +387,8 @@ class Dumper
     protected function getVersion12()
     {
         if (!$this->version12) {
+            $portType = $this->definition->getOption('port_type') ?: 'Port';
+
             $this->version12 = new $this->options['version12_class'](
                 static::SOAP_NS,
                 static::TARGET_NS,
@@ -394,7 +396,9 @@ class Dumper
                 $this->definition->getNamespace(),
                 static::TARGET_NS . ':' . $this->definition->getName() . 'PortType',
                 $this->definition->getOption('location'),
-                $this->definition->getOption('style')
+                $this->definition->getOption('style'),
+                'http://schemas.xmlsoap.org/soap/http',
+                $portType
             );
         }
 
