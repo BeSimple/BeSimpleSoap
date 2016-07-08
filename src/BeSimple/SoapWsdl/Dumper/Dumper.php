@@ -81,7 +81,7 @@ class Dumper
             'version11_class' => 'BeSimple\\SoapWsdl\\Dumper\\Version11',
             'version12_class' => 'BeSimple\\SoapWsdl\\Dumper\\Version12',
             'version11_name' => $this->definition->getName(),
-            'version12_name' => $this->definition->getName() . '12',
+            'version12_name' => $this->definition->getName(),
             'stylesheet' => null,
         );
 
