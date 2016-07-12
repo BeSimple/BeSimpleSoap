@@ -73,7 +73,7 @@ abstract class AbstractVersion implements VersionInterface
     public function getBindingNode()
     {
         if (!$this->bindingNode) {
-            $this->bindingNode = $this->document->createElement('binding');
+            $this->bindingNode = $this->document->createElement(Dumper::WSDL_NS . ':binding');
             $this->bindingNode->setAttribute('name', $this->name . 'Binding');
             $this->bindingNode->setAttribute('type', $this->portTypeName);
 
@@ -99,7 +99,7 @@ abstract class AbstractVersion implements VersionInterface
 
     public function addOperation(Method $method)
     {
-        $operation = $this->document->createElement('operation');
+        $operation = $this->document->createElement(Dumper::WSDL_NS . ':operation');
         $operation->setAttribute('name', $method->getName());
 
         $soapOperation = $this->document->createElement($this->soapNs . ':operation');
@@ -118,7 +118,7 @@ abstract class AbstractVersion implements VersionInterface
 
         $use = \SOAP_LITERAL === $method->getUse() ? 'literal' : 'encoded';
 
-        $input = $this->document->createElement('input');
+        $input = $this->document->createElement(Dumper::WSDL_NS . ':input');
         $operation->appendChild($input);
 
         $soapBody = $this->document->createElement($this->soapNs . ':body');
@@ -140,7 +140,7 @@ abstract class AbstractVersion implements VersionInterface
             }
         }
 
-        $output = $this->document->createElement('output');
+        $output = $this->document->createElement(Dumper::WSDL_NS . ':output');
         $soapBody = $this->document->createElement($this->soapNs . ':body');
         $soapBody->setAttribute('use', $use);
         $soapBody->setAttribute('namespace', $this->namespace);
