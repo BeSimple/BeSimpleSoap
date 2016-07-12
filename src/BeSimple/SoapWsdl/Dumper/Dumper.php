@@ -188,11 +188,12 @@ class Dumper
 
     protected function addMethods()
     {
-        $this->addComplexTypes();
+        $types = $this->addComplexTypes();
         $this->addPortType();
         $this->addMessages($this->definition->getMessages());
 
         foreach ($this->definition->getMethods() as $method) {
+            $this->addElementsType($method, $types);
             $this->addPortOperation($method);
 
             foreach ($method->getVersions() as $version) {
@@ -208,7 +209,7 @@ class Dumper
                 continue;
             }
 
-            $messageElement = $this->document->createElement('message');
+            $messageElement = $this->document->createElement(static::WSDL_NS . ':message');
             $messageElement->setAttribute('name', $message->getName());
 
             if ($this->definition->getOption('style') === \SOAP_RPC) {
@@ -216,11 +217,11 @@ class Dumper
                 foreach ($message->all() as $part) {
                     $type = $this->definition->getTypeRepository()->getType($part->getType());
 
-                    $partElement = $this->document->createElement('part');
+                    $partElement = $this->document->createElement(static::WSDL_NS . ':part');
                     $partElement->setAttribute('name', $part->getName());
 
                     if ($type instanceof ComplexType) {
-                        $partElement->setAttribute('type', static::TYPES_NS . ':' . $type->getXmlType());
+                        $partElement->setAttribute('element', static::TARGET_NS . ':' . $type->getXmlType());
                     } else {
                         $partElement->setAttribute('type', $type);
                     }
@@ -444,5 +445,25 @@ class Dumper
         $simpleType->appendChild($restr);
 
         return $simpleType;
+    }
+
+    private function addElementsType(Method $method, \DOMElement $types)
+    {
+        $elementRequest = $this->document->createElement(static::XS_NS . ':element');
+        $elementRequest->setAttribute('name', $method->getInput()->getName());
+        $elementRequest->setAttribute('type', static::TARGET_NS . ':' . $method->getInput()->getName());
+
+        $elementResponse = $this->document->createElement(static::XS_NS . ':element');
+        $elementResponse->setAttribute('name', $method->getOutput()->getName());
+        $elementResponse->setAttribute('type', static::TARGET_NS . ':' . $method->getOutput()->getName());
+
+        $elementFault = $this->document->createElement(static::XS_NS . ':element');
+        $elementFault->setAttribute('name', $method->getFault()->getName());
+        $elementFault->setAttribute('type', static::TARGET_NS . ':' . $method->getFault()->getName());
+
+        $schema = $types->getElementsByTagName(static::XS_NS . ':schema')->item(0);
+        $schema->appendChild($elementRequest);
+        $schema->appendChild($elementResponse);
+        $schema->appendChild($elementFault);
     }
 }
