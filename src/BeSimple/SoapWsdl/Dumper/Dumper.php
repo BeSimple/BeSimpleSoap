@@ -319,7 +319,7 @@ class Dumper
 
     protected function addPortType()
     {
-        $this->domPortType = $this->document->createElement('portType');
+        $this->domPortType = $this->document->createElement(static::WSDL_NS . ':portType');
         $this->domPortType->setAttribute('name', $this->definition->getName() . 'PortType');
 
         $this->domDefinitions->appendChild($this->domPortType);
