@@ -25,15 +25,7 @@ class DocumentLiteralWrappedResponseMessageBinder implements MessageBinderInterf
     {
         $this->typeRepository = $typeRepository;
 
-        $result = new \stdClass();
-        //$result->{$messageDefinition->getName().'Result'} = $message;
-        foreach ($messageDefinition->getOutput()->all() as $name => $part) {
-            //$result->{$name} = $message;
-            $result->{$name} = $this->processType($part->getType(), $message);
-            break; // only one iteration
-        }
-
-        return $result;
+        return $message;
     }
 
     private function processType($phpType, $message)
