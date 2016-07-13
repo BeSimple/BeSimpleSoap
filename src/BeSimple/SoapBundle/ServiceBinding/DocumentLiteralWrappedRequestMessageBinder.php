@@ -35,7 +35,7 @@ class DocumentLiteralWrappedRequestMessageBinder implements MessageBinderInterfa
         $message = $message[0];
 
         foreach($messageDefinition->getInput()->all() as $argument) {
-            $result[$argument->getName()] = $this->processType($argument->getType(), $message->{$argument->getName()});
+            $result[$argument->getName()] = $this->processType($argument->getType(), $message);
         }
 
         return $result;
