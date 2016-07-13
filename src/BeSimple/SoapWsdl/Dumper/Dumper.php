@@ -240,22 +240,13 @@ class Dumper
 
             } else { // \SOAP_DOCUMENT (literal-wrapped)
 
-                $partElement = $this->document->createElement(static::WSDL_NS . ':part');
-                $name = 'parameters';
-                if (preg_match('#Request$#', $message->getName())) {
-                    $name = 'req';
-                } elseif (preg_match('#Response$#', $message->getName())) {
-                    $name = 'resp';
-                } elseif (preg_match('#Fault$#', $message->getName())) {
-                    $name = 'fault';
-                }
-                $partElement->setAttribute('name', $name);
-                $partElement->setAttribute('element', static::TARGET_NS . ':' . $message->getName());
-
-                $messageElement->appendChild($partElement);
-
                 $paramsComplexType = new ComplexType('array', $message->getName());
                 foreach ($message->all() as $part) {
+                    $partElement = $this->document->createElement(static::WSDL_NS . ':part');
+                    $partElement->setAttribute('name', $part->getName());
+                    $messageElement->appendChild($partElement);
+                    $partElement->setAttribute('element', static::TARGET_NS . ':' . $message->getName());
+
                     $paramsComplexType->add($part->getName(), $part->getType(), $part->isNillable());
                 }
 
