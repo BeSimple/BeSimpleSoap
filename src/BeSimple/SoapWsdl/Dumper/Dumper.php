@@ -272,8 +272,8 @@ class Dumper
         $this->domSchema = $this->document->createElement(static::XS_NS . ':schema');
         $this->domSchema->setAttribute(static::XML_NS . ':' . static::XS_NS, static::XS_NS_URI);
         $this->domSchema->setAttribute('targetNamespace', $this->definition->getNamespace());
-//        $this->domSchema->setAttribute('elementFormDefault', 'qualified');
-        $this->domSchema->setAttribute('elementFormDefault', "unqualified");
+        $this->domSchema->setAttribute('elementFormDefault', 'qualified');
+//        $this->domSchema->setAttribute('elementFormDefault', "unqualified");
         $this->domSchema->setAttribute('attributeFormDefault', "unqualified");
         $types->appendChild($this->domSchema);
 
