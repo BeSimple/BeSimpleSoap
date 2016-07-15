@@ -153,6 +153,7 @@ abstract class AbstractVersion implements VersionInterface
         $operation->appendChild($output);
 
         $fault = $this->document->createElement(Dumper::WSDL_NS . ':fault');
+        $fault->setAttribute('name', 'fault');
         $soapBody = $this->document->createElement($this->soapNs . ':body');
         $soapBody->setAttribute('use', $use);
         $soapBody->setAttribute('parts', 'fault');
