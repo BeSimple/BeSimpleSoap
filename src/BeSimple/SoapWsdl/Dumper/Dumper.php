@@ -175,34 +175,21 @@ class Dumper
 
         $this->domDefinitions->setAttribute('name', $this->definition->getName());
 
-        #done
         $this->domDefinitions->setAttribute('targetNamespace', $this->definition->getNamespace());
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::TARGET_NS, $this->definition->getNamespace());
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::WSDL_NS, static::WSDL_NS_URI);
         $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP_NS, static::SOAP12_NS_URI);
-
-        #delete
-//        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS, static::WSDL_NS_URI);
-//        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::TYPES_NS, $this->definition->getNamespace() . '/types');
-//        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP12_NS, static::SOAP12_NS_URI);
-//        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::XSD_NS, static::XSD_NS_URI);
-//        $this->domDefinitions->setAttributeNS(static::XML_NS_URI, static::XML_NS . ':' . static::SOAP_ENC_NS, static::SOAP_ENC_URI);
-
-//        foreach ($this->definition->getTypeRepository()->getXmlNamespaces() as $prefix => $uri) {
-//            $this->domDefinitions->setAttributeNs(static::XML_NS_URI, static::XML_NS . ':' . $prefix, $uri);
-//        }
 
         $this->document->appendChild($this->domDefinitions);
     }
 
     protected function addMethods()
     {
-        $types = $this->addComplexTypes();
+        $this->addComplexTypes();
         $this->addMessages($this->definition->getMessages());
         $this->addPortType();
 
         foreach ($this->definition->getMethods() as $method) {
-//            $this->addElementsType($method, $types);
             $this->addPortOperation($method);
 
             foreach ($method->getVersions() as $version) {
@@ -250,8 +237,6 @@ class Dumper
                     $paramsComplexType->add($part->getName(), $part->getType(), $part->isNillable());
                 }
 
-//                $this->addComplexType($paramsComplexType);
-
                 $paramsElement = $this->document->createElement(static::XS_NS . ':element');
                 $paramsElement->setAttribute('name', $paramsComplexType->getXmlType());
                 $paramsElement->setAttribute('type', static::TARGET_NS . ':' . $paramsComplexType->getXmlType());
@@ -268,12 +253,10 @@ class Dumper
         $types = $this->document->createElement(static::WSDL_NS . ':types');
         $this->domDefinitions->appendChild($types);
 
-        $nsTypes = $this->definition->getNamespace() . '/types';
         $this->domSchema = $this->document->createElement(static::XS_NS . ':schema');
         $this->domSchema->setAttribute(static::XML_NS . ':' . static::XS_NS, static::XS_NS_URI);
         $this->domSchema->setAttribute('targetNamespace', $this->definition->getNamespace());
         $this->domSchema->setAttribute('elementFormDefault', 'qualified');
-//        $this->domSchema->setAttribute('elementFormDefault', "unqualified");
         $this->domSchema->setAttribute('attributeFormDefault', "unqualified");
         $types->appendChild($this->domSchema);
 
@@ -310,7 +293,6 @@ class Dumper
                     $name = $childType->getName();
                 }
 
-                //$element->setAttribute('element', static::TYPES_NS.':'.$name);
                 $element->setAttribute('type', static::TARGET_NS . ':' . $name);
             } elseif (is_string($childType) && in_array($primitiveType, $this->primitiveTypes) && $child->getRestriction()) {
                 $element->appendChild($this->addSimpleTypes($primitiveType, $child));
@@ -461,25 +443,5 @@ class Dumper
         $simpleType->appendChild($restr);
 
         return $simpleType;
-    }
-
-    private function addElementsType(Method $method, \DOMElement $types)
-    {
-        $elementRequest = $this->document->createElement(static::XS_NS . ':element');
-        $elementRequest->setAttribute('name', $method->getInput()->getName());
-        $elementRequest->setAttribute('type', static::TYPES_NS . ':' . $method->getInput()->getName());
-
-        $elementResponse = $this->document->createElement(static::XS_NS . ':element');
-        $elementResponse->setAttribute('name', $method->getOutput()->getName());
-        $elementResponse->setAttribute('type', static::TYPES_NS . ':' . $method->getOutput()->getName());
-
-        $elementFault = $this->document->createElement(static::XS_NS . ':element');
-        $elementFault->setAttribute('name', $method->getFault()->getName());
-        $elementFault->setAttribute('type', static::TYPES_NS . ':' . $method->getFault()->getName());
-
-        $schema = $types->getElementsByTagName(static::XS_NS . ':schema')->item(0);
-        $schema->appendChild($elementRequest);
-        $schema->appendChild($elementResponse);
-        $schema->appendChild($elementFault);
     }
 }

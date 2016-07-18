@@ -111,6 +111,9 @@ abstract class AbstractVersion implements VersionInterface
             ? $method->getOption('soapActionRequired')
             : true;
 
+        if (\SOAP_DOCUMENT == $this->style) {
+            $soapOperation->setAttribute('style', 'document');
+        }
         $soapOperation->setAttribute('soapAction', $soapAction);
         $soapOperation->setAttribute('soapActionRequired', $soapActionRequired ? 'true' : 'false');
         $operation->appendChild($soapOperation);
@@ -124,8 +127,6 @@ abstract class AbstractVersion implements VersionInterface
         $soapBody = $this->document->createElement($this->soapNs . ':body');
         $soapBody->setAttribute('use', $use);
         $soapBody->setAttribute('parts', 'req');
-//        $soapBody->setAttribute('namespace', $this->namespace);
-//        $soapBody->setAttribute('encodingStyle', $this->getEncodingStyle());
         $input->appendChild($soapBody);
 
         $operation->appendChild($input);
@@ -144,20 +145,18 @@ abstract class AbstractVersion implements VersionInterface
         }
 
         $output = $this->document->createElement(Dumper::WSDL_NS . ':output');
-        $soapBody = $this->document->createElement($this->soapNs . ':body');
-        $soapBody->setAttribute('use', $use);
-        $soapBody->setAttribute('parts', 'resp');
-//        $soapBody->setAttribute('namespace', $this->namespace);
-//        $soapBody->setAttribute('encodingStyle', $this->getEncodingStyle());
-        $output->appendChild($soapBody);
+        $soapOutputBody = $this->document->createElement($this->soapNs . ':body');
+        $soapOutputBody->setAttribute('use', $use);
+        $soapOutputBody->setAttribute('parts', 'resp');
+        $output->appendChild($soapOutputBody);
         $operation->appendChild($output);
 
         $fault = $this->document->createElement(Dumper::WSDL_NS . ':fault');
         $fault->setAttribute('name', 'fault');
-        $soapBody = $this->document->createElement($this->soapNs . ':body');
-        $soapBody->setAttribute('use', $use);
-        $soapBody->setAttribute('parts', 'fault');
-        $fault->appendChild($soapBody);
+        $soapFaultBody = $this->document->createElement($this->soapNs . ':fault');
+        $soapFaultBody->setAttribute('use', $use);
+        $soapFaultBody->setAttribute('name', 'fault');
+        $fault->appendChild($soapFaultBody);
         $operation->appendChild($fault);
     }
 
