@@ -13,7 +13,6 @@
 namespace BeSimple\SoapBundle\Controller;
 
 use BeSimple\SoapBundle\Handler\ExceptionHandler;
-use BeSimple\SoapBundle\Soap\SoapHeader;
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
 use BeSimple\SoapBundle\WebServiceContext;
@@ -64,7 +63,8 @@ class SoapWebServiceController extends ContainerAware
     private $headers = array();
 
     /**
-     * @return \BeSimple\SoapBundle\Soap\SoapResponse
+     * @param string $webservice
+     * @return SoapResponse
      */
     public function callAction($webservice)
     {
