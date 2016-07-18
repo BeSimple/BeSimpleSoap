@@ -13,8 +13,11 @@
 namespace BeSimple\SoapBundle\Controller;
 
 use BeSimple\SoapBundle\Handler\ExceptionHandler;
+use BeSimple\SoapBundle\Soap\SoapHeader;
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
+use BeSimple\SoapBundle\WebServiceContext;
+use BeSimple\SoapCommon\SoapMessage;
 use BeSimple\SoapServer\SoapServerBuilder;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,6 +54,11 @@ class SoapWebServiceController extends ContainerAware
     protected $serviceBinder;
 
     /**
+     * @var WebServiceContext
+     */
+    protected $webserviceContext;
+
+    /**
      * @var array
      */
     private $headers = array();
@@ -61,16 +69,28 @@ class SoapWebServiceController extends ContainerAware
     public function callAction($webservice)
     {
         $webServiceContext   = $this->getWebServiceContext($webservice);
+        $this->webserviceContext = $webServiceContext;
 
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
-        $this->soapServer  = $webServiceContext
+        $serverBuilder = $webServiceContext
             ->getServerBuilder()
-            ->withSoapVersion11()
-            ->withHandler($this)
-            ->build()
         ;
+
+        if (\SOAP_DOCUMENT == $webServiceContext->getServiceDefinition()->getOption('version')) {
+            $this->soapServer = $serverBuilder
+                ->withSoapVersion12()
+                ->withHandler($this)
+                ->build()
+            ;
+        } else {
+            $this->soapServer = $serverBuilder
+                ->withSoapVersion11()
+                ->withHandler($this)
+                ->build()
+            ;
+        }
 
         ob_start();
         $this->soapServer->handle($this->soapRequest->getSoapMessage());
@@ -192,6 +212,10 @@ class SoapWebServiceController extends ContainerAware
             // forward to controller
             $response = $this->container->get('http_kernel')->handle($this->soapRequest, HttpKernelInterface::SUB_REQUEST, false);
 
+            $contentType = SoapMessage::getContentTypeForVersion(
+                $this->webserviceContext->getServiceDefinition()->getOption('version')
+            );
+            $response->headers->add(array('Content-Type' => $contentType));
             $this->setResponse($response);
 
             // add response soap headers to soap server
