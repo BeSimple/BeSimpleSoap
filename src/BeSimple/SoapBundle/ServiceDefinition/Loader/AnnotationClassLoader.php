@@ -33,6 +33,8 @@ class AnnotationClassLoader extends Loader
 
     protected $typeRepository;
 
+    protected $version = null;
+
     /**
      * Constructor.
      *
@@ -48,7 +50,7 @@ class AnnotationClassLoader extends Loader
      * Loads a ServiceDefinition from annotations from a class.
      *
      * @param string $class A class name
-     * @param string $type  The resource type
+     * @param string $type The resource type
      *
      * @return \BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition A ServiceDefinition instance
      *
@@ -60,21 +62,24 @@ class AnnotationClassLoader extends Loader
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist.', $class));
         }
 
-        $class      = new \ReflectionClass($class);
+        $class = new \ReflectionClass($class);
         $definition = new Definition\Definition($this->typeRepository);
+        $version = null;
 
         $sharedHeaders = array();
         foreach ($this->reader->getClassAnnotations($class) as $annotation) {
             if ($annotation instanceof Annotation\Header) {
                 $sharedHeaders[$annotation->getValue()] = $this->loadType($annotation->getPhpType());
+            } else if ($annotation instanceof Annotation\Version) {
+                $this->version = $annotation->getValue();
             }
         }
 
         foreach ($class->getMethods() as $method) {
-            $serviceHeaders   = $sharedHeaders;
+            $serviceHeaders = $sharedHeaders;
             $serviceArguments = array();
-            $serviceMethod    =
-            $serviceReturn    = null;
+            $serviceMethod =
+            $serviceReturn = null;
 
             foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
                 if ($annotation instanceof Annotation\Header) {
@@ -133,7 +138,7 @@ class AnnotationClassLoader extends Loader
      */
     private function getController(\ReflectionClass $class, \ReflectionMethod $method, Annotation\Method $annotation)
     {
-        if(null !== $annotation->getService()) {
+        if (null !== $annotation->getService()) {
             return $annotation->getService() . ':' . $method->name;
         } else {
             return $class->name . '::' . $method->name;
@@ -155,6 +160,10 @@ class AnnotationClassLoader extends Loader
             $loaded = $complexTypeResolver->load($phpType);
             $complexType = new ComplexType($phpType, isset($loaded['alias']) ? $loaded['alias'] : $phpType);
             foreach ($loaded['properties'] as $name => $property) {
+                // check versions and skip property as required
+                if ($this->version && $property->getVersion() && intval($this->version) < intval($property->getVersion())) {
+                    continue;
+                }
                 $complexType->add($name, $this->loadType($property->getValue()), $property->isNillable());
             }
 
@@ -167,8 +176,8 @@ class AnnotationClassLoader extends Loader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string $type The resource type
      *
      * @return Boolean True if this class supports the given resource, false otherwise
      */

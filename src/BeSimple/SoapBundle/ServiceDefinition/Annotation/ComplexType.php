@@ -18,6 +18,7 @@ class ComplexType extends Configuration
     private $name;
     private $value;
     private $isNillable = false;
+    private $version = null;
 
     public function getName()
     {
@@ -34,6 +35,11 @@ class ComplexType extends Configuration
         return $this->isNillable;
     }
 
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
     public function setName($name)
     {
         $this->name = $name;
@@ -46,7 +52,12 @@ class ComplexType extends Configuration
 
     public function setNillable($isNillable)
     {
-        $this->isNillable = (bool) $isNillable;
+        $this->isNillable = (bool)$isNillable;
+    }
+
+    public function setVersion($version)
+    {
+        $this->version = $version;
     }
 
     public function getAliasName()

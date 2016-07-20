@@ -20,6 +20,7 @@ class ComplexType
     private $name;
     private $value;
     private $isNillable = false;
+    private $version = null;
 
     public function getName()
     {
@@ -48,6 +49,18 @@ class ComplexType
 
     public function setNillable($isNillable)
     {
-        $this->isNillable = (bool) $isNillable;
+        $this->isNillable = (bool)$isNillable;
     }
+
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
+
 }

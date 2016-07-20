@@ -24,14 +24,15 @@ use BeSimple\SoapBundle\Util\Collection;
  */
 class AnnotationComplexTypeLoader extends AnnotationClassLoader
 {
-    private $aliasClass       = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\Alias';
+    private $aliasClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\Alias';
     private $complexTypeClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\ComplexType';
+    private $versionClass = 'BeSimple\SoapBundle\ServiceDefinition\Annotation\Version';
 
     /**
      * Loads a ServiceDefinition from annotations from a class.
      *
      * @param string $class A class name
-     * @param string $type  The resource type
+     * @param string $type The resource type
      *
      * @return ServiceDefinition A ServiceDefinition instance
      *
@@ -59,6 +60,7 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
                 $propertyComplexType->setValue($complexType->getValue());
                 $propertyComplexType->setNillable($complexType->isNillable());
                 $propertyComplexType->setName($property->getName());
+                $propertyComplexType->setVersion($complexType->getVersion());
                 $annotations['properties']->add($propertyComplexType);
             }
         }
@@ -69,8 +71,8 @@ class AnnotationComplexTypeLoader extends AnnotationClassLoader
     /**
      * Returns true if this class supports the given resource.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string $type The resource type
      *
      * @return Boolean True if this class supports the given resource, false otherwise
      */
