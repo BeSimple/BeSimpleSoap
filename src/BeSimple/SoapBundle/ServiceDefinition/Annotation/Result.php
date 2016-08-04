@@ -15,8 +15,14 @@ namespace BeSimple\SoapBundle\ServiceDefinition\Annotation;
  */
 class Result extends Configuration implements TypedElementInterface
 {
+    private $value = 'return';
     private $phpType;
     private $xmlType;
+
+    public function getValue()
+    {
+        return $this->value;
+    }
 
     public function getPhpType()
     {
@@ -26,6 +32,11 @@ class Result extends Configuration implements TypedElementInterface
     public function getXmlType()
     {
         return $this->xmlType;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
     }
 
     public function setPhpType($phpType)
