@@ -44,7 +44,7 @@ class WebServiceContext
         if (null === $this->serviceDefinition) {
             $cache = new ConfigCache(sprintf('%s/%s.definition.php', $this->options['cache_dir'], $this->options['name']), $this->options['debug']);
             if ($cache->isFresh()) {
-                $this->serviceDefinition = include (string) $cache;
+                $this->serviceDefinition = include (string)$cache;
             } else {
                 if (!$this->loader->supports($this->options['resource'], $this->options['resource_type'])) {
                     throw new \LogicException(sprintf('Cannot load "%s" (%s)', $this->options['resource'], $this->options['resource_type']));
@@ -54,7 +54,7 @@ class WebServiceContext
                 $this->serviceDefinition->setName($this->options['name']);
                 $this->serviceDefinition->setNamespace($this->options['namespace']);
 
-                $cache->write('<?php return unserialize('.var_export(serialize($this->serviceDefinition), true).');');
+                $cache->write('<?php return unserialize(' . var_export(serialize($this->serviceDefinition), true) . ');');
             }
         }
 
@@ -68,10 +68,10 @@ class WebServiceContext
 
     public function getWsdlFile($endpoint = null)
     {
-        $file      = sprintf ('%s/%s.%s.wsdl', $this->options['cache_dir'], $this->options['name'], md5($endpoint));
+        $file = sprintf('%s/%s.%s.wsdl', $this->options['cache_dir'], $this->options['name'], md5($endpoint));
         $cache = new ConfigCache($file, $this->options['debug']);
 
-        if(!$cache->isFresh()) {
+        if (!$cache->isFresh()) {
             $definition = $this->getServiceDefinition();
 
             if ($endpoint) {
@@ -82,7 +82,7 @@ class WebServiceContext
             $cache->write($dumper->dump());
         }
 
-        return (string) $cache;
+        return $cache->getPath();
     }
 
     public function getServiceBinder()
@@ -105,8 +105,7 @@ class WebServiceContext
             $this->serverBuilder = SoapServerBuilder::createWithDefaults()
                 ->withWsdl($this->getWsdlFile())
                 ->withClassmap($this->getServiceDefinition()->getTypeRepository()->getClassmap())
-                ->withTypeConverters($this->converters)
-            ;
+                ->withTypeConverters($this->converters);
 
             if (null !== $this->options['cache_type']) {
                 $this->serverBuilder->withWsdlCache($this->options['cache_type']);

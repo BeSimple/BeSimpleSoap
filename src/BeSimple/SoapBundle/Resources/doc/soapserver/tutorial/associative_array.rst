@@ -28,10 +28,13 @@ Controller
     namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use Symfony\Component\DependencyInjection\ContainerAware;
+    use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+    use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-    class DemoController extends ContainerAware
+    class DemoController  implements ContainerAwareInterface
     {
+        use ContainerAwareTrait;
+
         /**
          * @Soap\Method("returnAssocArray")
          * @Soap\Result(phpType = "BeSimple\SoapCommon\Type\KeyValue\String[]")
@@ -82,10 +85,13 @@ How to create my Associative Array?
 
     use Acme\DemoBundle\Entity\User;
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use Symfony\Component\DependencyInjection\ContainerAware;
+    use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+    use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-    class DemoController extends ContainerAware
+    class DemoController  implements ContainerAwareInterface
     {
+        use ContainerAwareTrait;
+
         /**
          * @Soap\Method("getUsers")
          * @Soap\Result(phpType = "Acme\DemoBundle\Soap\Type\User[]")

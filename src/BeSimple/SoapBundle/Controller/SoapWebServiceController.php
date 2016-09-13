@@ -16,8 +16,10 @@ use BeSimple\SoapBundle\Handler\ExceptionHandler;
 use BeSimple\SoapBundle\Soap\SoapRequest;
 use BeSimple\SoapBundle\Soap\SoapResponse;
 use BeSimple\SoapServer\SoapServerBuilder;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\FlattenException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,8 +30,10 @@ use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
  * @author Christian Kerl <christian-kerl@web.de>
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class SoapWebServiceController extends ContainerAware
+class SoapWebServiceController implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var \SoapServer
      */
@@ -60,17 +64,16 @@ class SoapWebServiceController extends ContainerAware
      */
     public function callAction($webservice)
     {
-        $webServiceContext   = $this->getWebServiceContext($webservice);
+        $webServiceContext = $this->getWebServiceContext($webservice);
 
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
         $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
-        $this->soapServer  = $webServiceContext
+        $this->soapServer = $webServiceContext
             ->getServerBuilder()
             ->withSoapVersion11()
             ->withHandler($this)
-            ->build()
-        ;
+            ->build();
 
         ob_start();
         $this->soapServer->handle($this->soapRequest->getSoapMessage());
@@ -94,8 +97,8 @@ class SoapWebServiceController extends ContainerAware
                 true
             )
         ));
-
-        $request = $this->container->get('request');
+        
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $query = $request->query;
         if ($query->has('wsdl') || $query->has('WSDL')) {
             $request->setRequestFormat('wsdl');
@@ -107,9 +110,9 @@ class SoapWebServiceController extends ContainerAware
     /**
      * Converts an Exception to a SoapFault Response.
      *
-     * @param Request              $request   The request
-     * @param FlattenException     $exception A FlattenException instance
-     * @param DebugLoggerInterface $logger    A DebugLoggerInterface instance
+     * @param Request $request The request
+     * @param FlattenException $exception A FlattenException instance
+     * @param DebugLoggerInterface $logger A DebugLoggerInterface instance
      *
      * @return Response
      *
@@ -121,13 +124,13 @@ class SoapWebServiceController extends ContainerAware
             throw new \LogicException(sprintf('The parameter "%s" is required in Request::$query parameter bag to generate the SoapFault.', '_besimple_soap_webservice'), null, $e);
         }
 
-        $view = 'TwigBundle:Exception:'.($this->container->get('kernel')->isDebug() ? 'exception' : 'error').'.txt.twig';
+        $view = 'TwigBundle:Exception:' . ($this->container->get('kernel')->isDebug() ? 'exception' : 'error') . '.txt.twig';
         $code = $exception->getStatusCode();
         $details = $this->container->get('templating')->render($view, array(
             'status_code' => $code,
             'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : '',
-            'exception'   => $exception,
-            'logger'      => $logger,
+            'exception' => $exception,
+            'logger' => $logger,
         ));
 
         $handler = new ExceptionHandler($exception, $details);
@@ -139,19 +142,18 @@ class SoapWebServiceController extends ContainerAware
         }
 
         $server = SoapServerBuilder::createWithDefaults()
-            ->withWsdl(__DIR__.'/../Handler/wsdl/exception.wsdl')
+            ->withWsdl(__DIR__ . '/../Handler/wsdl/exception.wsdl')
             ->withWsdlCacheNone()
             ->withHandler($handler)
-            ->build()
-        ;
+            ->build();
 
         ob_start();
         $server->handle(
-            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://besim.pl/soap/exception/1.0/">'.
-               '<soapenv:Header/>'.
-               '<soapenv:Body>'.
-                  '<ns:exception />'.
-               '</soapenv:Body>'.
+            '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://besim.pl/soap/exception/1.0/">' .
+            '<soapenv:Header/>' .
+            '<soapenv:Body>' .
+            '<ns:exception />' .
+            '</soapenv:Body>' .
             '</soapenv:Envelope>'
         );
 
