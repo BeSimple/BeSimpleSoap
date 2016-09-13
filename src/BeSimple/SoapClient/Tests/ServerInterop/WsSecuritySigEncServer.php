@@ -4,18 +4,18 @@ require '../../../../../vendor/autoload.php';
 
 use ass\XmlSecurity\Key as XmlSecurityKey;
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
-use BeSimple\SoapServer\SoapServer as BeSimpleSoapServer;
-use BeSimple\SoapServer\WsSecurityFilter as BeSimpleWsSecurityFilter;
-use BeSimple\SoapCommon\WsSecurityKey as BeSimpleWsSecurityKey;
-
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBook;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBookResponse;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBooksByType;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBooksByTypeResponse;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBook;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBookResponse;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\BookInformation;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBook;
+
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBookResponse;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBooksByType;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBooksByTypeResponse;
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
+use BeSimple\SoapCommon\WsSecurityKey as BeSimpleWsSecurityKey;
+use BeSimple\SoapServer\SoapServer as BeSimpleSoapServer;
+use BeSimple\SoapServer\WsSecurityFilter as BeSimpleWsSecurityFilter;
 
 $options = array(
     'soap_version'    => SOAP_1_1,

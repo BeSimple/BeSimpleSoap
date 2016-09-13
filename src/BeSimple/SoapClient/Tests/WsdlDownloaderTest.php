@@ -12,12 +12,12 @@
 
 namespace BeSimple\SoapClient\Tests;
 
+use BeSimple\SoapClient\Curl;
 use BeSimple\SoapClient\WsdlDownloader;
 use BeSimple\SoapCommon\Cache;
-use BeSimple\SoapClient\Curl;
-use Symfony\Component\Filesystem\Filesystem;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @author Andreas Schamberger <mail@andreass.net>

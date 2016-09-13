@@ -8,14 +8,14 @@
 *
 */
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
-
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\AttachmentRequest;
+
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\AttachmentType;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\base64Binary;
-
 use BeSimple\SoapClient\Tests\AxisInterop\TestCase;
+
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 
 class MtomAxisInteropTest extends TestCase
 {

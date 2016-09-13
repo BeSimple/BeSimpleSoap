@@ -2,15 +2,15 @@
 
 require '../../../../../vendor/autoload.php';
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\downloadFile;
 
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\downloadFileResponse;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFile;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFileResponse;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\downloadFile;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\downloadFileResponse;
-
 use BeSimple\SoapClient\Tests\ServerInterop\TestCase;
+
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 
 $options = array(
     'soap_version'    => SOAP_1_1,

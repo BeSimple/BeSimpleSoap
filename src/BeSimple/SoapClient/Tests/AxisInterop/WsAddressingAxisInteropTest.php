@@ -23,9 +23,9 @@
  */
 
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
-use BeSimple\SoapClient\WsAddressingFilter as BeSimpleWsAddressingFilter;
-
 use BeSimple\SoapClient\Tests\AxisInterop\TestCase;
+
+use BeSimple\SoapClient\WsAddressingFilter as BeSimpleWsAddressingFilter;
 
 class WsAddressingAxisInteropTest extends TestCase
 {

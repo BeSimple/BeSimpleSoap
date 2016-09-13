@@ -12,9 +12,9 @@
 
 namespace BeSimple\SoapClient;
 
-use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Converter\MtomTypeConverter;
 use BeSimple\SoapCommon\Converter\SwaTypeConverter;
+use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\SoapMessage;
 
 /**

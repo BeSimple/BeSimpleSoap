@@ -37,18 +37,18 @@
 use ass\XmlSecurity\Key as XmlSecurityKey;
 
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
-use BeSimple\SoapClient\WsSecurityFilter as BeSimpleWsSecurityFilter;
-use BeSimple\SoapCommon\WsSecurityKey as BeSimpleWsSecurityKey;
+use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\addBook;
+use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\addBookResponse;
 
+use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\BookInformation;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\getBook;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\getBookResponse;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\getBooksByType;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\getBooksByTypeResponse;
-use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\addBook;
-use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\addBookResponse;
-use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\BookInformation;
-
 use BeSimple\SoapClient\Tests\AxisInterop\TestCase;
+use BeSimple\SoapClient\WsSecurityFilter as BeSimpleWsSecurityFilter;
+
+use BeSimple\SoapCommon\WsSecurityKey as BeSimpleWsSecurityKey;
 
 class WsSecuritySigEncAxisInteropTest extends TestCase
 {
