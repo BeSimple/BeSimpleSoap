@@ -24,8 +24,8 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
-        "symfony/framework-bundle": "~3.0",
-        "symfony/twig-bundle": "~3.0",
+        "symfony/framework-bundle": "~3.1",
+        "symfony/twig-bundle": "~3.1",
         "zendframework/zend-mime": "2.1.*"
     },
     "replace": {
@@ -39,7 +39,7 @@
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "~2.0",
-        "symfony/process": "~2.3"
+        "symfony/process": "~3.1"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
