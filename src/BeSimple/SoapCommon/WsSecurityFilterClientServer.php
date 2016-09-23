@@ -30,7 +30,7 @@ abstract class WsSecurityFilterClientServer
     /**
      * The date format to be used with {@link \DateTime}
      */
-    const DATETIME_FORMAT = 'Y-m-d\TH:i:s.000\Z';
+    const DATETIME_FORMAT = 'Y-m-d\TH:i:s.u\Z';
 
     /**
      * (X509 3.2.1) Reference to a Subject Key Identifier

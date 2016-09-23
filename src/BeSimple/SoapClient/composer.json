@@ -23,12 +23,12 @@
         "php": ">=5.3.0",
         "ext-soap": "*",
         "ext-curl": "*",
-        "besimple/soap-common": "0.2.*",
+        "besimple/soap-common": "0.3.*",
         "ass/xmlsecurity": "~1.0"
     },
     "require-dev": {
         "mikey179/vfsStream": "~1.0",
-        "symfony/filesystem": "~2.0",
+        "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3"
     },
     "autoload": {
@@ -37,7 +37,7 @@
     "target-dir": "BeSimple/SoapClient",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.2-dev"
+            "dev-master": "0.3-dev"
         }
     }
 }

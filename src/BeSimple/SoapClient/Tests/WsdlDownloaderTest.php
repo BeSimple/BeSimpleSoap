@@ -278,7 +278,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
             $content = file_get_contents(self::$fixturesPath.$file);
             $content = preg_replace('#'.preg_quote('%location%').'#', sprintf('localhost:%d', WEBSERVER_PORT), $content);
 
-            file_put_contents(self::$fixturesPath.'build_include'.DIRECTORY_SEPARATOR.pathinfo($file, PATHINFO_BASENAME), $content);
+            self::$filesystem->dumpFile(self::$fixturesPath.'build_include'.DIRECTORY_SEPARATOR.pathinfo($file, PATHINFO_BASENAME), $content);
         }
     }
 

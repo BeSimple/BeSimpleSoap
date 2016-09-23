@@ -20,12 +20,12 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.0,<7",
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
-        "symfony/framework-bundle": "~2.0",
-        "symfony/twig-bundle": "~2.0",
+        "symfony/framework-bundle": "~2.3",
+        "symfony/twig-bundle": "~2.3",
         "zendframework/zend-mime": "2.1.*"
     },
     "replace": {
@@ -38,7 +38,7 @@
     "require-dev": {
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "~1.0",
-        "symfony/filesystem": "~2.0",
+        "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3"
     },
     "autoload": {
@@ -46,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.2-dev"
+            "dev-master": "0.3-dev"
         }
     }
 }
