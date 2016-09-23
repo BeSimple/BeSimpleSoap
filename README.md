@@ -2,6 +2,8 @@
 
 Build SOAP and WSDL based web services
 
+[![Build Status](https://travis-ci.org/phpmike/BeSimpleSoap.svg?branch=0.4)](https://travis-ci.org/phpmike/BeSimpleSoap)
+
 # Components
 
 BeSimpleSoap consists of five components ...
