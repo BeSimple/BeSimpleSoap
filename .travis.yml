@@ -8,9 +8,9 @@ php:
 env:
   - SYMFONY_VERSION=2.3.*
   - SYMFONY_VERSION=2.7.*
-  - SYMFONY_VERSION="dev-master symfony/debug:~2.6@dev symfony/http-kernel:~2.6@dev"
 
 before_script:
+  - phpenv config-add myphp.ini
   - composer self-update
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
   - composer update --no-interaction --prefer-source
@@ -22,5 +22,4 @@ script:
 
 matrix:
   allow_failures:
-    - env: SYMFONY_VERSION="dev-master symfony/debug:~2.6@dev symfony/http-kernel:~2.6@dev"
-    - php: 7.0
+    - env: SYMFONY_VERSION=2.3.*
