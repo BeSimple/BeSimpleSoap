@@ -132,7 +132,7 @@ class WsdlDownloader
      *
      * @return boolean
      */
-    private function isRemoteFile($file)
+    protected function isRemoteFile($file)
     {
         // @parse_url to suppress E_WARNING for invalid urls
         if (false !== $url = @parse_url($file)) {
@@ -209,7 +209,7 @@ class WsdlDownloader
      *
      * @return string
      */
-    private function resolveRelativePathInUrl($base, $relative)
+    protected function resolveRelativePathInUrl($base, $relative)
     {
         $urlParts = parse_url($base);
 
