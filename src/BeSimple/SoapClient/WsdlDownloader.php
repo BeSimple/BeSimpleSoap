@@ -153,7 +153,7 @@ class WsdlDownloader
      *
      * @return void
      */
-    private function resolveRemoteIncludes($xml, $cacheFilePath, $parentFilePath = null)
+    protected function resolveRemoteIncludes($xml, $cacheFilePath, $parentFilePath = null)
     {
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
