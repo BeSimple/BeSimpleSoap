@@ -2,9 +2,9 @@
 
 namespace BeSimple\SoapBundle\Soap;
 
+use BeSimple\SoapClient\SoapClientBuilder as BaseSoapClientBuilder;
 use BeSimple\SoapCommon\Classmap;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
-use BeSimple\SoapClient\SoapClientBuilder as BaseSoapClientBuilder;
 
 class SoapClientBuilder extends BaseSoapClientBuilder
 {

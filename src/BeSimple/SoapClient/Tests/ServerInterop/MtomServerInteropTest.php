@@ -1,13 +1,13 @@
 <?php
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
-
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest;
+
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentType;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary;
-
 use BeSimple\SoapClient\Tests\ServerInterop\TestCase;
+
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 
 class MtomServerInteropTest extends TestCase
 {

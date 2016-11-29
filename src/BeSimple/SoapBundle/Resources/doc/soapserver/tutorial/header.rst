@@ -9,10 +9,13 @@ Controller
     namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use Symfony\Component\DependencyInjection\ContainerAware;
+    use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+    use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-    class DemoController extends ContainerAware
+    class DemoController implements ContainerAwareInterface
     {
+        use ContainerAwareTrait;
+
         /**
          * @Soap\Method("hello")
          * @Soap\Header("api_key", phpType = "string")
@@ -42,14 +45,16 @@ If you want use a header for all actions of your controller you can declare the 
     namespace Acme\DemoBundle\Controller;
 
     use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-    use Symfony\Component\DependencyInjection\ContainerAware;
     use Symfony\Component\DependencyInjection\ContainerInterface;
+    use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
     /**
      * @Soap\Header("api_key", phpType = "string")
      */
-    class DemoController extends ContainerAware
+    class DemoController implements ContainerAwareInterface
     {
+        use ContainerAwareTrait;
+
         /**
          * @Soap\Method("hello")
          * @Soap\Param("names", phpType = "string[]")

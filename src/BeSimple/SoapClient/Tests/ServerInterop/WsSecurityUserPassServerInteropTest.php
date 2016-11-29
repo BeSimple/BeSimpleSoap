@@ -1,19 +1,19 @@
 <?php
 
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
-use BeSimple\SoapClient\WsSecurityFilter as BeSimpleWsSecurityFilter;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures;
 
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBook;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBookResponse;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\BookInformation;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBook;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBookResponse;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBooksByType;
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\getBooksByTypeResponse;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBook;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\addBookResponse;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\BookInformation;
-
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures;
 
 use BeSimple\SoapClient\Tests\ServerInterop\TestCase;
+
+use BeSimple\SoapClient\WsSecurityFilter as BeSimpleWsSecurityFilter;
 
 class WsSecurityUserPassServerInteropTest extends TestCase
 {

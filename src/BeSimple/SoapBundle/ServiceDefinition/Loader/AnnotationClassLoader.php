@@ -12,8 +12,8 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
-use BeSimple\SoapBundle\ServiceDefinition as Definition;
 use BeSimple\SoapBundle\ServiceDefinition\Annotation;
+use BeSimple\SoapBundle\ServiceDefinition as Definition;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 use Doctrine\Common\Annotations\Reader;

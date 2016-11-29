@@ -12,9 +12,9 @@
 
 namespace BeSimple\SoapCommon\Tests\Converter;
 
-use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
 use BeSimple\SoapCommon\Converter\DateTypeConverter;
+use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 
 /**
  * UnitTest for \BeSimple\SoapCommon\Converter\TypeConverterCollection.

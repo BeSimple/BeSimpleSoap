@@ -10,8 +10,8 @@
 
 namespace BeSimple\SoapBundle;
 
-use BeSimple\SoapBundle\DependencyInjection\Compiler\WebServiceResolverPass;
 use BeSimple\SoapBundle\DependencyInjection\Compiler\TypeConverterPass;
+use BeSimple\SoapBundle\DependencyInjection\Compiler\WebServiceResolverPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

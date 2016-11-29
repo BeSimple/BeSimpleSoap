@@ -12,8 +12,8 @@
 
 namespace BeSimple\SoapClient;
 
-use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 use BeSimple\SoapCommon\SoapMessage;
+use BeSimple\SoapCommon\SoapRequest as CommonSoapRequest;
 
 /**
  * SoapRequest class for SoapClient. Provides factory function for request object.

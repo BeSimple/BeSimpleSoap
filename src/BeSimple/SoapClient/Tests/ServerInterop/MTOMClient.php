@@ -2,11 +2,11 @@
 
 require '../../../../../vendor/autoload.php';
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
+use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest;
 
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary;
-use BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest;
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 
 $options = array(
     'soap_version'    => SOAP_1_1,

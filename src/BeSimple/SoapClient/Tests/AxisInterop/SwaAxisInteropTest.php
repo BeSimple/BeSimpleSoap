@@ -14,15 +14,15 @@
 *
 */
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 use BeSimple\SoapClient\SoapClient as BeSimpleSoapClient;
+use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\downloadFile;
 
+use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\downloadFileResponse;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\uploadFile;
 use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\uploadFileResponse;
-use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\downloadFile;
-use BeSimple\SoapClient\Tests\AxisInterop\Fixtures\downloadFileResponse;
-
 use BeSimple\SoapClient\Tests\AxisInterop\TestCase;
+
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
 
 class SwaAxisInteropTest extends TestCase
 {

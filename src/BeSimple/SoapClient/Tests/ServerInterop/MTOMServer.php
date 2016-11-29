@@ -2,10 +2,10 @@
 
 require '../../../../../vendor/autoload.php';
 
-use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
-use BeSimple\SoapServer\SoapServer as BeSimpleSoapServer;
-
 use BeSimple\SoapClient\Tests\ServerInterop\Fixtures;
+use BeSimple\SoapCommon\Helper as BeSimpleSoapHelper;
+
+use BeSimple\SoapServer\SoapServer as BeSimpleSoapServer;
 
 $options = array(
     'soap_version'    => SOAP_1_1,

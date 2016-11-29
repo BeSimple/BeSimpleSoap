@@ -15,8 +15,8 @@ namespace BeSimple\SoapCommon;
 
 use BeSimple\SoapCommon\Mime\Part as MimePart;
 use BeSimple\SoapCommon\SoapRequest;
-use BeSimple\SoapCommon\SoapResponse;
 use BeSimple\SoapCommon\SoapRequestFilter;
+use BeSimple\SoapCommon\SoapResponse;
 use BeSimple\SoapCommon\SoapResponseFilter;
 
 /**

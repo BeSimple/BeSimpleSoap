@@ -12,9 +12,9 @@
 
 namespace BeSimple\SoapServer;
 
-use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Converter\MtomTypeConverter;
 use BeSimple\SoapCommon\Converter\SwaTypeConverter;
+use BeSimple\SoapCommon\Helper;
 
 /**
  * Extended SoapServer that allows adding filters for SwA, MTOM, ... .
