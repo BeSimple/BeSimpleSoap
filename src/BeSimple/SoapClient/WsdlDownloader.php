@@ -100,6 +100,9 @@ class WsdlDownloader
                     // get content
                     if ($responseSuccessfull) {
                         $response = $this->curl->getResponseBody();
+                        if (empty($response)) {
+                            throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Got empty wsdl from '" . $wsdl ."'");
+                        }
 
                         if ($this->resolveRemoteIncludes) {
                             $this->resolveRemoteIncludes($response, $cacheFilePath, $wsdl);
