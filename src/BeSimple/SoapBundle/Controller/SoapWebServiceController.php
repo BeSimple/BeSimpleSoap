@@ -68,7 +68,7 @@ class SoapWebServiceController implements ContainerAwareInterface
 
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
-        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
+        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request_stack')->getCurrentRequest());
         $this->soapServer = $webServiceContext
             ->getServerBuilder()
             ->withSoapVersion11()
