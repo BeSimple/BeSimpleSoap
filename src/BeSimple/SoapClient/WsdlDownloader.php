@@ -159,7 +159,10 @@ class WsdlDownloader
     protected function resolveRemoteIncludes($xml, $cacheFilePath, $parentFilePath = null)
     {
         $doc = new \DOMDocument();
-        $doc->loadXML($xml);
+        $parsedOk = $doc->loadXML($xml);
+        if(!$parsedOk){
+            throw new \RuntimeException("WSDL Downloader: Couldn't parse xml: ".$xml);
+        }
 
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace(Helper::PFX_XML_SCHEMA, Helper::NS_XML_SCHEMA);
@@ -202,6 +205,12 @@ class WsdlDownloader
         }
 
         $doc->save($cacheFilePath);
+
+        $savedContents = file_get_contents($cacheFilePath);
+        if(empty($savedContents) || strlen($savedContents) < 25){
+            error_log("Removed empty cached wsdl file in: ".$cacheFilePath." for xml: ".$xml);
+            unlink($cacheFilePath);
+        }
     }
 
     /**
