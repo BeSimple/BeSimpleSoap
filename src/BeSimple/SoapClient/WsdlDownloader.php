@@ -208,8 +208,8 @@ class WsdlDownloader
 
         $savedContents = file_get_contents($cacheFilePath);
         if(empty($savedContents) || strlen($savedContents) < 25){
-            error_log("Removed empty cached wsdl file in: ".$cacheFilePath." for xml: ".$xml);
             unlink($cacheFilePath);
+            throw new \RuntimeException("Detected empty cached wsdl file in: ".$cacheFilePath." for xml: ".$xml);
         }
     }
 
