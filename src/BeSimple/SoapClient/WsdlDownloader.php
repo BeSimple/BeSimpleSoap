@@ -163,7 +163,7 @@ class WsdlDownloader
         $doc = new \DOMDocument();
         $parsedOk = $doc->loadXML($xml);
         if (!$parsedOk) {
-            throw new \RuntimeException("WSDL Downloader: Couldn't parse xml: $xml");
+            throw new \RuntimeException("SOAP-ERROR: Couldn't parse xml: $xml");
         }
 
         $xpath = new \DOMXPath($doc);
@@ -209,7 +209,7 @@ class WsdlDownloader
         $xmlResolved = $doc->saveXML();
 
         if (empty($xmlResolved) || strlen($xmlResolved) < self::XML_MIN_LENGTH) {
-            throw new \RuntimeException("Detected empty cached wsdl file in: $cacheFilePath for xml: $xml");
+            throw new \RuntimeException("SOAP-ERROR: Detected empty wsdl in: $cacheFilePath for xml: $xml");
         }
 
         file_put_contents($cacheFilePath, $xml);
