@@ -25,6 +25,8 @@ use BeSimple\SoapCommon\Helper;
  */
 class WsdlDownloader
 {
+    const XML_MIN_LENGTH = 25;
+
     /**
      * Cache enabled.
      *
@@ -160,8 +162,8 @@ class WsdlDownloader
     {
         $doc = new \DOMDocument();
         $parsedOk = $doc->loadXML($xml);
-        if(!$parsedOk){
-            throw new \RuntimeException("WSDL Downloader: Couldn't parse xml: ".$xml);
+        if (!$parsedOk) {
+            throw new \RuntimeException("WSDL Downloader: Couldn't parse xml: $xml");
         }
 
         $xpath = new \DOMXPath($doc);
@@ -204,13 +206,13 @@ class WsdlDownloader
             }
         }
 
-        $doc->save($cacheFilePath);
+        $xmlResolved = $doc->saveXML();
 
-        $savedContents = file_get_contents($cacheFilePath);
-        if(empty($savedContents) || strlen($savedContents) < 25){
-            unlink($cacheFilePath);
-            throw new \RuntimeException("Detected empty cached wsdl file in: ".$cacheFilePath." for xml: ".$xml);
+        if (empty($xmlResolved) || strlen($xmlResolved) < self::XML_MIN_LENGTH) {
+            throw new \RuntimeException("Detected empty cached wsdl file in: $cacheFilePath for xml: $xml");
         }
+
+        file_put_contents($cacheFilePath, $xml);
     }
 
     /**
