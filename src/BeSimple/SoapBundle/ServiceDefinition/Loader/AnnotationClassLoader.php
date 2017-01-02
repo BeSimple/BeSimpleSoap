@@ -73,7 +73,7 @@ class AnnotationClassLoader extends Loader
         foreach ($class->getMethods() as $method) {
             $serviceHeaders   = $sharedHeaders;
             $serviceArguments = array();
-            $serviceMethod    =
+            $serviceMethod    = null;
             $serviceReturn    = null;
 
             foreach ($this->reader->getMethodAnnotations($method) as $annotation) {
