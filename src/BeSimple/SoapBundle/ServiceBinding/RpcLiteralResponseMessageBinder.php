@@ -68,14 +68,7 @@ class RpcLiteralResponseMessageBinder implements MessageBinderInterface
 
                 $message = $array;
             } else {
-                if (is_array($message)) {
-                    foreach ($message as $complexType) {
-                        $array[] = $this->checkComplexType($phpType, $complexType);
-                    }
-                    $message = $array;
-                } else {
-                    $message = $this->checkComplexType($phpType, $message);
-                }
+                $message = $this->checkComplexType($phpType, $message);
             }
         }
 
