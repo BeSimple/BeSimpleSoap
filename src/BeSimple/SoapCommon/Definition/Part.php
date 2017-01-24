@@ -56,22 +56,20 @@ class Part
     {
         $this->nillable = (boolean) $nillable;
     }
-
+    
     public function getMinOccurs()
     {
         return $this->minOccurs;
     }
-
+    
     public function setMinOccurs($minOccurs)
     {
         $this->minOccurs = $minOccurs;
     }
-
     public function getMaxOccurs()
     {
         return $this->maxOccurs;
     }
-
     public function setMaxOccurs($maxOccurs)
     {
         $this->maxOccurs = $maxOccurs;
