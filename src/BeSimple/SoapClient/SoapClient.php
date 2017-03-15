@@ -310,17 +310,13 @@ class SoapClient extends \SoapClient
     public function __getLastResponseCode()
     {
         $lastResponseHeaders = $this->__getLastResponseHeaders();
-        echo $lastResponseHeaders."\n";
         if ($lastResponseHeaders) {
             if (preg_match( "#^HTTP(.*) ([\\d]{3}) (.*)#", $lastResponseHeaders, $matches)) {
                 $lastResponseCode = $matches[2];
                 return (int) $lastResponseCode;
-            } else {
-                return 0;
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
