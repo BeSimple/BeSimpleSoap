@@ -303,6 +303,23 @@ class SoapClient extends \SoapClient
     }
 
     /**
+     * Get last response HTTP code.
+     *
+     * @return integer
+     */
+    public function __getLastResponseCode()
+    {
+        $lastResponseHeaders = $this->__getLastResponseHeaders();
+        if ($lastResponseHeaders) {
+            if (preg_match( "#^HTTP(.*) ([\\d]{3}) (.*)#", $lastResponseHeaders, $matches)) {
+                $lastResponseCode = $matches[2];
+                return (int) $lastResponseCode;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get SoapKernel instance.
      *
      * @return \BeSimple\SoapClient\SoapKernel
