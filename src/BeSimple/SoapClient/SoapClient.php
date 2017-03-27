@@ -63,6 +63,13 @@ class SoapClient extends \SoapClient
     protected $lastRequest = '';
 
     /**
+     * Last request URI.
+     *
+     * @var string
+     */
+    protected $lastRequestUri = '';
+
+    /**
      * Last response headers.
      *
      * @var string
@@ -145,6 +152,7 @@ class SoapClient extends \SoapClient
         }
 
         $location = $soapRequest->getLocation();
+        $this->lastRequestUri = $location;
         $content = $soapRequest->getContent();
 
         $headers = $this->filterRequestHeaders($soapRequest, $headers);
@@ -280,6 +288,16 @@ class SoapClient extends \SoapClient
     public function __getLastRequest()
     {
         return $this->lastRequest;
+    }
+
+    /**
+     * Get last request HTTP URI.
+     *
+     * @return string
+     */
+    public function __getLastRequestUri()
+    {
+        return $this->lastRequestUri;
     }
 
     /**
