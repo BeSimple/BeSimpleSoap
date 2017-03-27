@@ -163,6 +163,8 @@ class Curl
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $request);
         }
 
+        $requestHeaders[] = "Expect:";  // This line is to avoid getting 100 Continue HTTP response code after sending headers
+
         if (count($requestHeaders) > 0) {
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $requestHeaders);
         }
