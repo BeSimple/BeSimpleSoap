@@ -1,52 +1,53 @@
 {
-    "name": "besimple/soap",
-    "type": "library",
-    "description": "Build and consume SOAP and WSDL based web services",
-    "keywords": ["soap"],
-    "homepage": "http://besim.pl",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Francis Besset",
-            "email": "francis.besset@gmail.com"
-        },
-        {
-            "name": "Christian Kerl",
-            "email": "christian-kerl@web.de"
-        },
-        {
-            "name": "Andreas Schamberger",
-            "email": "mail@andreass.net"
-        }
-    ],
-    "require": {
-        "php": ">=5.3.0",
-        "ext-soap": "*",
-        "ext-curl": "*",
-        "ass/xmlsecurity": "~1.0",
-        "symfony/framework-bundle": "~2.6",
-        "symfony/twig-bundle": "~2.6",
-        "zendframework/zend-mime": "2.1.*"
-    },
-    "replace": {
-        "besimple/soap-bundle": "self.version",
-        "besimple/soap-client": "self.version",
-        "besimple/soap-common": "self.version",
-        "besimple/soap-server": "self.version",
-        "besimple/soap-wsdl":   "self.version"
-    },
-    "require-dev": {
-        "ext-mcrypt": "*",
-        "mikey179/vfsStream": "~1.0",
-        "symfony/filesystem": "~2.3",
-        "symfony/process": "~2.3"
-    },
-    "autoload": {
-        "psr-0": { "BeSimple\\": "src/" }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.3-dev"
-        }
-    }
+	"name" : "besimple/soap",
+	"type" : "library",
+	"description" : "Build and consume SOAP and WSDL based web services",
+	"keywords" : [
+		"soap"
+	],
+	"homepage" : "http://besim.pl",
+	"license" : "MIT",
+	"authors" : [{
+			"name" : "Francis Besset",
+			"email" : "francis.besset@gmail.com"
+		}, {
+			"name" : "Christian Kerl",
+			"email" : "christian-kerl@web.de"
+		}, {
+			"name" : "Andreas Schamberger",
+			"email" : "mail@andreass.net"
+		}
+	],
+	"require" : {
+		"php" : ">=5.3.0",
+		"ext-soap" : "*",
+		"ext-curl" : "*",
+		"ass/xmlsecurity" : "~1.0",
+		"symfony/framework-bundle" : "^2.7 || ^3.0",
+		"symfony/twig-bundle" : "^2.7 || ^3.0",
+		"zendframework/zend-mime" : "2.1.*"
+	},
+	"replace" : {
+		"besimple/soap-bundle" : "self.version",
+		"besimple/soap-client" : "self.version",
+		"besimple/soap-common" : "self.version",
+		"besimple/soap-server" : "self.version",
+		"besimple/soap-wsdl" : "self.version"
+	},
+	"require-dev" : {
+		"ext-mcrypt" : "*",
+		"mikey179/vfsStream" : "~1.0",
+		"symfony/filesystem" : "~2.3",
+		"symfony/process" : "~2.3"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"BeSimple\\" : "src/"
+		}
+	},
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "0.3-dev"
+		}
+	}
 }

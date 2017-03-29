@@ -12,7 +12,7 @@
 
 namespace BeSimple\SoapBundle\ServiceDefinition\Loader;
 
-use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
+use BeSimple\SoapBundle\ServiceDefinition\Definition;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\FileLoader;
@@ -52,7 +52,7 @@ class AnnotationFileLoader extends FileLoader
      * @param string $file A PHP file path
      * @param string $type The resource type
      *
-     * @return ServiceDefinition A ServiceDefinition instance
+     * @return Definition A Definition instance
      *
      * @throws \InvalidArgumentException When the file does not exist
      */
