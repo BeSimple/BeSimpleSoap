@@ -163,9 +163,6 @@ class Curl
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $request);
         }
 
-        //http://stackoverflow.com/questions/11359276/php-curl-exec-returns-both-http-1-1-100-continue-and-http-1-1-200-ok-separated-b
-        $requestHeaders[] = "Expect:";  // This line is to avoid getting 100 Continue HTTP response code after sending headers
-
         if (count($requestHeaders) > 0) {
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $requestHeaders);
         }

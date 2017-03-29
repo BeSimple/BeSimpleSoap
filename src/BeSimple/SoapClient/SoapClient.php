@@ -77,6 +77,13 @@ class SoapClient extends \SoapClient
     protected $lastResponseHeaders = '';
 
     /**
+     * Last response code.
+     *
+     * @var string
+     */
+    protected $lastResponseCode = '';
+
+    /**
      * Last response.
      *
      * @var string
@@ -186,6 +193,7 @@ class SoapClient extends \SoapClient
         if ($this->tracingEnabled === true) {
             $this->lastResponseHeaders = $this->curl->getResponseHeaders();
             $this->lastResponse = $this->curl->getResponseBody();
+            $this->lastResponseCode = $this->curl->getResponseStatusCode();
         }
         // wrap response data in SoapResponse object
         $soapResponse = SoapResponse::create(
@@ -327,14 +335,7 @@ class SoapClient extends \SoapClient
      */
     public function __getLastResponseCode()
     {
-        $lastResponseHeaders = $this->__getLastResponseHeaders();
-        if ($lastResponseHeaders) {
-            if (preg_match( "#^HTTP(.*) ([\\d]{3}) (.*)#", $lastResponseHeaders, $matches)) {
-                $lastResponseCode = $matches[2];
-                return (int) $lastResponseCode;
-            }
-        }
-        return null;
+        return $this->lastResponseCode;
     }
 
     /**
