@@ -19,7 +19,7 @@ use BeSimple\SoapBundle\Soap\SoapHeader;
 class ServiceBinder
 {
     /**
-     * @var \BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition
+     * @var \BeSimple\SoapBundle\ServiceDefinition\Definition
      */
     private $definition;
 

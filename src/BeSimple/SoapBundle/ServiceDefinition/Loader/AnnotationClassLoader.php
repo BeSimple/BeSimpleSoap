@@ -50,7 +50,7 @@ class AnnotationClassLoader extends Loader
      * @param string $class A class name
      * @param string $type  The resource type
      *
-     * @return \BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition A ServiceDefinition instance
+     * @return \BeSimple\SoapBundle\ServiceDefinition\Definition A Definition instance
      *
      * @throws \InvalidArgumentException When route can't be parsed
      */
