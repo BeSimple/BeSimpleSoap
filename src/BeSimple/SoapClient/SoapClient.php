@@ -49,6 +49,13 @@ class SoapClient extends \SoapClient
     protected $curl = null;
 
     /**
+     * request headers.
+     *
+     * @var array
+     */
+    protected $requestHeaders = array();
+
+    /**
      * Last request headers.
      *
      * @var string
@@ -170,7 +177,7 @@ class SoapClient extends \SoapClient
         $responseSuccessfull = $this->curl->exec(
             $location,
             $content,
-            $headers,
+            $this->requestHeaders,
             $options
         );
 
@@ -289,6 +296,16 @@ class SoapClient extends \SoapClient
     }
 
     /**
+     * Get request HTTP headers.
+     *
+     * @return string
+     */
+    public function __getRequestHeaders()
+    {
+        return $this->requestHeaders;
+    }
+
+        /**
      * Get last request HTTP body.
      *
      * @return string
@@ -430,4 +447,12 @@ class SoapClient extends \SoapClient
         }
         $this->curl->setOption(CURLOPT_TIMEOUT,$value);
     }
+
+    /**
+     * @param $value
+     */
+    public function setRequestHeaders($headers){
+        $this->requestHeaders = $headers;
+    }
+
 }
