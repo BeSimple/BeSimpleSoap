@@ -49,6 +49,13 @@ class SoapClient extends \SoapClient
     protected $curl = null;
 
     /**
+     * request headers.
+     *
+     * @var array
+     */
+    protected $requestHeaders = array();
+
+    /**
      * Last request headers.
      *
      * @var string
@@ -148,12 +155,12 @@ class SoapClient extends \SoapClient
         $soapVersion = $soapRequest->getVersion();
         $soapAction = $soapRequest->getAction();
         if (SOAP_1_1 == $soapVersion) {
-            $headers = array(
+            $staticallyAddedHeaders = array(
                 'Content-Type:' . $soapRequest->getContentType(),
                 'SOAPAction: "' . $soapAction . '"',
             );
         } else {
-            $headers = array(
+            $staticallyAddedHeaders = array(
                'Content-Type:' . $soapRequest->getContentType() . '; action="' . $soapAction . '"',
             );
         }
@@ -161,16 +168,16 @@ class SoapClient extends \SoapClient
         $location = $soapRequest->getLocation();
         $this->lastRequestUri = $location;
         $content = $soapRequest->getContent();
-
-        $headers = $this->filterRequestHeaders($soapRequest, $headers);
-
+        $staticallyAddedHeaders = $this->filterRequestHeaders($soapRequest, $staticallyAddedHeaders);
         $options = $this->filterRequestOptions($soapRequest);
+        $flattenedHttpHeaders = $this->getRequestHeadersForCurl();// flatten key/value pair array into single string array
+        $flattenedHttpHeaders = array_merge($flattenedHttpHeaders, $staticallyAddedHeaders);//add statically added headers to the headers passed in
 
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
             $location,
             $content,
-            $headers,
+            $flattenedHttpHeaders,
             $options
         );
 
@@ -289,6 +296,16 @@ class SoapClient extends \SoapClient
     }
 
     /**
+     * Get request HTTP headers.
+     *
+     * @return string
+     */
+    public function __getRequestHeaders()
+    {
+        return $this->requestHeaders;
+    }
+
+        /**
      * Get last request HTTP body.
      *
      * @return string
@@ -430,4 +447,20 @@ class SoapClient extends \SoapClient
         }
         $this->curl->setOption(CURLOPT_TIMEOUT,$value);
     }
+
+    /**
+     * @param array $headers
+     */
+    public function setRequestHeaders($headers){
+        $this->requestHeaders = $headers;
+    }
+
+    public function getRequestHeadersForCurl(){
+        $requestHeadersStringArray = array();
+        foreach($this->requestHeaders as $key => $value){
+            $requestHeadersStringArray[]= $key.": ".$value;
+        }
+        return $requestHeadersStringArray;
+    }
+
 }
