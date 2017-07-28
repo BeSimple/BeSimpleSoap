@@ -1,5 +1,5 @@
 {
-    "name": "smartbox/besimple/soap",
+    "name": "smartbox/besimple-soap",
     "type": "library",
     "description": "Build and consume SOAP and WSDL based web services",
     "keywords": ["soap"],
