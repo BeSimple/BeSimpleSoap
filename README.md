@@ -1,6 +1,9 @@
 # BeSimpleSoap
 
 Build SOAP and WSDL based web services
+[![Latest Stable Version](https://img.shields.io/packagist/v/smartbox/besimple-soap.svg?style=flat-square)](https://packagist.org/packages/smartbox/besimple-soap)
+[![Minimum PHP Version](https://img.shields.io/badge/php-~%207.0-8892BF.svg?style=flat-square)](https://php.net/)
+[![Build Status](https://travis-ci.org/smartbox/besimple-soap.svg?branch=master)](https://travis-ci.org/smartbox/besimple-soap)
 
 # Components
 
@@ -44,7 +47,7 @@ Create a `composer.json` file:
 ```json
 {
     "require": {
-        "besimple/soap": "0.2.*@dev"
+        "smartbox/besimple-soap": "dev-master"
     }
 }
 ```
