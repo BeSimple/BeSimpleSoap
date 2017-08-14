@@ -175,19 +175,28 @@ class SoapClientBuilder extends AbstractSoapBuilder
      *
      * @param string $host     Host
      * @param int    $port     Port
-     * @param string $username Username
+     * @param string $login    Login
      * @param string $password Password
+     * @param int    $auth     Authentication method
      *
      * @return \BeSimple\SoapClient\SoapClientBuilder
      */
-    public function withProxy($host, $port, $username = null, $password = null)
+    public function withProxy($host, $port, $login = null, $password = null, $auth = null)
     {
         $this->soapOptions['proxy_host'] = $host;
         $this->soapOptions['proxy_port'] = $port;
 
-        if ($username) {
-            $this->soapOptions['proxy_login']    = $username;
+        if ($login) {
+            $this->soapOptions['proxy_login'] = $login;
             $this->soapOptions['proxy_password'] = $password;
+
+            if ($auth) {
+                if (!in_array($auth, array(\CURLAUTH_BASIC, \CURLAUTH_NTLM), true)) {
+                    throw new \InvalidArgumentException('Invalid authentication method: CURLAUTH_BASIC or CURLAUTH_NTLM constants are availables.');
+                }
+
+                $this->soapOptions['proxy_auth'] = $auth;
+            }
         }
 
         return $this;

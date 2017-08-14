@@ -25,17 +25,15 @@ class Cache
 
         BaseCache::setEnabled($isEnabled);
 
-        if (BaseCache::ENABLED == BaseCache::isEnabled()) {
-            BaseCache::setType($type);
-            BaseCache::setDirectory($directory);
+        BaseCache::setType($type);
+        BaseCache::setDirectory($directory);
 
-            if (null !== $lifetime) {
-                BaseCache::setLifetime($lifetime);
-            }
+        if (null !== $lifetime) {
+            BaseCache::setLifetime($lifetime);
+        }
 
-            if (null !== $limit) {
-                BaseCache::setLimit($limit);
-            }
+        if (null !== $limit) {
+            BaseCache::setLimit($limit);
         }
     }
 }

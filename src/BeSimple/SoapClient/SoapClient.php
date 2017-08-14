@@ -42,15 +42,6 @@ class SoapClient extends \SoapClient
     protected $tracingEnabled = false;
 
     /**
-     * Work around missing header/php://input access in PHP cli webserver by
-     * setting headers additionally as GET parameters and SOAP request body
-     * explicitly as POST variable.
-     *
-     * @var boolean
-     */
-    private $cliWebserverWorkaround = false;
-
-    /**
      * cURL instance.
      *
      * @var \BeSimple\SoapClient\Curl
@@ -108,11 +99,13 @@ class SoapClient extends \SoapClient
         if (isset($options['soap_version'])) {
             $this->soapVersion = $options['soap_version'];
         }
-        // activate cli webserver workaround
-        if (isset($options['cli_webserver_workaround'])) {
-            $this->cliWebserverWorkaround = $options['cli_webserver_workaround'];
-        }
+
         $this->curl = new Curl($options);
+
+        if (isset($options['extra_options'])) {
+            unset($options['extra_options']);
+        }
+
         $wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new SoapKernel();
@@ -153,32 +146,19 @@ class SoapClient extends \SoapClient
 
         $location = $soapRequest->getLocation();
         $content = $soapRequest->getContent();
-        /*
-         * Work around missing header/php://input access in PHP cli webserver by
-         * setting headers additionally as GET parameters and SOAP request body
-         * explicitly as POST variable
-         */
-        if ($this->cliWebserverWorkaround === true) {
-            if (strpos($location, '?') === false) {
-                $location .= '?';
-            } else {
-                $location .= '&';
-            }
-            $location .= SoapMessage::CONTENT_TYPE_HEADER.'='.urlencode($soapRequest->getContentType());
-            $location .= '&';
-            $location .= SoapMessage::SOAP_ACTION_HEADER.'='.urlencode($soapRequest->getAction());
 
-            $content = http_build_query(array('request' => $content));
+        $headers = $this->filterRequestHeaders($soapRequest, $headers);
 
-            $headers = array();
-        }
+        $options = $this->filterRequestOptions($soapRequest);
 
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
             $location,
             $content,
-            $headers
+            $headers,
+            $options
         );
+
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
             $this->lastRequestHeaders = $this->curl->getRequestHeaders();
@@ -251,6 +231,31 @@ class SoapClient extends \SoapClient
         $this->soapKernel->filterResponse($soapResponse);
 
         return $soapResponse;
+    }
+
+    /**
+     * Filters HTTP headers which will be sent
+     *
+     * @param SoapRequest $soapRequest SOAP request object
+     * @param array       $headers     An array of HTTP headers
+     *
+     * @return array
+     */
+    protected function filterRequestHeaders(SoapRequest $soapRequest, array $headers)
+    {
+        return $headers;
+    }
+
+    /**
+     * Adds additional cURL options for the request
+     *
+     * @param SoapRequest $soapRequest SOAP request object
+     *
+     * @return array
+     */
+    protected function filterRequestOptions(SoapRequest $soapRequest)
+    {
+        return array();
     }
 
     /**
@@ -354,7 +359,7 @@ class SoapClient extends \SoapClient
      *
      * @return string
      */
-    private function loadWsdl($wsdl, array $options)
+    protected function loadWsdl($wsdl, array $options)
     {
         // option to resolve wsdl/xsd includes
         $resolveRemoteIncludes = true;

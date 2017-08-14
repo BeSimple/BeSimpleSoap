@@ -80,20 +80,38 @@ class Curl
         if (isset($options['connection_timeout'])) {
             curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $options['connection_timeout']);
         }
+
         if (isset($options['proxy_host'])) {
-            $port = isset($options['proxy_port']) ? $options['proxy_port'] : 8080;
-            curl_setopt($this->ch, CURLOPT_PROXY, $options['proxy_host'] . ':' . $port);
+            if (false !== $options['proxy_host']) {
+                $proxyHost = $options['proxy_host'].(isset($options['proxy_port']) ? $options['proxy_port'] : 8080);
+            } else {
+                $proxyHost = false;
+            }
+
+            curl_setopt($this->ch, CURLOPT_PROXY, $proxyHost);
+
+            if (false !== $proxyHost && isset($options['proxy_login'])) {
+                curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_login'].':'.$options['proxy_password']);
+
+                if (isset($options['proxy_auth'])) {
+                    curl_setopt($this->ch, CURLOPT_PROXYAUTH, $options['proxy_auth']);
+                }
+            }
         }
-        if (isset($options['proxy_user'])) {
-            curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $options['proxy_user'] . ':' . $options['proxy_password']);
-        }
+
         if (isset($options['login'])) {
-            curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+            curl_setopt($this->ch, CURLOPT_HTTPAUTH, isset($options['extra_options']['http_auth']) ? $options['extra_options']['http_auth'] : CURLAUTH_ANY);
             curl_setopt($this->ch, CURLOPT_USERPWD, $options['login'].':'.$options['password']);
         }
         if (isset($options['local_cert'])) {
             curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
             curl_setopt($this->ch, CURLOPT_SSLCERTPASSWD, $options['passphrase']);
+        }
+        if (isset($options['ca_info'])) {
+            curl_setopt($this->ch, CURLOPT_CAINFO, $options['ca_info']);
+        }
+        if (isset($options['ca_path'])) {
+            curl_setopt($this->ch, CURLOPT_CAPATH, $options['ca_path']);
         }
     }
 
@@ -112,10 +130,11 @@ class Curl
      * @param string $location       HTTP location
      * @param string $request        Request body
      * @param array  $requestHeaders Request header strings
+     * @param array  $requestOptions An array of request options
      *
      * @return bool
      */
-    public function exec($location, $request = null, $requestHeaders = array())
+    public function exec($location, $request = null, $requestHeaders = array(), $requestOptions = array())
     {
         curl_setopt($this->ch, CURLOPT_URL, $location);
 
@@ -126,6 +145,10 @@ class Curl
 
         if (count($requestHeaders) > 0) {
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $requestHeaders);
+        }
+
+        if (count($requestOptions) > 0) {
+            curl_setopt_array($this->ch, $requestOptions);
         }
 
         $this->response = $this->execManualRedirect();

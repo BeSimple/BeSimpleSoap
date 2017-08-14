@@ -98,18 +98,31 @@ class BeSimpleSoapExtension extends Extension
                 }
             }
 
+            $proxy = $options['proxy'];
+            if (false !== $proxy['host']) {
+                if (null !== $proxy['auth']) {
+                    if ('basic' === $proxy['auth']) {
+                        $proxy['auth'] = \CURLAUTH_BASIC;
+                    } elseif ('ntlm' === $proxy['auth']) {
+                        $proxy['auth'] = \CURLAUTH_NTLM;
+                    }
+                }
+
+                $definition->addMethodCall('withProxy', array(
+                    $proxy['host'], $proxy['port'],
+                    $proxy['login'], $proxy['password'],
+                    $proxy['auth']
+                ));
+            }
+
             if (isset($defOptions['cache_type'])) {
                 $defOptions['cache_type'] = $this->getCacheType($defOptions['cache_type']);
             }
 
             $definition->replaceArgument(1, $defOptions);
 
-            if (!empty($options['classmap'])) {
-                $classmap = $this->createClientClassmap($client, $options['classmap'], $container);
-                $definition->replaceArgument(2, new Reference($classmap));
-            } else {
-                $definition->replaceArgument(2, null);
-            }
+            $classmap = $this->createClientClassmap($client, $options['classmap'], $container);
+            $definition->replaceArgument(2, new Reference($classmap));
 
             $this->createClient($client, $container);
         }
@@ -120,9 +133,11 @@ class BeSimpleSoapExtension extends Extension
         $definition = new DefinitionDecorator('besimple.soap.classmap');
         $container->setDefinition(sprintf('besimple.soap.classmap.%s', $client), $definition);
 
-        $definition->setMethodCalls(array(
-            array('set', array($classmap)),
-        ));
+        if (!empty($classmap)) {
+            $definition->setMethodCalls(array(
+                array('set', array($classmap)),
+            ));
+        }
 
         return sprintf('besimple.soap.classmap.%s', $client);
     }
@@ -132,7 +147,10 @@ class BeSimpleSoapExtension extends Extension
         $definition = new DefinitionDecorator('besimple.soap.client');
         $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
 
-        $definition->setFactoryService(sprintf('besimple.soap.client.builder.%s', $client));
+        $definition->setFactory(array(
+            new Reference(sprintf('besimple.soap.client.builder.%s', $client)),
+            'build'
+        ));
     }
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)

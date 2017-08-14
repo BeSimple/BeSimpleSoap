@@ -24,6 +24,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 class Configuration
 {
     private $cacheTypes = array('none', 'disk', 'memory', 'disk_memory');
+    private $proxyAuth = array('basic', 'ntlm');
 
     /**
      * Generates the configuration tree.
@@ -85,11 +86,32 @@ class Configuration
                                 ->scalarNode('cache_type')
                                     ->validate()
                                         ->ifNotInArray($this->cacheTypes)
-                                        ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
+                                        ->thenInvalid(sprintf('The cache type has to be either: %s', implode(', ', $this->cacheTypes)))
                                     ->end()
                                 ->end()
                                 ->arrayNode('classmap')
                                     ->useAttributeAsKey('name')->prototype('scalar')->end()
+                                ->end()
+                                ->arrayNode('proxy')
+                                    ->info('proxy configuration')
+                                    ->addDefaultsIfNotSet()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($v) { return !is_array($v); })
+                                        ->then(function ($v) { return array('host' => null === $v ? false : $v); })
+                                    ->end()
+                                    ->children()
+                                        ->scalarNode('host')->defaultFalse()->end()
+                                        ->scalarNode('port')->defaultValue(3128)->end()
+                                        ->scalarNode('login')->defaultNull()->end()
+                                        ->scalarNode('password')->defaultNull()->end()
+                                        ->scalarNode('auth')
+                                            ->defaultNull()
+                                            ->validate()
+                                                ->ifNotInArray($this->proxyAuth)
+                                                ->thenInvalid(sprintf('The proxy auth has to be either: %s', implode(', ', $this->proxyAuth)))
+                                            ->end()
+                                        ->end()
+                                    ->end()
                                 ->end()
                             ->end()
                         ->end()

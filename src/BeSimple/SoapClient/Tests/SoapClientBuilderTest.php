@@ -96,6 +96,20 @@ class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
 
         $builder->withProxy('127.0.0.1', 8585, 'foo', 'bar');
         $this->assertEquals($this->mergeOptions(array('proxy_host' => '127.0.0.1', 'proxy_port' => 8585, 'proxy_login' => 'foo', 'proxy_password' => 'bar')), $builder->getSoapOptions());
+
+        $builder->withProxy('127.0.0.1', 8585, 'foo', 'bar', \CURLAUTH_BASIC);
+        $this->assertEquals($this->mergeOptions(array('proxy_host' => '127.0.0.1', 'proxy_port' => 8585, 'proxy_login' => 'foo', 'proxy_password' => 'bar', 'proxy_auth' => \CURLAUTH_BASIC)), $builder->getSoapOptions());
+
+        $builder->withProxy('127.0.0.1', 8585, 'foo', 'bar', \CURLAUTH_NTLM);
+        $this->assertEquals($this->mergeOptions(array('proxy_host' => '127.0.0.1', 'proxy_port' => 8585, 'proxy_login' => 'foo', 'proxy_password' => 'bar', 'proxy_auth' => \CURLAUTH_NTLM)), $builder->getSoapOptions());
+
+        try {
+            $builder->withProxy('127.0.0.1', 8585, 'foo', 'bar', -100);
+
+            $this->fail('An expected exception has not been raised.');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('InvalidArgumentException', $e);
+        }
     }
 
     public function testCreateWithDefaults()

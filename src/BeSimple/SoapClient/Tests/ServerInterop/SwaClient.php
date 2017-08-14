@@ -24,7 +24,6 @@ $options = array(
         'uploadFile'           => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFile',
         'uploadFileResponse'   => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\uploadFileResponse',
     ),
-    'cli_webserver_workaround' => true, // Work around missing header access in PHP cli webserver by setting headers additionally as GET parameters.
 );
 
 $sc = new BeSimpleSoapClient(__DIR__.'/Fixtures/SwA.wsdl', $options);

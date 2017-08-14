@@ -18,7 +18,6 @@ $options = array(
         'base64Binary'      => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\base64Binary',
         'AttachmentRequest' => 'BeSimple\SoapClient\Tests\ServerInterop\Fixtures\AttachmentRequest',
     ),
-    'cli_webserver_workaround' => true, // Work around missing header access in PHP cli webserver by setting headers additionally as GET parameters.
     'connection_timeout' => 1,
 );
 
