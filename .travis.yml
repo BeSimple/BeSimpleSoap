@@ -15,7 +15,7 @@ matrix:
 before_script:
   - composer self-update
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
-  - composer install --no-interaction --prefer-source --dev
+  - composer install --prefer-dist --no-interaction
   - ./src/BeSimple/SoapClient/Tests/bin/phpwebserver.sh
   - ./src/BeSimple/SoapClient/Tests/bin/axis.sh
 
@@ -23,6 +23,8 @@ script:
   - bin/phpunit --coverage-text --debug
 
 notifications:
-  email:
-    on_success: always
+  email:
+    recipients:
+      - si-integration@smartandco.com
+    on_success: change
     on_failure: always
