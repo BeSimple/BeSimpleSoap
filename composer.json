@@ -40,7 +40,8 @@
         "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "^2.8",
         "symfony/process": "^2.8",
-        "phpunit/phpunit": "^5.3"
+        "phpunit/phpunit": "^5.3",
+        "phplint/phplint": "~0.0.1"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
