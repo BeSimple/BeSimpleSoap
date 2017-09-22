@@ -25,6 +25,7 @@ class Configuration
 {
     private $cacheTypes = array('none', 'disk', 'memory', 'disk_memory');
     private $proxyAuth = array('basic', 'ntlm');
+    private $passwordTypes = array('PasswordText', 'PasswordDigest');
 
     /**
      * Generates the configuration tree.
@@ -143,6 +144,19 @@ class Configuration
                                 ->validate()
                                     ->ifNotInArray($this->cacheTypes)
                                     ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
+                                ->end()
+                            ->end()
+                            ->arrayNode('wsse')
+                                ->children()
+                                    ->scalarNode('password_type')
+                                        ->defaultValue($this->passwordTypes[0])
+                                        ->validate()
+                                            ->ifNotInArray($this->passwordTypes)
+                                            ->thenInvalid(sprintf('The password type has to be either: %s', implode(', ', $this->passwordTypes)))
+                                        ->end()
+                                    ->end()
+                                    ->scalarNode('username')->defaultNull()->end()
+                                    ->scalarNode('password')->defaultNull()->end()
                                 ->end()
                             ->end()
                         ->end()

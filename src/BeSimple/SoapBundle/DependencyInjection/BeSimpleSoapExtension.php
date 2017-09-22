@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use BeSimple\SoapCommon\WsSecurityFilterClientServer;
 
 /**
  * BeSimpleSoapExtension.
@@ -166,6 +167,10 @@ class BeSimpleSoapExtension extends Extension
             $config['cache_type'] = $this->getCacheType($config['cache_type']);
         }
 
+        if (isset($config['wsse'])) {
+            $config['wsse']['password_type'] = $this->getPasswordType($config['wsse']['password_type']);
+        }
+
         $options = $container
             ->getDefinition('besimple.soap.context.'.$bindingSuffix)
             ->getArgument(2);
@@ -187,6 +192,17 @@ class BeSimpleSoapExtension extends Extension
 
             case 'disk_memory':
                 return Cache::TYPE_DISK_MEMORY;
+        }
+    }
+
+    private function getPasswordType($type)
+    {
+        switch ($type) {
+            case 'PasswordText':
+                return WsSecurityFilterClientServer::PASSWORD_TYPE_TEXT;
+
+            case 'PasswordDigest':
+                return WsSecurityFilterClientServer::PASSWORD_TYPE_DIGEST;
         }
     }
 }

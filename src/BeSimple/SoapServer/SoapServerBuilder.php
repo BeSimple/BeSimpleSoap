@@ -67,6 +67,21 @@ class SoapServerBuilder extends AbstractSoapBuilder
             $server->setPersistence($this->persistence);
         }
 
+        if (isset($this->options['wsse'])) {
+            $wssFilter = new WsSecurityFilter();
+            $wssFilter->setPasswordType($this->options['wsse']['password_type']);
+            $wssFilter->setUsernamePasswordCallback(function ($user) {
+                if ($user == $this->options['wsse']['username']) {
+                    return $this->options['wsse']['password'];
+                }
+
+                return null;
+            });
+
+            $soapKernel = $server->getSoapKernel();
+            $soapKernel->registerFilter($wssFilter);
+        }
+
         if (null !== $this->handlerClass) {
             $server->setClass($this->handlerClass);
         } elseif (null !== $this->handlerObject) {
@@ -160,6 +175,18 @@ class SoapServerBuilder extends AbstractSoapBuilder
     public function withMtomAttachments()
     {
         $this->options['attachment_type'] = Helper::ATTACHMENTS_TYPE_MTOM;
+
+        return $this;
+    }
+
+    /**
+     * SOAP attachment type MTOM.
+     *
+     * @return \BeSimple\SoapServer\SoapServerBuilder
+     */
+    public function withWsse($wsse)
+    {
+        $this->options['wsse'] = $wsse;
 
         return $this;
     }

@@ -35,12 +35,21 @@ use BeSimple\SoapCommon\WsSecurityFilterClientServer;
  */
 class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapRequestFilter, SoapResponseFilter
 {
+    private $passwordTypes = array(WsSecurityFilter::PASSWORD_TYPE_TEXT, WsSecurityFilter::PASSWORD_TYPE_DIGEST);
+
     /**
      * Username/password callback that returns password or null.
      *
      * @var callable
      */
     protected $usernamePasswordCallback;
+
+    /**
+     * Password Type (PASSWORD_TYPE_TEXT | PASSWORD_TYPE_DIGEST)
+     *
+     * @var int
+     */
+    private $passwordType;
 
     /**
      * Set username/password callback that returns password or null.
@@ -52,6 +61,22 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
     public function setUsernamePasswordCallback($callback)
     {
         $this->usernamePasswordCallback = $callback;
+    }
+
+    /**
+     * Set the Securement Password Type
+     *
+     * @param callable $callback Username/password callback function
+     *
+     * @return void
+     */
+    public function setPasswordType($passwordType)
+    {
+        if (!in_array($passwordType, $this->passwordTypes)) {
+            throw new \Exception(sprintf('The password type has to be either: %s', implode(', ', $this->passwordTypes)));
+        }
+
+        $this->passwordType = $passwordType;
     }
 
     /**
@@ -77,6 +102,11 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
 
         // locate security header
         $security = $dom->getElementsByTagNameNS(Helper::NS_WSS, 'Security')->item(0);
+
+        if (null === $security && null !== $this->passwordType) {
+            throw new \SoapFault('wsse:FailedAuthentication', 'No WS-Security header found');
+        }
+
         if (null !== $security) {
 
             // is security header still valid?
@@ -101,7 +131,7 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
 
                 $password = call_user_func($this->usernamePasswordCallback, $usernameTokenUsername->textContent);
 
-                if ($usernameTokenPassword->getAttribute('Type') == Helper::NAME_WSS_UTP . '#PasswordDigest') {
+                if ($this->passwordType === WsSecurityFilter::PASSWORD_TYPE_DIGEST && $usernameTokenPassword->getAttribute('Type') == Helper::NAME_WSS_UTP . '#PasswordDigest') {
                     $nonce = $usernameToken->getElementsByTagNameNS(Helper::NS_WSS, 'Nonce')->item(0);
                     $created = $usernameToken->getElementsByTagNameNS(Helper::NS_WSU, 'Created')->item(0);
                     $password = base64_encode(sha1(base64_decode($nonce->textContent) . $created->textContent . $password, true));

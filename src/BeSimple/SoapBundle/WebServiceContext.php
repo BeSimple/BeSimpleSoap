@@ -111,6 +111,9 @@ class WebServiceContext
             if (null !== $this->options['cache_type']) {
                 $this->serverBuilder->withWsdlCache($this->options['cache_type']);
             }
+            if (isset($this->options['wsse'])) {
+                $this->serverBuilder->withWsse($this->options['wsse']);
+            }
         }
 
         return $this->serverBuilder;

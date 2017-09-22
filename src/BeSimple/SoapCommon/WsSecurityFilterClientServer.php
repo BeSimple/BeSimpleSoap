@@ -28,6 +28,16 @@ use BeSimple\SoapCommon\WsSecurityKey;
 abstract class WsSecurityFilterClientServer
 {
     /**
+     * (UT 3.1) Password type: plain text.
+     */
+    const PASSWORD_TYPE_TEXT = 0;
+
+    /**
+     * (UT 3.1) Password type: digest.
+     */
+    const PASSWORD_TYPE_DIGEST = 1;
+
+    /**
      * The date format to be used with {@link \DateTime}
      */
     const DATETIME_FORMAT = 'Y-m-d\TH:i:s.000\Z';
