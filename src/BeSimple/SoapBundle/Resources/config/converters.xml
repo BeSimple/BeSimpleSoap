@@ -8,6 +8,7 @@
         <parameter key="besimple.soap.converter.collection.class">BeSimple\SoapCommon\Converter\TypeConverterCollection</parameter>
         <parameter key="besimple.soap.converter.date_time.class">BeSimple\SoapCommon\Converter\DateTimeTypeConverter</parameter>
         <parameter key="besimple.soap.converter.date.class">BeSimple\SoapCommon\Converter\DateTypeConverter</parameter>
+        <parameter key="besimple.soap.converter.time.class">BeSimple\SoapCommon\Converter\TimeTypeConverter</parameter>
     </parameters>
 
     <services>
@@ -18,6 +19,10 @@
         </service>
 
         <service id="besimple.soap.converter.date" class="%besimple.soap.converter.date.class%" public="false">
+            <tag name="besimple.soap.converter" />
+        </service>
+        
+        <service id="besimple.soap.converter.time" class="%besimple.soap.converter.time.class%" public="false">
             <tag name="besimple.soap.converter" />
         </service>
     </services>

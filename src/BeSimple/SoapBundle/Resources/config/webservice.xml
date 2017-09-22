@@ -96,6 +96,10 @@
                 <argument>dateTime</argument>
                 <argument>xsd:dateTime</argument>
             </call>
+            <call method="addType">
+                <argument>time</argument>
+                <argument>xsd:time</argument>
+            </call>
         </service>
     </services>
 
