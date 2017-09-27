@@ -10,3 +10,6 @@ phpunit.xml
 
 # MacOS
 .DS_Store
+
+# PHP CS Fixer
+.php_cs.cache
