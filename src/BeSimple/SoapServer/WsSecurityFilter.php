@@ -204,7 +204,7 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
 
         // create security header
         $security = $filterHelper->createElement(Helper::NS_WSS, 'Security');
-        $filterHelper->addHeaderElement($security, true, $this->actor, $response->getVersion());
+        $filterHelper->addHeaderElement($security, false, $this->actor, $response->getVersion());
 
         if (true === $this->addTimestamp || null !== $this->expires) {
             $timestamp = $filterHelper->createElement(Helper::NS_WSU, 'Timestamp');
