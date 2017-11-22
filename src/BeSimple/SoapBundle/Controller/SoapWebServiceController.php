@@ -29,6 +29,7 @@ use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
  * @author Christian Kerl <christian-kerl@web.de>
  * @author Francis Besset <francis.besset@gmail.com>
  */
+
 class SoapWebServiceController extends Controller
 {
     use ContainerAwareTrait;
@@ -66,7 +67,7 @@ class SoapWebServiceController extends Controller
 
         $this->serviceBinder = $webServiceContext->getServiceBinder();
 
-        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request'));
+        $this->soapRequest = SoapRequest::createFromHttpRequest($this->container->get('request_stack')->getCurrentRequest());
         $this->soapServer  = $webServiceContext
             ->getServerBuilder()
             ->withSoapVersion11()
@@ -97,7 +98,7 @@ class SoapWebServiceController extends Controller
             )
         ));
 
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $query = $request->query;
         if ($query->has('wsdl') || $query->has('WSDL')) {
             $request->setRequestFormat('wsdl');

@@ -82,7 +82,7 @@ class WebServiceContext
             $cache->write($dumper->dump());
         }
 
-        return (string) $cache;
+        return $cache->getPath();
     }
 
     public function getServiceBinder()

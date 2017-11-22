@@ -158,7 +158,7 @@ class BeSimpleSoapExtension extends Extension
         $definition = new DefinitionDecorator('besimple.soap.client');
         $container->setDefinition(sprintf('besimple.soap.client.%s', $client), $definition);
 
-        $definition->setFactoryService(sprintf('besimple.soap.client.builder.%s', $client));
+        $definition->setFactory(sprintf('besimple.soap.client.builder.%s', $client));
     }
 
     private function createWebServiceContext(array $config, ContainerBuilder $container)

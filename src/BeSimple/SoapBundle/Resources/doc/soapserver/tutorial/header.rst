@@ -21,7 +21,7 @@ Controller
          */
         public function helloAction(array $names)
         {
-            $soapHeaders = $this->container->get('request')->getSoapHeaders();
+            $soapHeaders = $this->container->get('request_stack')->getCurrentRequest()->getSoapHeaders();
 
             // You can use '1234' !== (string) $soapHeaders->get('api_key')
             if (!$soapHeaders->has('api_key') || '1234' !== $soapHeaders->get('api_key')->getData()) {
@@ -79,7 +79,7 @@ If you want use a header for all actions of your controller you can declare the 
 
         private function checkApiKeyHeader()
         {
-            $soapHeaders = $this->container->get('request')->getSoapHeaders();
+            $soapHeaders = $this->container->get('request_stack')->getCurrentRequest()->getSoapHeaders();
 
             // You can use '1234' !== (string) $soapHeaders->get('api_key')
             if (!$soapHeaders->has('api_key') || '1234' !== $soapHeaders->get('api_key')->getData()) {
