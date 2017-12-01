@@ -25,6 +25,8 @@ use BeSimple\SoapCommon\Helper;
  */
 class WsdlDownloader
 {
+    const XML_MIN_LENGTH = 25;
+
     /**
      * Cache enabled.
      *
@@ -100,6 +102,9 @@ class WsdlDownloader
                     // get content
                     if ($responseSuccessfull) {
                         $response = $this->curl->getResponseBody();
+                        if (empty($response)) {
+                            throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Got empty wsdl from '" . $wsdl ."'");
+                        }
 
                         if ($this->resolveRemoteIncludes) {
                             $this->resolveRemoteIncludes($response, $cacheFilePath, $wsdl);
@@ -132,7 +137,7 @@ class WsdlDownloader
      *
      * @return boolean
      */
-    private function isRemoteFile($file)
+    protected function isRemoteFile($file)
     {
         // @parse_url to suppress E_WARNING for invalid urls
         if (false !== $url = @parse_url($file)) {
@@ -153,10 +158,13 @@ class WsdlDownloader
      *
      * @return void
      */
-    private function resolveRemoteIncludes($xml, $cacheFilePath, $parentFilePath = null)
+    protected function resolveRemoteIncludes($xml, $cacheFilePath, $parentFilePath = null)
     {
         $doc = new \DOMDocument();
-        $doc->loadXML($xml);
+        $parsedOk = $doc->loadXML($xml);
+        if (!$parsedOk) {
+            throw new \RuntimeException("SOAP-ERROR: Couldn't parse xml: $xml");
+        }
 
         $xpath = new \DOMXPath($doc);
         $xpath->registerNamespace(Helper::PFX_XML_SCHEMA, Helper::NS_XML_SCHEMA);
@@ -198,7 +206,13 @@ class WsdlDownloader
             }
         }
 
-        $doc->save($cacheFilePath);
+        $xmlResolved = $doc->saveXML();
+
+        if (empty($xmlResolved) || strlen($xmlResolved) < self::XML_MIN_LENGTH) {
+            throw new \RuntimeException("SOAP-ERROR: Detected empty wsdl in: $cacheFilePath for xml: $xml");
+        }
+
+        file_put_contents($cacheFilePath, $xml);
     }
 
     /**
@@ -209,7 +223,7 @@ class WsdlDownloader
      *
      * @return string
      */
-    private function resolveRelativePathInUrl($base, $relative)
+    protected function resolveRelativePathInUrl($base, $relative)
     {
         $urlParts = parse_url($base);
 

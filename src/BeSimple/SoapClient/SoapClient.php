@@ -49,32 +49,53 @@ class SoapClient extends \SoapClient
     protected $curl = null;
 
     /**
+     * request headers.
+     *
+     * @var array
+     */
+    protected $requestHeaders = array();
+
+    /**
      * Last request headers.
      *
      * @var string
      */
-    private $lastRequestHeaders = '';
+    protected $lastRequestHeaders = '';
 
     /**
      * Last request.
      *
      * @var string
      */
-    private $lastRequest = '';
+    protected $lastRequest = '';
+
+    /**
+     * Last request URI.
+     *
+     * @var string
+     */
+    protected $lastRequestUri = '';
 
     /**
      * Last response headers.
      *
      * @var string
      */
-    private $lastResponseHeaders = '';
+    protected $lastResponseHeaders = '';
+
+    /**
+     * Last response code.
+     *
+     * @var string
+     */
+    protected $lastResponseCode = '';
 
     /**
      * Last response.
      *
      * @var string
      */
-    private $lastResponse = '';
+    protected $lastResponse = '';
 
     /**
      * Soap kernel.
@@ -128,40 +149,45 @@ class SoapClient extends \SoapClient
      *
      * @return SoapResponse
      */
-    private function __doHttpRequest(SoapRequest $soapRequest)
+    protected function __doHttpRequest(SoapRequest $soapRequest)
     {
         // HTTP headers
         $soapVersion = $soapRequest->getVersion();
         $soapAction = $soapRequest->getAction();
         if (SOAP_1_1 == $soapVersion) {
-            $headers = array(
+            $staticallyAddedHeaders = array(
                 'Content-Type:' . $soapRequest->getContentType(),
                 'SOAPAction: "' . $soapAction . '"',
             );
         } else {
-            $headers = array(
+            $staticallyAddedHeaders = array(
                'Content-Type:' . $soapRequest->getContentType() . '; action="' . $soapAction . '"',
             );
         }
 
         $location = $soapRequest->getLocation();
+        $this->lastRequestUri = $location;
         $content = $soapRequest->getContent();
-
-        $headers = $this->filterRequestHeaders($soapRequest, $headers);
-
+        $staticallyAddedHeaders = $this->filterRequestHeaders($soapRequest, $staticallyAddedHeaders);
         $options = $this->filterRequestOptions($soapRequest);
+        $flattenedHttpHeaders = $this->getRequestHeadersForCurl();// flatten key/value pair array into single string array
+        $flattenedHttpHeaders = array_merge($flattenedHttpHeaders, $staticallyAddedHeaders);//add statically added headers to the headers passed in
 
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
             $location,
             $content,
-            $headers,
+            $flattenedHttpHeaders,
             $options
         );
 
         // tracing enabled: store last request header and body
         if ($this->tracingEnabled === true) {
-            $this->lastRequestHeaders = $this->curl->getRequestHeaders();
+            $this->lastRequestHeaders .= "POST ".$soapRequest->getLocation()."\n";
+            $this->lastRequestHeaders .= "SOAPAction: ".$soapRequest->getAction()."\n";
+            $this->lastRequestHeaders .= "SOAPVersion: ".$soapRequest->getVersion()."\n";
+            $this->lastRequestHeaders .= "Content-Type: ".$soapRequest->getContentType()."\n";
+            $this->lastRequestHeaders .= $this->curl->getRequestHeaders();
             $this->lastRequest = $soapRequest->getContent();
         }
         // in case of an error while making the http request throw a soapFault
@@ -174,6 +200,7 @@ class SoapClient extends \SoapClient
         if ($this->tracingEnabled === true) {
             $this->lastResponseHeaders = $this->curl->getResponseHeaders();
             $this->lastResponse = $this->curl->getResponseBody();
+            $this->lastResponseCode = $this->curl->getResponseStatusCode();
         }
         // wrap response data in SoapResponse object
         $soapResponse = SoapResponse::create(
@@ -269,6 +296,16 @@ class SoapClient extends \SoapClient
     }
 
     /**
+     * Get request HTTP headers.
+     *
+     * @return string
+     */
+    public function __getRequestHeaders()
+    {
+        return $this->requestHeaders;
+    }
+
+        /**
      * Get last request HTTP body.
      *
      * @return string
@@ -276,6 +313,16 @@ class SoapClient extends \SoapClient
     public function __getLastRequest()
     {
         return $this->lastRequest;
+    }
+
+    /**
+     * Get last request HTTP URI.
+     *
+     * @return string
+     */
+    public function __getLastRequestUri()
+    {
+        return $this->lastRequestUri;
     }
 
     /**
@@ -299,6 +346,16 @@ class SoapClient extends \SoapClient
     }
 
     /**
+     * Get last response HTTP code.
+     *
+     * @return integer
+     */
+    public function __getLastResponseCode()
+    {
+        return $this->lastResponseCode;
+    }
+
+    /**
      * Get SoapKernel instance.
      *
      * @return \BeSimple\SoapClient\SoapKernel
@@ -315,7 +372,7 @@ class SoapClient extends \SoapClient
     *
     * @return void
     */
-    private function configureMime(array &$options)
+    protected function configureMime(array &$options)
     {
         if (isset($options['attachment_type']) && Helper::ATTACHMENTS_TYPE_BASE64 !== $options['attachment_type']) {
             // register mime filter in SoapKernel
@@ -380,4 +437,30 @@ class SoapClient extends \SoapClient
 
         return $cacheFileName;
     }
+
+    /**
+     * @param $value
+     */
+    public function setExecutionTimeout($value){
+        if(!is_numeric($value)){
+            throw new \InvalidArgumentException("Expected integer as an input");
+        }
+        $this->curl->setOption(CURLOPT_TIMEOUT,$value);
+    }
+
+    /**
+     * @param array $headers
+     */
+    public function setRequestHeaders($headers){
+        $this->requestHeaders = $headers;
+    }
+
+    public function getRequestHeadersForCurl(){
+        $requestHeadersStringArray = array();
+        foreach($this->requestHeaders as $key => $value){
+            $requestHeadersStringArray[]= $key.": ".$value;
+        }
+        return $requestHeadersStringArray;
+    }
+
 }

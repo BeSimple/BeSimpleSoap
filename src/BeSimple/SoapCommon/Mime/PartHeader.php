@@ -131,7 +131,7 @@ abstract class PartHeader
      * Quote string with '"' if it contains one of the special characters:
      * "(" / ")" / "<" / ">" / "@" / "," / ";" / ":" / "\" / <"> / "/" / "[" / "]" / "?" / "="
      *
-     * @param string $string String to quote
+     * @param string $string StringType to quote
      *
      * @return string
      */
