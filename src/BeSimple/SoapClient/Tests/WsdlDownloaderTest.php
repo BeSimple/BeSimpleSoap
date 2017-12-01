@@ -32,7 +32,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     /**
      * @dataProvider provideDownload
      */
-    public function testDownload($source, $regexp, $nbDownloads)
+    public function testDownloadDownloadsToVfs($source, $regexp, $nbDownloads)
     {
         $wsdlCacheDir = vfsStream::setup('wsdl');
         $wsdlCacheUrl = $wsdlCacheDir->url('wsdl');
@@ -49,7 +49,12 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $cacheFileName = $wsdlDownloader->download($source);
         $this->assertCount($nbDownloads, $wsdlCacheDir->getChildren());
 
-        $this->assertRegExp('#'.sprintf($regexp, $cacheDirForRegExp).'#', file_get_contents($cacheFileName));
+        $this->assertIsReadable($cacheFileName);
+
+        //Test that the Cache filename is valid
+        $regexp = '#'.sprintf($regexp, $cacheDirForRegExp).'#';
+        $this->assertRegExp($regexp, $cacheFileName);
+
     }
 
     public function provideDownload()
