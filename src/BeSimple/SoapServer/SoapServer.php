@@ -100,6 +100,34 @@ class SoapServer extends \SoapServer
         parent::handle($soapRequest->getContent());
         $response = ob_get_clean();
 
+        /**
+         * Custom code to catch SoapFault generated in the "handle" method.
+         * Previously, the SoapFault was'nt catch but directly written in the buffer.
+         * We need to catch it to be able to manage and return the error properly
+         */
+        if(strstr($response, "SOAP_ERROR_COMPLEX_TYPE")){
+            $doc = new \DOMDocument();
+            $doc->loadXML($response);
+
+            $getNodeContent = function ($tagName) use ($doc) {
+                $node = $doc->getElementsByTagName($tagName);
+                if(!empty($node) && $node->length > 0){
+                    return $node->item(0)->textContent;
+                }
+                return null;
+            };
+
+            if(!empty($doc->getElementsByTagName("SOAP-ENV:Fault")) ){
+                $faultCode = $getNodeContent("faultcode");
+                $faultString =  $getNodeContent("faultstring");
+                $faultActor = $getNodeContent("faultactor");
+                $detail = $getNodeContent("detail");
+                $faultName = $getNodeContent("faultname");
+
+                throw new \SoapFault($faultCode, $faultString, $faultActor, $detail, $faultName);
+            }
+        }
+
         // Remove headers added by SoapServer::handle() method
         header_remove('Content-Length');
         header_remove('Content-Type');

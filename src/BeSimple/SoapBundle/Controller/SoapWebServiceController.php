@@ -145,6 +145,8 @@ class SoapWebServiceController extends ContainerAware
             ->build()
         ;
 
+        $this->cleanBuffer();
+
         ob_start();
         $server->handle(
             '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://besim.pl/soap/exception/1.0/">'.
@@ -246,5 +248,18 @@ class SoapWebServiceController extends ContainerAware
         }
 
         return $this->container->get($context);
+    }
+
+    /**
+     * Method to clean the buffer when an exception is thrown and the buffer is not closed in that case.
+     *
+     * This is needed because in these cases the real error is saved in the buffer and we don't want to show in the
+     * client response. This happens for instance when a Soap method is called but this doesn't exist.
+     */
+    private function cleanBuffer()
+    {
+        if (ob_get_level() > 0) {
+            ob_end_clean();
+        }
     }
 }

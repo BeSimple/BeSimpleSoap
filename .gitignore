@@ -1,3 +1,15 @@
+# Composer
 /vendor/
+/bin/
 composer.lock
+
 phpunit.xml
+
+# IDE files
+/.idea
+
+# MacOS
+.DS_Store
+
+# PHP CS Fixer
+.php_cs.cache

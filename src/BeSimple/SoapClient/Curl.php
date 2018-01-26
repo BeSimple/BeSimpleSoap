@@ -31,21 +31,21 @@ class Curl
      *
      * @var resource
      */
-    private $ch;
+    protected $ch;
 
     /**
      * Maximum number of location headers to follow.
      *
      * @var int
      */
-    private $followLocationMaxRedirects;
+    protected $followLocationMaxRedirects;
 
     /**
      * Request response data.
      *
      * @var string
      */
-    private $response;
+    protected $response;
 
     /**
      * Constructor.
@@ -60,6 +60,8 @@ class Curl
             $options['user_agent'] = self::USER_AGENT;
         }
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
+
+        $headers = [];
 
         // make http request
         $this->ch = curl_init();
@@ -100,8 +102,18 @@ class Curl
         }
 
         if (isset($options['login'])) {
+            $curlUserPwd = $options['login'].':'.$options['password'];
             curl_setopt($this->ch, CURLOPT_HTTPAUTH, isset($options['extra_options']['http_auth']) ? $options['extra_options']['http_auth'] : CURLAUTH_ANY);
-            curl_setopt($this->ch, CURLOPT_USERPWD, $options['login'].':'.$options['password']);
+            curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
+
+            // use preemptive authentication
+            if (
+                isset($options['preemptive_auth']) &&
+                true === $options['preemptive_auth']
+            ) {
+                $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
+            }
+
         }
         if (isset($options['local_cert'])) {
             curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
@@ -113,6 +125,10 @@ class Curl
         if (isset($options['ca_path'])) {
             curl_setopt($this->ch, CURLOPT_CAPATH, $options['ca_path']);
         }
+
+        if (!empty($headers)) {
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
+        }
     }
 
     /**
@@ -121,6 +137,10 @@ class Curl
     public function __destruct()
     {
         curl_close($this->ch);
+    }
+
+    public function setOption($curlOption, $curlOptionValue){
+        curl_setopt($this->ch,$curlOption,$curlOptionValue);
     }
 
     /**
@@ -164,7 +184,7 @@ class Curl
      *
      * @return mixed
      */
-    private function execManualRedirect($redirects = 0)
+    protected function execManualRedirect($redirects = 0)
     {
         if ($redirects > $this->followLocationMaxRedirects) {
 
@@ -252,7 +272,7 @@ class Curl
         $errorNumber = curl_errno($this->ch);
         if (isset($errorCodeMapping[$errorNumber])) {
 
-            return $errorCodeMapping[$errorNumber];
+            return $errorCodeMapping[$errorNumber].': '.curl_error($this->ch);
         }
 
         return curl_error($this->ch);
