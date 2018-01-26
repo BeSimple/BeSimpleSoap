@@ -25,9 +25,9 @@ use org\bovigo\vfs\vfsStreamWrapper;
  */
 class WsdlDownloaderTest extends AbstractWebserverTest
 {
-    static protected $filesystem;
+    protected static $filesystem;
 
-    static protected $fixturesPath;
+    protected static $fixturesPath;
 
     /**
      * @dataProvider provideDownload
@@ -67,7 +67,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
             ),
             array(
                 __DIR__.DIRECTORY_SEPARATOR.'Fixtures/xsdinclude/xsdinctest_relative.xml',
-                '\.\./type_include\.xsd',
+                '%s/wsdl_[a-f0-9]{32}\.cache',
                 1,
             ),
             array(
@@ -146,7 +146,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/wsdlinctest_absolute.xml',
                 '%s/cache_local_absolute.xml',
                 null,
-                '%s/wsdl_[a-f0-9]{32}.cache',
+                'wsdl_include\.wsdl',
                 2,
             ),
             array(
@@ -160,15 +160,15 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 $remoteUrlAbsolute,
                 '%s/cache_remote_absolute.xml',
                 $remoteUrlAbsolute,
-                '%s/wsdl_[a-f0-9]{32}\.cache',
+                'wsdl_include\.wsdl',
                 2,
             ),
             array(
                 $remoteUrlRelative,
                 '%s/cache_remote_relative.xml',
                 $remoteUrlRelative,
-                '%s/wsdl_[a-f0-9]{32}\.cache',
-                2
+                'wsdl_include\.wsdl',
+                2,
             ),
         );
     }
@@ -211,7 +211,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/xsdinctest_absolute.xml',
                 '%s/cache_local_absolute.xml',
                 null,
-                '%s/wsdl_[a-f0-9]{32}\.cache',
+                'type_include\.xsd',
                 2,
             ),
             array(
@@ -225,14 +225,14 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 $remoteUrlAbsolute,
                 '%s/cache_remote_absolute.xml',
                 $remoteUrlAbsolute,
-                '%s/wsdl_[a-f0-9]{32}\.cache',
+                'type_include\.xsd',
                 2,
             ),
             array(
                 $remoteUrlRelative,
                 '%s/cache_remote_relative.xml',
                 $remoteUrlRelative,
-                '%s/wsdl_[a-f0-9]{32}\.cache',
+                'type_include\.xsd',
                 2,
             ),
         );
@@ -275,7 +275,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         parent::setUpBeforeClass();
 
-        self::$filesystem  = new Filesystem();
+        self::$filesystem = new Filesystem();
         self::$fixturesPath = __DIR__.DIRECTORY_SEPARATOR.'Fixtures'.DIRECTORY_SEPARATOR;
         self::$filesystem->mkdir(self::$fixturesPath.'build_include');
 
