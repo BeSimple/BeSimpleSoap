@@ -5,11 +5,10 @@ cd $DIR
 
 VERSION_AXIS=1.5.1
 ZIP_AXIS=axis2-$VERSION_AXIS-bin.zip
-if [[ "$VERSION_AXIS" > "1.5.1" ]]; then
-    PATH_AXIS=http://archive.apache.org/dist/axis/axis2/java/core/$VERSION_AXIS/$ZIP_AXIS
-elif [[ "$VERSION_AXIS" == "1.5.1" ]]; then
-    echo "setting axis path to: https://archive.apache.org/dist/ws/axis2/1_5_1/axis2-1.5.1-bin.zip"
+if [[ "$VERSION_AXIS" == "1.5.1" ]]; then
     PATH_AXIS=https://archive.apache.org/dist/ws/axis2/1_5_1/axis2-1.5.1-bin.zip
+elif [[ "$VERSION_AXIS" > "1.5.1" ]]; then
+    PATH_AXIS=http://archive.apache.org/dist/axis/axis2/java/core/$VERSION_AXIS/$ZIP_AXIS
 else
     PATH_AXIS=http://archive.apache.org/dist/ws/axis2/${VERSION_AXIS//./_}/$ZIP_AXIS
 fi
