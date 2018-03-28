@@ -49,13 +49,13 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
     protected function processType($phpType, $message)
     {
         $isArray = false;
-
         $type = $this->typeRepository->getType($phpType);
         if ($type instanceof ArrayOfType) {
             $isArray = true;
             $array = array();
 
-            $type = $this->typeRepository->getType($type->get('item')->getType());
+            $phpType = substr($type->getPhpType(), 0, strlen($type->getPhpType()) - 2);
+            $type = $this->typeRepository->getType($phpType);
         }
 
         // @TODO Fix array reference
@@ -65,6 +65,21 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             if ($isArray) {
                 if (isset($message->item)) {
                     foreach ($message->item as $complexType) {
+                        $array[] = $this->checkComplexType($phpType, $complexType);
+                    }
+
+                    // See https://github.com/BeSimple/BeSimpleSoapBundle/issues/29
+                    if (in_array('BeSimple\SoapCommon\Type\AbstractKeyValue', class_parents($phpType))) {
+                        $assocArray = array();
+                        foreach ($array as $keyValue) {
+                            $assocArray[$keyValue->getKey()] = $keyValue->getValue();
+                        }
+
+                        $array = $assocArray;
+                    }
+                }
+                if (is_array($message)) {
+                    foreach ($message as $complexType) {
                         $array[] = $this->checkComplexType($phpType, $complexType);
                     }
 

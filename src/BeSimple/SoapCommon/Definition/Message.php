@@ -48,13 +48,13 @@ class Message
         return 0 === count($this->parts) ? true : false;
     }
 
-    public function add($name, $phpType, $nillable = false)
+    public function add($name, $phpType, $nillable = false, $attribute = false)
     {
         if ($phpType instanceof TypeInterface) {
             $phpType = $phpType->getPhpType();
         }
 
-        $this->parts[$name] = new Part($name, $phpType, $nillable);
+        $this->parts[$name] = new Part($name, $phpType, $nillable, $attribute);
 
         return $this;
     }
