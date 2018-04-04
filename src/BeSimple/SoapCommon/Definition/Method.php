@@ -63,12 +63,19 @@ class Method
 
     public function addInput($name, $type)
     {
+        $inName = $this->name;
+        $this->input = new Message($inName);
+
         $this->input->add($name, $type);
     }
 
-    public function setOutput($type)
+    public function setOutput($type, $name = 'return')
     {
-        $this->output->add('return', $type);
+        if ('return' !== $name) {
+            $this->output = new Message($name);
+        }
+
+        $this->output->add($name, $type);
     }
 
     public function getHeaders()
