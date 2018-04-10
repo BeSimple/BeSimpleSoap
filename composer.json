@@ -24,8 +24,8 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
-        "symfony/framework-bundle": "~2.6",
-        "symfony/twig-bundle": "~2.6",
+        "symfony/framework-bundle": "~2.3",
+        "symfony/twig-bundle": "~2.3",
         "zendframework/zend-mime": "2.1.*"
     },
     "replace": {

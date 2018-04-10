@@ -15,7 +15,7 @@ namespace BeSimple\SoapBundle\Util;
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class String
+class BsString
 {
     /**
      * Checks if a string starts with a given string.

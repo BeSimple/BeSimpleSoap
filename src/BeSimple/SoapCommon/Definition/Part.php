@@ -20,12 +20,14 @@ class Part
     protected $name;
     protected $type;
     protected $nillable;
+    protected $attribute;
 
-    public function __construct($name, $type, $nillable = false)
+    public function __construct($name, $type, $nillable = false, $attribute = false)
     {
         $this->name = $name;
         $this->type = $type;
         $this->setNillable($nillable);
+        $this->setAttribute($attribute);
     }
 
     public function getName()
@@ -51,5 +53,25 @@ class Part
     public function setNillable($nillable)
     {
         $this->nillable = (boolean) $nillable;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * @param bool $attribute
+     *
+     * @return $this
+     */
+    public function setAttribute($attribute)
+    {
+        $this->attribute = $attribute;
+
+        return $this;
     }
 }

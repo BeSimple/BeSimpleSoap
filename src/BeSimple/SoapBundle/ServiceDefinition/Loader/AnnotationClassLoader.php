@@ -96,6 +96,7 @@ class AnnotationClassLoader extends Loader
                     }
 
                     $serviceReturn = $annotation->getPhpType();
+                    $serviceXmlReturn = $annotation->getXmlType();
                 }
             }
 
@@ -116,7 +117,11 @@ class AnnotationClassLoader extends Loader
                     throw new \LogicException(sprintf('@Soap\Result non-existent for "%s".', $method->getName()));
                 }
 
-                $serviceMethod->setOutput($this->loadType($serviceReturn));
+                if (!isset($serviceXmlReturn) || !$serviceXmlReturn) {
+                    $serviceXmlReturn = 'return';
+                }
+
+                $serviceMethod->setOutput($this->loadType($serviceReturn), $serviceXmlReturn);
 
                 $definition->addMethod($serviceMethod);
             }
@@ -155,7 +160,7 @@ class AnnotationClassLoader extends Loader
             $loaded = $complexTypeResolver->load($phpType);
             $complexType = new ComplexType($phpType, isset($loaded['alias']) ? $loaded['alias'] : $phpType);
             foreach ($loaded['properties'] as $name => $property) {
-                $complexType->add($name, $this->loadType($property->getValue()), $property->isNillable());
+                $complexType->add($name, $this->loadType($property->getValue()), $property->isNillable(), $property->isAttribute());
             }
 
             $this->typeRepository->addComplexType($complexType);

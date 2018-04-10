@@ -217,11 +217,13 @@ class Dumper
 
     protected function addComplexTypes()
     {
-        $types = $this->document->createElement('types');
+        $types = $this->document->createElement(static::WSDL_NS . ':types');
         $this->domDefinitions->appendChild($types);
 
         $this->domSchema = $this->document->createElement(static::XSD_NS.':schema');
         $this->domSchema->setAttribute('targetNamespace', $this->definition->getNamespace());
+        $this->domSchema->setAttribute('elementFormDefault', 'unqualified');
+        $this->domSchema->setAttribute(static::XML_NS.':'.static::XSD_NS, static::XSD_NS_URI);
         $types->appendChild($this->domSchema);
 
         foreach ($this->definition->getTypeRepository()->getComplexTypes() as $type) {
@@ -236,19 +238,30 @@ class Dumper
         $complexType = $this->document->createElement(static::XSD_NS.':complexType');
         $complexType->setAttribute('name', $type->getXmlType());
 
-        $all = $this->document->createElement(static::XSD_NS.':'.($type instanceof ArrayOfType ? 'sequence' : 'all'));
+        $all = $this->document->createElement(static::XSD_NS.':'.'sequence');
         $complexType->appendChild($all);
 
         foreach ($type->all() as $child) {
+            $isArray = false;
             $childType = $this->definition->getTypeRepository()->getType($child->getType());
 
-            $element = $this->document->createElement(static::XSD_NS.':element');
+            if ($child->isAttribute()) {
+                $element = $this->document->createElement(static::XSD_NS.':attribute');
+            } else {
+                $element = $this->document->createElement(static::XSD_NS.':element');
+            }
+
             $element->setAttribute('name', $child->getName());
 
             if ($childType instanceof ComplexType) {
                 $name = $childType->getXmlType();
                 if ($childType instanceof ArrayOfType) {
                     $name = $childType->getName();
+                }
+
+                if (0 === strpos($name, 'ArrayOf')) {
+                    $isArray = true;
+                    $name = lcfirst(substr($name, 7));
                 }
 
                 $element->setAttribute('type', static::TYPES_NS.':'.$name);
@@ -260,12 +273,16 @@ class Dumper
                 $element->setAttribute('nillable', 'true');
             }
 
-            if ($type instanceof ArrayOfType) {
+            if ($type instanceof ArrayOfType || $isArray) {
                 $element->setAttribute('minOccurs', 0);
                 $element->setAttribute('maxOccurs', 'unbounded');
             }
 
-            $all->appendChild($element);
+            if ($child->isAttribute()) {
+                $complexType->appendChild($element);
+            } else {
+                $all->appendChild($element);
+            }
         }
 
         $this->domSchema->appendChild($complexType);

@@ -86,7 +86,7 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
             $expires = $xpath->query($query, $security)->item(0);
 
             if (null !== $expires) {
-                $expiresDatetime = \DateTime::createFromFormat(self::DATETIME_FORMAT, $expires->textContent, new \DateTimeZone('UTC'));
+                $expiresDatetime = \DateTime::createFromFormat(static::DATETIME_FORMAT, $expires->textContent, new \DateTimeZone('UTC'));
                 $currentDatetime = new \DateTime('now', new \DateTimeZone('UTC'));
 
                 if ($currentDatetime > $expiresDatetime) {
@@ -170,7 +170,7 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
 
         // init timestamp
         $dt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $createdTimestamp = $dt->format(self::DATETIME_FORMAT);
+        $createdTimestamp = $dt->format(static::DATETIME_FORMAT);
 
         // create security header
         $security = $filterHelper->createElement(Helper::NS_WSS, 'Security');
@@ -182,7 +182,7 @@ class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapReque
             $timestamp->appendChild($created);
             if (null !== $this->expires) {
                 $dt->modify('+' . $this->expires . ' seconds');
-                $expiresTimestamp = $dt->format(self::DATETIME_FORMAT);
+                $expiresTimestamp = $dt->format(static::DATETIME_FORMAT);
                 $expires = $filterHelper->createElement(Helper::NS_WSU, 'Expires', $expiresTimestamp);
                 $timestamp->appendChild($expires);
             }
