@@ -17,6 +17,7 @@ use BeSimple\SoapWsdl\Dumper\Dumper;
 use BeSimple\SoapServer\SoapServerBuilder;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Zend\Serializer\Serializer;
 
 /**
  * WebServiceContext.
@@ -42,9 +43,9 @@ class WebServiceContext
     public function getServiceDefinition()
     {
         if (null === $this->serviceDefinition) {
-            $cache = new ConfigCache(sprintf('%s/%s.definition.php', $this->options['cache_dir'], $this->options['name']), $this->options['debug']);
+            $cache = new ConfigCache(sprintf('%s/%s.definition.srz', $this->options['cache_dir'], $this->options['name']), $this->options['debug']);
             if ($cache->isFresh()) {
-                $this->serviceDefinition = include (string) $cache;
+                $this->serviceDefinition = Serializer::unserialize(file_get_contents((string) $cache));
             } else {
                 if (!$this->loader->supports($this->options['resource'], $this->options['resource_type'])) {
                     throw new \LogicException(sprintf('Cannot load "%s" (%s)', $this->options['resource'], $this->options['resource_type']));
@@ -54,7 +55,8 @@ class WebServiceContext
                 $this->serviceDefinition->setName($this->options['name']);
                 $this->serviceDefinition->setNamespace($this->options['namespace']);
 
-                $cache->write('<?php return unserialize('.var_export(serialize($this->serviceDefinition), true).');');
+                $definition = Serializer::serialize($this->serviceDefinition);
+                $cache->write($definition);
             }
         }
 

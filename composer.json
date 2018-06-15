@@ -1,5 +1,5 @@
 {
-    "name": "besimple/soap",
+    "name": "smartbox/besimple-soap",
     "type": "library",
     "description": "Build and consume SOAP and WSDL based web services",
     "keywords": ["soap"],
@@ -26,7 +26,10 @@
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.6",
         "symfony/twig-bundle": "~2.6",
-        "zendframework/zend-mime": "2.1.*"
+        "zendframework/zend-mime": "2.*",
+        "phpunit/phpunit": "^5.4",
+        "zendframework/zend-serializer": "^2.9",
+        "zendframework/zend-servicemanager": "^3.3"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
@@ -42,11 +45,14 @@
         "symfony/process": "~2.3"
     },
     "autoload": {
-        "psr-0": { "BeSimple\\": "src/" }
+        "psr-0": { "BeSimple\\": "src"}
     },
     "extra": {
         "branch-alias": {
             "dev-master": "0.3-dev"
         }
+    },
+    "config": {
+        "bin-dir": "bin"
     }
 }
