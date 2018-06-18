@@ -27,7 +27,9 @@
         "symfony/framework-bundle": "~2.6",
         "symfony/twig-bundle": "~2.6",
         "zendframework/zend-mime": "2.*",
-        "phpunit/phpunit": "^5.4"
+        "phpunit/phpunit": "^5.4",
+        "zendframework/zend-serializer": "^2.9",
+        "zendframework/zend-servicemanager": "^3.3"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
