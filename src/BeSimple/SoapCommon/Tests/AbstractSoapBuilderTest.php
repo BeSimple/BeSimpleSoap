@@ -19,7 +19,7 @@ use BeSimple\SoapCommon\Converter\DateTypeConverter;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 use BeSimple\SoapCommon\Tests\Fixtures\SoapBuilder;
 
-class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
+class AbstractSoapBuilderTest extends \PHPUnit\Framework\TestCase
 {
     private $defaultOptions = array(
         'features' => 0,
@@ -87,11 +87,13 @@ class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->mergeOptions(array('cache_wsdl' => Cache::TYPE_DISK_MEMORY)), $builder->getSoapOptions());
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testWithWsdlCacheBadValue()
     {
         $builder = $this->getSoapBuilder();
 
-        $this->setExpectedException('InvalidArgumentException');
         $builder->withWsdlCache('foo');
     }
 

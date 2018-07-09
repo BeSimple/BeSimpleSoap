@@ -27,7 +27,6 @@
         "symfony/framework-bundle": "~2.6",
         "symfony/twig-bundle": "~2.6",
         "zendframework/zend-mime": "2.*",
-        "phpunit/phpunit": "^5.4",
         "zendframework/zend-serializer": "^2.9",
         "zendframework/zend-servicemanager": "^3.3"
     },
@@ -42,7 +41,8 @@
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "~2.3",
-        "symfony/process": "~2.3"
+        "symfony/process": "~2.3",
+        "symfony/phpunit-bridge": "*"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src"}

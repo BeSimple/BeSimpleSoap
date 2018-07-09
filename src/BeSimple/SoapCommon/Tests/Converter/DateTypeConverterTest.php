@@ -17,7 +17,7 @@ use BeSimple\SoapCommon\Converter\DateTypeConverter;
 /**
  * UnitTest for \BeSimple\SoapCommon\Converter\DateTypeConverter.
  */
-class DateTypeConverterTest extends \PHPUnit_Framework_TestCase
+class DateTypeConverterTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertXmlToPhp()
     {

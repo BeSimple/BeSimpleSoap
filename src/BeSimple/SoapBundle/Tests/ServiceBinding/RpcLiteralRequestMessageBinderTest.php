@@ -19,7 +19,7 @@ use BeSimple\SoapBundle\Util\Collection;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 use BeSimple\SoapCommon\Definition\Type\TypeRepository;
 
-class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
+class RpcLiteralRequestMessageBinderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider messageProvider
@@ -66,6 +66,9 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('foos' => array($foo1, $foo2)), $result);
     }
 
+    /**
+     * @expectedException SoapFault
+     */
     public function testProcessMessageSoapFault()
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
@@ -75,7 +78,6 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
         $foo = new Fixtures\Foo('foo', null);
 
-        $this->setExpectedException('SoapFault');
         $messageBinder->processMessage(
             $method,
             array($foo),

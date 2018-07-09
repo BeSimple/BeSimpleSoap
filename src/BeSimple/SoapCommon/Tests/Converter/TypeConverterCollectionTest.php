@@ -21,7 +21,7 @@ use BeSimple\SoapCommon\Converter\DateTypeConverter;
  *
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class TypeConverterCollectionTest extends \PHPUnit_Framework_TestCase
+class TypeConverterCollectionTest extends \PHPUnit\Framework\TestCase
 {
     public function testAdd()
     {
@@ -76,6 +76,9 @@ class TypeConverterCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($converter, $converters->all());
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testAddCollection()
     {
         $converters1 = new TypeConverterCollection();
@@ -87,7 +90,6 @@ class TypeConverterCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(array($dateTimeTypeConverter), $converters1->all());
 
-        $this->setExpectedException('InvalidArgumentException');
         $converters1->addCollection($converters2);
     }
 }

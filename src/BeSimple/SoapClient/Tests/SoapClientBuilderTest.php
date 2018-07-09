@@ -14,7 +14,7 @@ namespace BeSimple\SoapClient\Tests;
 
 use BeSimple\SoapClient\SoapClientBuilder;
 
-class SoapClientBuilderTest extends \PHPUnit_Framework_TestCase
+class SoapClientBuilderTest extends \PHPUnit\Framework\TestCase
 {
     private $defaultOptions = array(
         'features' => 0,

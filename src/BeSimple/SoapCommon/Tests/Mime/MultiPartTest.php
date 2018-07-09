@@ -16,7 +16,7 @@ use BeSimple\SoapCommon\Mime\MultiPart;
 use BeSimple\SoapCommon\Mime\Part;
 use BeSimple\SoapCommon\Mime\PartHeader;
 
-class MultiPartTest extends \PHPUnit_Framework_TestCase
+class MultiPartTest extends \PHPUnit\Framework\TestCase
 {
     public function testConstructor()
     {

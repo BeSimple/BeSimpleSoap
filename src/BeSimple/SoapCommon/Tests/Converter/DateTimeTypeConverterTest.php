@@ -19,7 +19,7 @@ use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class DateTimeTypeConverterTest extends \PHPUnit_Framework_TestCase
+class DateTimeTypeConverterTest extends \PHPUnit\Framework\TestCase
 {
     public function testConvertXmlToPhp()
     {

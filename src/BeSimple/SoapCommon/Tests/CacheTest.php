@@ -16,7 +16,7 @@ use BeSimple\SoapCommon\Cache;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 
-class SoapRequestTest extends \PHPUnit_Framework_TestCase
+class SoapRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testSetEnabled()
     {
@@ -27,9 +27,11 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Cache::DISABLED, Cache::isEnabled());
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testSetEnabledBadValue()
     {
-        $this->setExpectedException('InvalidArgumentException');
         Cache::setEnabled('foo');
     }
 
@@ -42,9 +44,11 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Cache::TYPE_NONE, Cache::getType());
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testSetTypeBadValue()
     {
-        $this->setExpectedException('InvalidArgumentException');
         Cache::setType('foo');
     }
 

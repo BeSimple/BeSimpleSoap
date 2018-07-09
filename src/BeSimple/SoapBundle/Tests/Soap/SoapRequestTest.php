@@ -19,7 +19,7 @@ use BeSimple\SoapBundle\Soap\SoapRequest;
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class SoapRequestTest extends \PHPUnit_Framework_TestCase
+class SoapRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testMtomMessage()
     {

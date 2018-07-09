@@ -22,7 +22,7 @@ before_script:
   - ./src/BeSimple/SoapClient/Tests/bin/axis.sh
 
 script:
-  - bin/phpunit --coverage-text --debug
+  - bin/simple-phpunit --coverage-text --debug
 
 notifications:
   email:

@@ -15,7 +15,7 @@ namespace BeSimple\SoapCommon\Tests;
 use BeSimple\SoapCommon\Mime\Part;
 use BeSimple\SoapCommon\Mime\PartHeader;
 
-class PartTest extends \PHPUnit_Framework_TestCase
+class PartTest extends \PHPUnit\Framework\TestCase
 {
     public function testConstructor()
     {

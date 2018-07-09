@@ -14,7 +14,7 @@ namespace BeSimple\SoapCommon\Tests;
 
 use BeSimple\SoapCommon\WsdlHandler;
 
-class WsdlHandlerTest extends \PHPUnit_Framework_TestCase
+class WsdlHandlerTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsValidMimeTypeType()
     {

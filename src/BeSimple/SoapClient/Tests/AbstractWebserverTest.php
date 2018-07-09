@@ -18,7 +18,7 @@ use Symfony\Component\Process\ProcessBuilder;
 /**
  * @author francis.besset@gmail.com <francis.besset@gmail.com>
  */
-abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractWebServerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ProcessBuilder
