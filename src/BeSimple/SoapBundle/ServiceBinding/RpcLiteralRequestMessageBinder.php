@@ -49,13 +49,15 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
     protected function processType($phpType, $message)
     {
         $isArray = false;
+        $arrayOfTypeName = '';
 
         $type = $this->typeRepository->getType($phpType);
         if ($type instanceof ArrayOfType) {
             $isArray = true;
             $array = array();
+            $arrayOfTypeName = str_replace('ArrayOf', '', $type->getXmlType());
 
-            $type = $this->typeRepository->getType($type->get('item')->getType());
+            $type = $this->typeRepository->getType($type->get($arrayOfTypeName)->getType());
         }
 
         // @TODO Fix array reference
@@ -63,8 +65,8 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             $phpType = $type->getPhpType();
 
             if ($isArray) {
-                if (isset($message->item)) {
-                    foreach ($message->item as $complexType) {
+                if (isset($message->{$arrayOfTypeName})) {
+                    foreach ($message->{$arrayOfTypeName} as $complexType) {
                         $array[] = $this->checkComplexType($phpType, $complexType);
                     }
 
@@ -84,8 +86,8 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
                 $message = $this->checkComplexType($phpType, $message);
             }
         } elseif ($isArray) {
-            if (isset($message->item)) {
-                $message = $message->item;
+            if (isset($message->{$arrayOfTypeName})) {
+                $message = $message->{$arrayOfTypeName};
             } else {
                 $message = $array;
             }
