@@ -25,6 +25,6 @@ class ArrayOfType extends ComplexType
 
         parent::__construct($phpType, 'ArrayOf'.ucfirst($xmlTypeOf ?: $arrayOf));
 
-        $this->add('item', $arrayOf);
+        $this->add($xmlTypeOf, $arrayOf);
     }
 }
