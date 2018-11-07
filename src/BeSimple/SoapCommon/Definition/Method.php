@@ -59,9 +59,9 @@ class Method
         $this->headers->add($name, $type, $nillable);
     }
 
-    public function addInput($name, $type)
+    public function addInput($name, $type, $nillable = false)
     {
-        $this->input->add($name, $type);
+        $this->input->add($name, $type, $nillable);
     }
 
     public function setOutput($type)
