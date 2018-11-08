@@ -12,8 +12,6 @@
 
 namespace BeSimple\SoapCommon\Definition;
 
-use BeSimple\SoapCommon\Definition\Type\TypeRepository;
-
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
@@ -56,14 +54,14 @@ class Method
         return \SOAP_LITERAL;
     }
 
-    public function addHeader($name, $type)
+    public function addHeader($name, $type, $nillable = false)
     {
-        $this->headers->add($name, $type);
+        $this->headers->add($name, $type, $nillable);
     }
 
-    public function addInput($name, $type)
+    public function addInput($name, $type, $nillable = false)
     {
-        $this->input->add($name, $type);
+        $this->input->add($name, $type, $nillable);
     }
 
     public function setOutput($type)
