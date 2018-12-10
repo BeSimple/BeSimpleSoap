@@ -106,15 +106,6 @@ class WsdlDownloader
                             throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Got empty wsdl from '" . $wsdl ."'");
                         }
 
-                        // Enforce content type from response. Has to be "text/xml".
-                        if (false === strpos($this->curl->getResponseContentType(), 'text/xml')) {
-                            throw new \ErrorException(sprintf(
-                                'SOAP-ERROR: Parsing WSDL: Got wrong content type (%s) from "%s"',
-                                $this->curl->getResponseContentType(),
-                                $wsdl
-                            ));
-                        }
-
                         if ($this->resolveRemoteIncludes) {
                             $this->resolveRemoteIncludes($response, $cacheFilePath, $wsdl);
                         } else {
