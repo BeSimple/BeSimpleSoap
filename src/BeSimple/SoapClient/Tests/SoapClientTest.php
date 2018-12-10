@@ -50,7 +50,7 @@ class SoapClientTest extends \PHPUnit\Framework\TestCase
         }
 
         $this->assertInstanceOf('SoapFault', $soapFault);
-        $this->assertRegExp('/SOAP-ERROR: Parsing WSDL: Couldn\'t find <definitions> in \'vfs:\/\/wsdl\/wsdl_[a-z0-9]+.cache\'/', $soapFault->getMessage());
+        $this->assertRegExp('/SOAP-ERROR: Parsing WSDL: .*/', $soapFault->getMessage());
         $this->assertContains('WSDL', $soapFault->faultcode);
     }
 
@@ -61,7 +61,10 @@ class SoapClientTest extends \PHPUnit\Framework\TestCase
     {
         return array(
             array(
-                __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures/wsdlinclude/wsdl_invalid.xml'
+                __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures/wsdlinclude/wsdl_invalid_html.xml'
+            ),
+            array(
+                __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures/wsdlinclude/wsdl_invalid_incomplete.xml'
             )
         );
     }
