@@ -109,6 +109,7 @@ class SoapClient extends \SoapClient
      *
      * @param string               $wsdl    WSDL file
      * @param array(string=>mixed) $options Options array
+     * @throws \SoapFault
      */
     public function __construct($wsdl, array $options = array())
     {
