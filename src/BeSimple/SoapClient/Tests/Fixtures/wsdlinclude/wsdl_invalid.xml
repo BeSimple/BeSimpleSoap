@@ -1,0 +1,27 @@
+<HTML>
+    <HEAD>
+        <STYLE type="text/css">#content{ FONT-SIZE: 0.7em; PADDING-BOTTOM: 2em; MARGIN-LEFT: 30px}BODY{MARGIN-TOP: 0px;
+            MARGIN-LEFT: 0px; COLOR: #000000; FONT-FAMILY: Verdana; BACKGROUND-COLOR: white}P{MARGIN-TOP: 0px;
+            MARGIN-BOTTOM: 12px; COLOR: #000000; FONT-FAMILY: Verdana}PRE{BORDER-RIGHT: #f0f0e0 1px solid;
+            PADDING-RIGHT: 5px; BORDER-TOP: #f0f0e0 1px solid; MARGIN-TOP: -5px; PADDING-LEFT: 5px; FONT-SIZE: 1.2em;
+            PADDING-BOTTOM: 5px; BORDER-LEFT: #f0f0e0 1px solid; PADDING-TOP: 5px; BORDER-BOTTOM: #f0f0e0 1px solid;
+            FONT-FAMILY: Courier New; BACKGROUND-COLOR: #e5e5cc}.heading1{MARGIN-TOP: 0px; PADDING-LEFT: 15px;
+            FONT-WEIGHT: normal; FONT-SIZE: 26px; MARGIN-BOTTOM: 0px; PADDING-BOTTOM: 3px; MARGIN-LEFT: -30px; WIDTH:
+            100%; COLOR: #ffffff; PADDING-TOP: 10px; FONT-FAMILY: Tahoma; BACKGROUND-COLOR: #003366}.intro{MARGIN-LEFT:
+            -15px}
+        </STYLE>
+        <TITLE>Service</TITLE>
+    </HEAD>
+    <BODY>
+        <DIV id="content">
+            <P class="heading1">Service</P>
+            <BR/>
+            <P class="intro">The server was unable to process the request due to an internal error. For more information
+                about the error, either turn on IncludeExceptionDetailInFaults (either from ServiceBehaviorAttribute or
+                from the &lt;serviceDebug&gt; configuration behaviour) on the server in order to send the exception
+                information back to the client, or turn on tracing as per the Microsoft .NET Framework SDK documentation
+                and inspect the server trace logs.
+            </P>
+        </DIV>
+    </BODY>
+</HTML>
