@@ -22,7 +22,7 @@ class SoapClientTest extends \PHPUnit\Framework\TestCase
 
         Cache::setEnabled(Cache::ENABLED);
         Cache::setDirectory($wsdlCacheUrl);
-        $this->assertCount(0, $wsdlCacheDir->getChildren());
+        $this->assertCount(0, $wsdlCacheDir->getChildren(), 'Unexpected amount of cached files before loading WSDL');
 
         // Must be wrapped in a try-catch and shut up because SoapFaults are pseudo-fatal errors that stop PHPUnit
         try {
@@ -31,7 +31,7 @@ class SoapClientTest extends \PHPUnit\Framework\TestCase
             // noop
         }
 
-        $this->assertCount(0, $wsdlCacheDir->getChildren());
+        $this->assertCount(0, $wsdlCacheDir->getChildren(), 'Invalid WSDL was not deleted from cache');
     }
 
     /**
@@ -49,9 +49,9 @@ class SoapClientTest extends \PHPUnit\Framework\TestCase
             // noop
         }
 
-        $this->assertInstanceOf('SoapFault', $soapFault);
-        $this->assertRegExp('/SOAP-ERROR: Parsing WSDL: .*/', $soapFault->getMessage());
-        $this->assertContains('WSDL', $soapFault->faultcode);
+        $this->assertInstanceOf('SoapFault', $soapFault, 'Invalid type of exception');
+        $this->assertRegExp('/SOAP-ERROR: Parsing WSDL: .*/', $soapFault->getMessage(), 'Invalid or incorrect exception message');
+        $this->assertContains('WSDL', $soapFault->faultcode, 'Invalid type of faultcode');
     }
 
     /**
