@@ -138,7 +138,17 @@ class SoapClient extends \SoapClient
         $options['trace'] = false;
         // disable WSDL caching as we handle WSDL caching for remote URLs ourself
         $options['cache_wsdl'] = WSDL_CACHE_NONE;
-        parent::__construct($wsdlFile, $options);
+
+        try {
+            parent::__construct($wsdlFile, $options);
+        } catch (\SoapFault $soapFault) {
+            // Discard cached WSDL file if there's a problem with it
+            if ($soapFault->faultcode === 'WSDL') {
+                unlink($wsdlFile);
+            }
+
+            throw $soapFault;
+        }
     }
 
 
