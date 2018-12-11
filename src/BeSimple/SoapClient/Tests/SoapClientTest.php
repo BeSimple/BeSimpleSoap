@@ -60,10 +60,10 @@ class SoapClientTest extends \PHPUnit\Framework\TestCase
     public function provideInvalidWSDL()
     {
         return array(
-            array(
+            'HTML' => array(
                 __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures/wsdlinclude/wsdl_invalid_html.xml'
             ),
-            array(
+            'Incomplete' => array(
                 __DIR__ . DIRECTORY_SEPARATOR . 'Fixtures/wsdlinclude/wsdl_invalid_incomplete.xml'
             )
         );
