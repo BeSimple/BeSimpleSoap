@@ -14,7 +14,7 @@ namespace BeSimple\SoapBundle\Handler;
 
 use BeSimple\SoapServer\Exception\ReceiverSoapFault;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\FlattenException;
+use Symfony\Component\Debug\Exception\FlattenException;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>

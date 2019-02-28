@@ -4,13 +4,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="_webservice_call" pattern="/{webservice}">
+    <route id="_webservice_call" path="/{webservice}">
         <default key="_controller">BeSimpleSoapBundle:SoapWebService:Call</default>
         <default key="_format">xml</default>
         <requirement key="_method">POST</requirement>
     </route>
 
-    <route id="_webservice_definition" pattern="/{webservice}">
+    <route id="_webservice_definition" path="/{webservice}">
         <default key="_controller">BeSimpleSoapBundle:SoapWebService:Definition</default>
         <default key="_format">xml</default>
         <requirement key="_method">GET</requirement>
