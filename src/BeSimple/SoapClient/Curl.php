@@ -26,6 +26,11 @@ class Curl
      */
     const USER_AGENT = 'PHP-SOAP/\BeSimple\SoapClient';
 
+    const AUTH_TYPE_BASIC= 'basic';
+    const AUTH_TYPE_NTLM = 'ntlm';
+    const AUTH_TYPE_NONE = 'none';
+
+
     /**
      * Curl resource.
      *
@@ -111,7 +116,9 @@ class Curl
                 isset($options['preemptive_auth']) &&
                 true === $options['preemptive_auth']
             ) {
-                $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
+                if($options['auth_type'] === self::AUTH_TYPE_BASIC) {
+                    $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
+                }
             }
 
         }
