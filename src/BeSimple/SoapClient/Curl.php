@@ -30,7 +30,6 @@ class Curl
     const AUTH_TYPE_NTLM = 'ntlm';
     const AUTH_TYPE_NONE = 'none';
 
-
     /**
      * Curl resource.
      *
