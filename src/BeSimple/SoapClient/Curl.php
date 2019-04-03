@@ -104,11 +104,9 @@ class Curl
                 }
             }
         }
-
-        if (isset($options['login'])) {
+        $authType = isset($options['auth_type']) ? $options['auth_type'] : Curl::AUTH_TYPE_NONE;
+        if (isset($options['login']) && Curl::AUTH_TYPE_NONE !== $authType) {
             $curlUserPwd = $options['login'].':'.$options['password'];
-            curl_setopt($this->ch, CURLOPT_HTTPAUTH, isset($options['extra_options']['http_auth']) ? $options['extra_options']['http_auth'] : CURLAUTH_ANY);
-            curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
 
             // use preemptive authentication
             if (
@@ -118,6 +116,9 @@ class Curl
                 if (self::AUTH_TYPE_BASIC === $options['auth_type']) {
                     $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
                 }
+            } else {
+                curl_setopt($this->ch, CURLOPT_HTTPAUTH, Curl::AUTH_TYPE_BASIC === $authType ? CURLAUTH_BASIC : CURLAUTH_ANY);
+                curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
             }
         }
         if (isset($options['local_cert'])) {
