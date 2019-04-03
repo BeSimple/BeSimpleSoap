@@ -2,6 +2,8 @@
 
 namespace BeSimple\SoapClient;
 
+@trigger_error('Deprecated after version v1.1.4 smartbox/besimple-soap', E_USER_DEPRECATED);
+
 /**
  * Class BasicAuthSoapClient
  * @deprecated Deprecated after version v1.1.4 of smartbox/besimple-soap
@@ -11,8 +13,6 @@ class BasicAuthSoapClient extends SoapClient
 {
     /**
      * {@inheritDoc}
-     *
-     * @trigger_error('Deprecated after version v1.1.4 smartbox/besimple-soap', E_USER_DEPRECATED);
      */
     protected function filterRequestHeaders(SoapRequest $soapRequest, array $headers)
     {
