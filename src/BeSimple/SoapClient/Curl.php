@@ -108,18 +108,13 @@ class Curl
         if (isset($options['login']) && Curl::AUTH_TYPE_NONE !== $authType) {
             $curlUserPwd = $options['login'].':'.$options['password'];
 
-            // use preemptive authentication
-            if (
-                isset($options['preemptive_auth']) &&
-                true === $options['preemptive_auth']
-            ) {
+                // use preemptive authentication
                 if (self::AUTH_TYPE_BASIC === $options['auth_type']) {
                     $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
                 }
-            } else {
                 curl_setopt($this->ch, CURLOPT_HTTPAUTH, Curl::AUTH_TYPE_BASIC === $authType ? CURLAUTH_BASIC : CURLAUTH_ANY);
                 curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
-            }
+
         }
         if (isset($options['local_cert'])) {
             curl_setopt($this->ch, CURLOPT_SSLCERT, $options['local_cert']);
