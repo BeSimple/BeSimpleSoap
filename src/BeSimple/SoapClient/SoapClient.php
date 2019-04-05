@@ -282,7 +282,7 @@ class SoapClient extends \SoapClient
      */
     protected function filterRequestHeaders(SoapRequest $soapRequest, array $headers)
     {
-        if (isset($this->_login) && isset($this->_password) && Curl::AUTH_TYPE_BASIC === $this->authType) {
+        if (Curl::AUTH_TYPE_BASIC === $this->authType && isset($this->_login) && isset($this->_password)) {
             $authToken = base64_encode(sprintf('%s:%s', $this->_login, $this->_password));
             $headers[] = sprintf('Authorization: Basic %s', $authToken);
         }
