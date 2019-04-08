@@ -15,7 +15,6 @@ namespace BeSimple\SoapClient;
 use BeSimple\SoapCommon\Helper;
 use BeSimple\SoapCommon\Converter\MtomTypeConverter;
 use BeSimple\SoapCommon\Converter\SwaTypeConverter;
-use BeSimple\SoapCommon\SoapMessage;
 
 /**
  * Extended SoapClient that uses a a cURL wrapper for all underlying HTTP
@@ -37,7 +36,7 @@ class SoapClient extends \SoapClient
     /**
      * Tracing enabled?
      *
-     * @var boolean
+     * @var bool
      */
     protected $tracingEnabled = false;
 
@@ -104,17 +103,20 @@ class SoapClient extends \SoapClient
      */
     protected $soapKernel = null;
 
+    protected $authType = Curl::AUTH_TYPE_NONE;
+
     /**
      * Constructor.
      *
      * @param string               $wsdl    WSDL file
      * @param array(string=>mixed) $options Options array
+     *
      * @throws \SoapFault
      */
     public function __construct($wsdl, array $options = array())
     {
         // tracing enabled: store last request/response header and body
-        if (isset($options['trace']) && $options['trace'] === true) {
+        if (isset($options['trace']) && true === $options['trace']) {
             $this->tracingEnabled = true;
         }
         // store SOAP version
@@ -144,14 +146,13 @@ class SoapClient extends \SoapClient
             parent::__construct($wsdlFile, $options);
         } catch (\SoapFault $soapFault) {
             // Discard cached WSDL file if there's a problem with it
-            if ($soapFault->faultcode === 'WSDL') {
+            if ('WSDL' === $soapFault->faultcode) {
                 unlink($wsdlFile);
             }
 
             throw $soapFault;
         }
     }
-
 
     /**
      * Perform HTTP request with cURL.
@@ -167,12 +168,12 @@ class SoapClient extends \SoapClient
         $soapAction = $soapRequest->getAction();
         if (SOAP_1_1 == $soapVersion) {
             $staticallyAddedHeaders = array(
-                'Content-Type:' . $soapRequest->getContentType(),
-                'SOAPAction: "' . $soapAction . '"',
+                'Content-Type:'.$soapRequest->getContentType(),
+                'SOAPAction: "'.$soapAction.'"',
             );
         } else {
             $staticallyAddedHeaders = array(
-               'Content-Type:' . $soapRequest->getContentType() . '; action="' . $soapAction . '"',
+               'Content-Type:'.$soapRequest->getContentType().'; action="'.$soapAction.'"',
             );
         }
 
@@ -181,8 +182,8 @@ class SoapClient extends \SoapClient
         $content = $soapRequest->getContent();
         $staticallyAddedHeaders = $this->filterRequestHeaders($soapRequest, $staticallyAddedHeaders);
         $options = $this->filterRequestOptions($soapRequest);
-        $flattenedHttpHeaders = $this->getRequestHeadersForCurl();// flatten key/value pair array into single string array
-        $flattenedHttpHeaders = array_merge($flattenedHttpHeaders, $staticallyAddedHeaders);//add statically added headers to the headers passed in
+        $flattenedHttpHeaders = $this->getRequestHeadersForCurl(); // flatten key/value pair array into single string array
+        $flattenedHttpHeaders = array_merge($flattenedHttpHeaders, $staticallyAddedHeaders); //add statically added headers to the headers passed in
 
         // execute HTTP request with cURL
         $responseSuccessfull = $this->curl->exec(
@@ -193,22 +194,22 @@ class SoapClient extends \SoapClient
         );
 
         // tracing enabled: store last request header and body
-        if ($this->tracingEnabled === true) {
-            $this->lastRequestHeaders .= "POST ".$soapRequest->getLocation()."\n";
-            $this->lastRequestHeaders .= "SOAPAction: ".$soapRequest->getAction()."\n";
-            $this->lastRequestHeaders .= "SOAPVersion: ".$soapRequest->getVersion()."\n";
-            $this->lastRequestHeaders .= "Content-Type: ".$soapRequest->getContentType()."\n";
+        if (true === $this->tracingEnabled) {
+            $this->lastRequestHeaders .= 'POST '.$soapRequest->getLocation()."\n";
+            $this->lastRequestHeaders .= 'SOAPAction: '.$soapRequest->getAction()."\n";
+            $this->lastRequestHeaders .= 'SOAPVersion: '.$soapRequest->getVersion()."\n";
+            $this->lastRequestHeaders .= 'Content-Type: '.$soapRequest->getContentType()."\n";
             $this->lastRequestHeaders .= $this->curl->getRequestHeaders();
             $this->lastRequest = $soapRequest->getContent();
         }
         // in case of an error while making the http request throw a soapFault
-        if ($responseSuccessfull === false) {
+        if (false === $responseSuccessfull) {
             // get error message from curl
             $faultstring = $this->curl->getErrorMessage();
             throw new \SoapFault('HTTP', $faultstring);
         }
         // tracing enabled: store last response header and body
-        if ($this->tracingEnabled === true) {
+        if (true === $this->tracingEnabled) {
             $this->lastResponseHeaders = $this->curl->getResponseHeaders();
             $this->lastResponse = $this->curl->getResponseBody();
             $this->lastResponseCode = $this->curl->getResponseStatusCode();
@@ -272,7 +273,7 @@ class SoapClient extends \SoapClient
     }
 
     /**
-     * Filters HTTP headers which will be sent
+     * Filters HTTP headers which will be sent.
      *
      * @param SoapRequest $soapRequest SOAP request object
      * @param array       $headers     An array of HTTP headers
@@ -281,11 +282,16 @@ class SoapClient extends \SoapClient
      */
     protected function filterRequestHeaders(SoapRequest $soapRequest, array $headers)
     {
+        if (Curl::AUTH_TYPE_BASIC === $this->authType && isset($this->_login) && isset($this->_password)) {
+            $authToken = base64_encode(sprintf('%s:%s', $this->_login, $this->_password));
+            $headers[] = sprintf('Authorization: Basic %s', $authToken);
+        }
+
         return $headers;
     }
 
     /**
-     * Adds additional cURL options for the request
+     * Adds additional cURL options for the request.
      *
      * @param SoapRequest $soapRequest SOAP request object
      *
@@ -316,7 +322,7 @@ class SoapClient extends \SoapClient
         return $this->requestHeaders;
     }
 
-        /**
+    /**
      * Get last request HTTP body.
      *
      * @return string
@@ -359,7 +365,7 @@ class SoapClient extends \SoapClient
     /**
      * Get last response HTTP code.
      *
-     * @return integer
+     * @return int
      */
     public function __getLastResponseCode()
     {
@@ -377,12 +383,10 @@ class SoapClient extends \SoapClient
     }
 
     /**
-    * Configure filter and type converter for SwA/MTOM.
-    *
-    * @param array &$options SOAP constructor options array.
-    *
-    * @return void
-    */
+     * Configure filter and type converter for SwA/MTOM.
+     *
+     * @param array &$options SOAP constructor options array
+     */
     protected function configureMime(array &$options)
     {
         if (isset($options['attachment_type']) && Helper::ATTACHMENTS_TYPE_BASE64 !== $options['attachment_type']) {
@@ -405,11 +409,11 @@ class SoapClient extends \SoapClient
             }
             $options['typemap'][] = array(
                 'type_name' => $converter->getTypeName(),
-                'type_ns'   => $converter->getTypeNamespace(),
-                'from_xml'  => function($input) use ($converter) {
+                'type_ns' => $converter->getTypeNamespace(),
+                'from_xml' => function ($input) use ($converter) {
                     return $converter->convertXmlToPhp($input);
                 },
-                'to_xml'    => function($input) use ($converter) {
+                'to_xml' => function ($input) use ($converter) {
                     return $converter->convertPhpToXml($input);
                 },
             );
@@ -443,7 +447,7 @@ class SoapClient extends \SoapClient
         try {
             $cacheFileName = $wsdlDownloader->download($wsdl);
         } catch (\RuntimeException $e) {
-            throw new \SoapFault('WSDL', "SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl . "' : failed to load external entity \"" . $wsdl . "\"");
+            throw new \SoapFault('WSDL', "SOAP-ERROR: Parsing WSDL: Couldn't load from '".$wsdl."' : failed to load external entity \"".$wsdl.'"');
         }
 
         return $cacheFileName;
@@ -452,26 +456,39 @@ class SoapClient extends \SoapClient
     /**
      * @param $value
      */
-    public function setExecutionTimeout($value){
-        if(!is_numeric($value)){
-            throw new \InvalidArgumentException("Expected integer as an input");
+    public function setExecutionTimeout($value)
+    {
+        if (!is_numeric($value)) {
+            throw new \InvalidArgumentException('Expected integer as an input');
         }
-        $this->curl->setOption(CURLOPT_TIMEOUT,$value);
+        $this->curl->setOption(CURLOPT_TIMEOUT, $value);
     }
 
     /**
      * @param array $headers
      */
-    public function setRequestHeaders($headers){
+    public function setRequestHeaders($headers)
+    {
         $this->requestHeaders = $headers;
     }
 
-    public function getRequestHeadersForCurl(){
+    public function getRequestHeadersForCurl()
+    {
         $requestHeadersStringArray = array();
-        foreach($this->requestHeaders as $key => $value){
-            $requestHeadersStringArray[]= $key.": ".$value;
+        foreach ($this->requestHeaders as $key => $value) {
+            $requestHeadersStringArray[] = $key.': '.$value;
         }
+
         return $requestHeadersStringArray;
     }
 
+    public function getAuthType()
+    {
+        return $this->authType;
+    }
+
+    public function setAuthType($authType)
+    {
+        $this->authType = $authType;
+    }
 }

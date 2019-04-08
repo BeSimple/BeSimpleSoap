@@ -26,6 +26,10 @@ class Curl
      */
     const USER_AGENT = 'PHP-SOAP/\BeSimple\SoapClient';
 
+    const AUTH_TYPE_BASIC = 'basic';
+    const AUTH_TYPE_NTLM = 'ntlm';
+    const AUTH_TYPE_NONE = 'none';
+
     /**
      * Curl resource.
      *
@@ -100,19 +104,16 @@ class Curl
                 }
             }
         }
-
-        if (isset($options['login'])) {
+        $authType = isset($options['auth_type']) ? $options['auth_type'] : Curl::AUTH_TYPE_NONE;
+        if (isset($options['login']) && Curl::AUTH_TYPE_NONE !== $authType) {
             $curlUserPwd = $options['login'].':'.$options['password'];
-            curl_setopt($this->ch, CURLOPT_HTTPAUTH, isset($options['extra_options']['http_auth']) ? $options['extra_options']['http_auth'] : CURLAUTH_ANY);
-            curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
 
-            // use preemptive authentication
-            if (
-                isset($options['preemptive_auth']) &&
-                true === $options['preemptive_auth']
-            ) {
-                $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
-            }
+                // use preemptive authentication
+                if (self::AUTH_TYPE_BASIC === $options['auth_type']) {
+                    $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
+                }
+                curl_setopt($this->ch, CURLOPT_HTTPAUTH, Curl::AUTH_TYPE_BASIC === $authType ? CURLAUTH_BASIC : CURLAUTH_ANY);
+                curl_setopt($this->ch, CURLOPT_USERPWD, $curlUserPwd);
 
         }
         if (isset($options['local_cert'])) {
@@ -139,8 +140,9 @@ class Curl
         curl_close($this->ch);
     }
 
-    public function setOption($curlOption, $curlOptionValue){
-        curl_setopt($this->ch,$curlOption,$curlOptionValue);
+    public function setOption($curlOption, $curlOptionValue)
+    {
+        curl_setopt($this->ch, $curlOption, $curlOptionValue);
     }
 
     /**
@@ -173,7 +175,7 @@ class Curl
 
         $this->response = $this->execManualRedirect();
 
-        return ($this->response === false) ? false : true;
+        return (false === $this->response) ? false : true;
     }
 
     /**
@@ -187,7 +189,6 @@ class Curl
     protected function execManualRedirect($redirects = 0)
     {
         if ($redirects > $this->followLocationMaxRedirects) {
-
             // TODO Redirection limit reached, aborting
             return false;
         }
@@ -195,14 +196,14 @@ class Curl
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($this->ch);
         $httpResponseCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
-        if ($httpResponseCode == 307) {
+        if (307 == $httpResponseCode) {
             $headerSize = curl_getinfo($this->ch, CURLINFO_HEADER_SIZE);
             $header = substr($response, 0, $headerSize);
             $matches = array();
             preg_match('/Location:(.*?)\n/', $header, $matches);
             $url = trim(array_pop($matches));
             // @parse_url to suppress E_WARNING for invalid urls
-            if (($url = @parse_url($url)) !== false) {
+            if (false !== ($url = @parse_url($url))) {
                 $lastUrl = parse_url(curl_getinfo($this->ch, CURLINFO_EFFECTIVE_URL));
                 if (!isset($url['scheme'])) {
                     $url['scheme'] = $lastUrl['scheme'];
@@ -213,7 +214,7 @@ class Curl
                 if (!isset($url['path'])) {
                     $url['path'] = $lastUrl['path'];
                 }
-                $newUrl = $url['scheme'] . '://' . $url['host'] . $url['path'] . ($url['query'] ? '?' . $url['query'] : '');
+                $newUrl = $url['scheme'].'://'.$url['host'].$url['path'].($url['query'] ? '?'.$url['query'] : '');
                 curl_setopt($this->ch, CURLOPT_URL, $newUrl);
 
                 return $this->execManualRedirect($redirects++);
@@ -225,7 +226,7 @@ class Curl
 
     /**
      * Error code mapping from cURL error codes to PHP ext/soap error messages
-     * (where applicable)
+     * (where applicable).
      *
      * http://curl.haxx.se/libcurl/c/libcurl-errors.html
      *
@@ -271,7 +272,6 @@ class Curl
         $errorCodeMapping = $this->getErrorCodeMapping();
         $errorNumber = curl_errno($this->ch);
         if (isset($errorCodeMapping[$errorNumber])) {
-
             return $errorCodeMapping[$errorNumber].': '.curl_error($this->ch);
         }
 
