@@ -109,7 +109,7 @@ class Curl
             $curlUserPwd = $options['login'].':'.$options['password'];
 
                 // use preemptive authentication
-                if (self::AUTH_TYPE_BASIC === $options['auth_type']) {
+                if (self::AUTH_TYPE_BASIC === $authType) {
                     $headers[] = sprintf('Authorization: Basic %s', base64_encode($curlUserPwd));
                 }
                 curl_setopt($this->ch, CURLOPT_HTTPAUTH, Curl::AUTH_TYPE_BASIC === $authType ? CURLAUTH_BASIC : CURLAUTH_ANY);
