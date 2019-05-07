@@ -2,8 +2,6 @@ FROM composer:1 AS composer
 
 FROM php:7.0-fpm
 
-MAINTAINER Andrey Moretti <andrey.moretti@smartbox.com>
-
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 #Installing and enabling features and PHP extension needed
