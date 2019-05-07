@@ -1,12 +1,8 @@
 DOCKER_COMPOSE  = docker-compose
-
-EXEC        = $(DOCKER_COMPOSE) exec app
-RUN        = $(DOCKER_COMPOSE) run app
-
-SYMFONY         = $(EXEC_PHP) app/console
-COMPOSER        = $(EXEC_PHP) composer
-
-QA        = docker run -it --rm -v `pwd`:/project mykiwi/phaudit:7.2
+EXEC        	= $(DOCKER_COMPOSE) exec app
+RUN        		= $(DOCKER_COMPOSE) run app
+COMPOSER        = $(RUN) composer
+QA        		= docker run -it --rm -v `pwd`:/project mykiwi/phaudit:7.2
 
 ##
 ## Project
