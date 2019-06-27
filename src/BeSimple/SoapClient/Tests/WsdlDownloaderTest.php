@@ -271,6 +271,26 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/', '../../../test'));
     }
 
+    /**
+     * Test that only HTTP 200 is the accepted response and everything else should throw an exception.
+     *
+     * @throws \ErrorException
+     */
+    public function testInvalidResponseCodes()
+    {
+        $this->expectException('ErrorException');
+        $this->expectExceptionMessage('SOAP-ERROR: Parsing WSDL: Unexpected response code received from \'http://somefake.url/wsdl\', response code: 302');
+
+        $curlMock = $this->createMock('BeSimple\SoapClient\Curl');
+        $curlMock->expects($this->any())
+            ->method('getResponseStatusCode')
+            ->willReturn(302);
+
+        $wsdlDownloader = new WsdlDownloader($curlMock);
+
+        $wsdlDownloader->download('http://somefake.url/wsdl');
+    }
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
