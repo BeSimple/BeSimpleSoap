@@ -14,6 +14,7 @@ namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Downloads WSDL files with cURL. Uses the WSDL_CACHE_* constants and the
@@ -26,11 +27,6 @@ use BeSimple\SoapCommon\Helper;
 class WsdlDownloader
 {
     const XML_MIN_LENGTH = 25;
-
-    /**
-     *  Expected HTTP status code when downloading wsdls.
-     */
-    const HTTP_OK = 200;
 
     /**
      * Cache enabled.
@@ -105,7 +101,7 @@ class WsdlDownloader
                     // execute request
                     $this->curl->exec($wsdl);
                     // get content
-                    if (static::HTTP_OK === $this->curl->getResponseStatusCode()) {
+                    if (Response::HTTP_OK === $this->curl->getResponseStatusCode()) {
                         $response = $this->curl->getResponseBody();
                         if (empty($response)) {
                             throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Got empty wsdl from '" . $wsdl ."'");
