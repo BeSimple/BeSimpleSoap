@@ -14,6 +14,7 @@ namespace BeSimple\SoapClient;
 
 use BeSimple\SoapCommon\Cache;
 use BeSimple\SoapCommon\Helper;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Downloads WSDL files with cURL. Uses the WSDL_CACHE_* constants and the
@@ -98,9 +99,9 @@ class WsdlDownloader
             if (!$this->cacheEnabled || !file_exists($cacheFilePath) || (filemtime($cacheFilePath) + $this->cacheTtl) < time()) {
                 if ($isRemoteFile) {
                     // execute request
-                    $responseSuccessfull = $this->curl->exec($wsdl);
+                    $this->curl->exec($wsdl);
                     // get content
-                    if ($responseSuccessfull) {
+                    if (Response::HTTP_OK === $this->curl->getResponseStatusCode()) {
                         $response = $this->curl->getResponseBody();
                         if (empty($response)) {
                             throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Got empty wsdl from '" . $wsdl ."'");
@@ -112,7 +113,7 @@ class WsdlDownloader
                             file_put_contents($cacheFilePath, $response);
                         }
                     } else {
-                        throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Couldn't load from '" . $wsdl ."'");
+                        throw new \ErrorException("SOAP-ERROR: Parsing WSDL: Unexpected response code received from '" . $wsdl ."', response code: " . $this->curl->getResponseStatusCode());
                     }
                 } elseif (file_exists($wsdl)) {
                     $response = file_get_contents($wsdl);

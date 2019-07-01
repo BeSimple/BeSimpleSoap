@@ -271,6 +271,60 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertEquals('http://localhost/test', $m->invoke($wsdlDownloader, 'http://localhost/sub/sub/sub/', '../../../test'));
     }
 
+    /**
+     * Test that non HTTP 200 responses throw an exception
+     *
+     * @dataProvider invalidResponseCodesDataProvider
+     *
+     * @throws \ErrorException
+     */
+    public function testInvalidResponseCodes($responseCode)
+    {
+        $this->expectException('ErrorException');
+        $this->expectExceptionMessage('SOAP-ERROR: Parsing WSDL: Unexpected response code received from \'http://somefake.url/wsdl\', response code: ' . $responseCode);
+
+        $curlMock = $this->createMock('BeSimple\SoapClient\Curl');
+        $curlMock->expects($this->any())
+            ->method('getResponseStatusCode')
+            ->willReturn($responseCode);
+
+        $wsdlDownloader = new WsdlDownloader($curlMock);
+
+        $wsdlDownloader->download('http://somefake.url/wsdl');
+    }
+
+    public function invalidResponseCodesDataProvider()
+    {
+        return [
+            'No Content' => [204],
+            'Moved Permanently' => [301],
+            'Found' => [302],
+            'Unathorized' => [401],
+            'Not Found' => [404],
+            'Internal Server Error' => [500]
+        ];
+    }
+
+    /**
+     * Test that HTTP 200 responses downloads and stores the WSDL correctly
+     */
+    public function testValidResponseCode()
+    {
+        $curlMock = $this->createMock('BeSimple\SoapClient\Curl');
+        $curlMock->expects($this->any())
+            ->method('getResponseStatusCode')
+            ->willReturn(200);
+        $curlMock->expects($this->once())
+            ->method('getResponseBody')
+            ->willReturn('<?xml version="1.0"?><wsdl:types xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"></wsdl:types>');
+
+        $wsdlDownloader = new WsdlDownloader($curlMock);
+
+        $result = $wsdlDownloader->download('http://somefake.url/wsdl');
+
+        $this->assertRegExp('/.*wsdl_[a-f0-9]{32}\.cache/', $result);
+    }
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
