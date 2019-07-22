@@ -26,7 +26,8 @@
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "^4.3",
         "symfony/twig-bundle": "^4.3",
-        "zendframework/zend-mime": "2.1.*"
+        "zendframework/zend-mime": "2.1.*",
+        "symfony/dependency-injection": "^4.3"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
@@ -39,7 +40,15 @@
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "~1.0",
         "symfony/filesystem": "^4.3",
-        "symfony/process": "^4.3"
+        "symfony/form": "^4.3",
+        "symfony/process": "^4.3",
+        "symfony/console": "^4.3",
+        "symfony/messenger": "^4.3",
+        "symfony/serializer": "^4.3",
+        "symfony/translation": "^4.3",
+        "symfony/validator": "^4.1",
+        "symfony/security-csrf": "^4.0",
+        "symfony/property-info": "^4.0"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
