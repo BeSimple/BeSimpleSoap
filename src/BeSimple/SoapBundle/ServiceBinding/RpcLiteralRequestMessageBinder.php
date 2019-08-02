@@ -57,7 +57,7 @@ class RpcLiteralRequestMessageBinder implements MessageBinderInterface
             $array = array();
             $arrayOfTypeName = str_replace('ArrayOf', '', $type->getXmlType());
 
-            $type = $this->typeRepository->getType($type->get($arrayOfTypeName)->getType());
+            $type = null !== $type->get($arrayOfTypeName) ? $this->typeRepository->getType($type->get($arrayOfTypeName)->getType()) : null;
         }
 
         // @TODO Fix array reference

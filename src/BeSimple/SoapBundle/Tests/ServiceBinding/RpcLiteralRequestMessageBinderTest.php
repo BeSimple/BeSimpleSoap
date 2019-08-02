@@ -52,7 +52,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $foo1 = new Fixtures\Foo('foobar', 29291);
         $foo2 = new Fixtures\Foo('barfoo', 39392);
         $foos = new \stdClass();
-        $foos->item = array($foo1, $foo2);
+        $foos->Foo = array($foo1, $foo2);
 
         $method = new Definition\Method('complextype_argument', null);
         $method->addInput('foos', 'BeSimple\SoapBundle\Tests\fixtures\ServiceBinding\Foo[]');
@@ -92,7 +92,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
         $foo  = new Fixtures\Foo('foo', 2499104);
         $foos = new \stdClass();
-        $foos->item = array($foo, $foo);
+        $foos->Foo = array($foo, $foo);
 
         $result = $messageBinder->processMessage(
             $method,
@@ -132,7 +132,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
         $array          = array(1, 2, 3, 4);
         $stdClass       = new \stdClass();
-        $stdClass->item = $array;
+        $stdClass->String = $array;
         $simpleArrays   = new Fixtures\SimpleArrays(null, new \stdClass(), $stdClass);
 
         $result = $messageBinder->processMessage(
@@ -214,7 +214,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
         $method->addInput('foo', 'string[]');
         $method->addInput('bar', 'int');
         $strings = new \stdClass();
-        $strings->item = array('foo', 'bar', 'barfoo');
+        $strings->String = array('foo', 'bar', 'barfoo');
         $messages[] = array(
             $method,
             array($strings, 4),

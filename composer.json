@@ -48,7 +48,8 @@
         "symfony/translation": "^4.3",
         "symfony/validator": "^4.1",
         "symfony/security-csrf": "^4.0",
-        "symfony/property-info": "^4.0"
+        "symfony/property-info": "^4.0",
+        "phpunit/phpunit": "~4.8.36|~5.2"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
