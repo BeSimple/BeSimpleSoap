@@ -24,10 +24,10 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
-        "symfony/framework-bundle": "^4.3",
-        "symfony/twig-bundle": "^4.3",
+        "symfony/framework-bundle": "^3.4|^4.0",
+        "symfony/twig-bundle": "^3.4|^4.0",
         "zendframework/zend-mime": "2.1.*",
-        "symfony/dependency-injection": "^4.3"
+        "symfony/dependency-injection": "^3.4|^4.0"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
@@ -39,17 +39,17 @@
     "require-dev": {
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "~1.0",
-        "symfony/filesystem": "^4.3",
-        "symfony/form": "^4.3",
-        "symfony/process": "^4.3",
-        "symfony/console": "^4.3",
-        "symfony/messenger": "^4.3",
-        "symfony/serializer": "^4.3",
-        "symfony/translation": "^4.3",
-        "symfony/validator": "^4.1",
-        "symfony/security-csrf": "^4.0",
-        "symfony/property-info": "^4.0",
-        "phpunit/phpunit": "~4.8.36|~5.2"
+        "symfony/form": "^3.4|^4.0",
+        "symfony/process": "^3.4|^4.0",
+        "symfony/console": "^3.4|^4.0",
+        "symfony/messenger": "^3.4|^4.0",
+        "symfony/serializer": "^3.4|^4.0",
+        "symfony/translation": "^3.4|^4.0",
+        "symfony/validator": "^3.4|^4.0",
+        "symfony/security-csrf": "^3.4|^4.0",
+        "symfony/property-info": "^3.4|^4.0",
+        "phpunit/phpunit": "~4.8.36|~5.2",
+        "symfony/filesystem": "^3.4|^4.0"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
