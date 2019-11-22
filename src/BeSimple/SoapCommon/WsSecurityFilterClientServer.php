@@ -326,7 +326,7 @@ abstract class WsSecurityFilterClientServer
                 switch ($key->localName) {
                     case 'KeyIdentifier':
 
-                        return $this->serviceSecurityKey->getPublicKey();
+                        return isset($this->serviceSecurityKey) ? $this->serviceSecurityKey->getPublicKey() : null;
                     case 'Reference':
                         $uri = $key->getAttribute('URI');
                         $referencedNode = $this->getReferenceNodeForUri($node, $uri);
