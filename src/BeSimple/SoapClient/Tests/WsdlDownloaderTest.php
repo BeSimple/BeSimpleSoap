@@ -66,12 +66,12 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 1,
             ),
             array(
-                sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT),
+                sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', self::WEBSERVER_PORT),
                 '%s/wsdl_[a-f0-9]{32}\.cache',
                 2,
             ),
             array(
-                sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT),
+                sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', self::WEBSERVER_PORT),
                 '%s/wsdl_[a-f0-9]{32}\.cache',
                 2,
             ),
@@ -133,8 +133,8 @@ class WsdlDownloaderTest extends AbstractWebserverTest
 
     public function provideResolveWsdlIncludes()
     {
-        $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/wsdlinctest_absolute.xml', WEBSERVER_PORT);
-        $remoteUrlRelative = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_relative.xml', WEBSERVER_PORT);
+        $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/wsdlinctest_absolute.xml', self::WEBSERVER_PORT);
+        $remoteUrlRelative = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_relative.xml', self::WEBSERVER_PORT);
 
         return array(
             array(
@@ -198,8 +198,8 @@ class WsdlDownloaderTest extends AbstractWebserverTest
 
     public function provideResolveXsdIncludes()
     {
-        $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT);
-        $remoteUrlRelative = sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT);
+        $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', self::WEBSERVER_PORT);
+        $remoteUrlRelative = sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', self::WEBSERVER_PORT);
 
         return array(
             array(
@@ -276,7 +276,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
 
         foreach (array('wsdlinclude/wsdlinctest_absolute.xml', 'xsdinclude/xsdinctest_absolute.xml') as $file) {
             $content = file_get_contents(self::$fixturesPath.$file);
-            $content = preg_replace('#'.preg_quote('%location%').'#', sprintf('localhost:%d', WEBSERVER_PORT), $content);
+            $content = preg_replace('#'.preg_quote('%location%').'#', sprintf('localhost:%d', self::WEBSERVER_PORT), $content);
 
             self::$filesystem->dumpFile(self::$fixturesPath.'build_include'.DIRECTORY_SEPARATOR.pathinfo($file, PATHINFO_BASENAME), $content);
         }

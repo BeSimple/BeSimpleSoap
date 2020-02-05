@@ -24,8 +24,9 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
-        "symfony/framework-bundle": "^3.0 || ^4.0",
-        "symfony/twig-bundle": "^3.0 || ^4.0",
+        "symfony/dependency-injection": "^3.4 || ^4.0",
+        "symfony/framework-bundle": "^3.4 || ^4.0",
+        "symfony/twig-bundle": "^3.4 || ^4.0",
         "zendframework/zend-mime": "2.1.*"
     },
     "replace": {
@@ -38,8 +39,17 @@
     "require-dev": {
         "ext-mcrypt": "*",
         "mikey179/vfsStream": "~1.0",
-        "symfony/filesystem": "~2.3",
-        "symfony/process": "~2.3"
+        "symfony/form": "^3.4 || ^4.0",
+        "symfony/process": "^3.4 || ^4.0",
+        "symfony/console": "^3.4 || ^4.0",
+        "symfony/messenger": "^3.4 || ^4.0",
+        "symfony/serializer": "^3.4 || ^4.0",
+        "symfony/translation": "^3.4 || ^4.0",
+        "symfony/validator": "^3.4 || ^4.0",
+        "symfony/security-csrf": "^3.4 || ^4.0",
+        "symfony/property-info": "^3.4 || ^4.0",
+        "phpunit/phpunit": "~4.8.36 || ~5.2",
+        "symfony/filesystem": "^3.4 || ^4.0"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
