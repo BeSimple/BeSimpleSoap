@@ -24,7 +24,7 @@
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
-        "symfony/dependency-injection": "^3.4 || ^4.0"
+        "symfony/dependency-injection": "^3.4 || ^4.0",
         "symfony/framework-bundle": "^3.4 || ^4.0",
         "symfony/twig-bundle": "^3.4 || ^4.0",
         "zendframework/zend-mime": "2.1.*"
