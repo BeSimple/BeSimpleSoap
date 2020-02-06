@@ -98,7 +98,7 @@ class SoapWebServiceController implements ContainerAwareInterface
             )
         ));
 
-        $request = $this->container->get('request');
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $query = $request->query;
         if ($query->has('wsdl') || $query->has('WSDL')) {
             $request->setRequestFormat('wsdl');
