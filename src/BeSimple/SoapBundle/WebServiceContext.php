@@ -44,7 +44,7 @@ class WebServiceContext
         if (null === $this->serviceDefinition) {
             $cache = new ConfigCache(sprintf('%s/%s.definition.php', $this->options['cache_dir'], $this->options['name']), $this->options['debug']);
             if ($cache->isFresh()) {
-                $this->serviceDefinition = include (string) $cache;
+                $this->serviceDefinition = include (string) $cache->getPath();
             } else {
                 if (!$this->loader->supports($this->options['resource'], $this->options['resource_type'])) {
                     throw new \LogicException(sprintf('Cannot load "%s" (%s)', $this->options['resource'], $this->options['resource_type']));
