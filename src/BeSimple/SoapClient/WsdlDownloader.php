@@ -213,7 +213,7 @@ class WsdlDownloader
             throw new \RuntimeException("SOAP-ERROR: Detected empty wsdl in: $cacheFilePath for xml: $xml");
         }
 
-        file_put_contents($cacheFilePath, $xml);
+        file_put_contents($cacheFilePath, $xmlResolved);
     }
 
     /**

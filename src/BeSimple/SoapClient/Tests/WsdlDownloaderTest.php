@@ -140,13 +140,15 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/wsdlinctest_absolute.xml', WEBSERVER_PORT);
         $remoteUrlRelative = sprintf('http://localhost:%d/wsdlinclude/wsdlinctest_relative.xml', WEBSERVER_PORT);
+        $wsdlIncludeMd5 = md5('http://' . sprintf('localhost:%d', WEBSERVER_PORT) . '/wsdl_include.wsdl');
+        $expectedWsdl = 'wsdl_'.$wsdlIncludeMd5.'.cache';
 
         return array(
             array(
                 __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/wsdlinctest_absolute.xml',
                 '%s/cache_local_absolute.xml',
                 null,
-                'wsdl_include\.wsdl',
+                $expectedWsdl,
                 2,
             ),
             array(
@@ -160,14 +162,14 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 $remoteUrlAbsolute,
                 '%s/cache_remote_absolute.xml',
                 $remoteUrlAbsolute,
-                'wsdl_include\.wsdl',
+                $expectedWsdl,
                 2,
             ),
             array(
                 $remoteUrlRelative,
                 '%s/cache_remote_relative.xml',
                 $remoteUrlRelative,
-                'wsdl_include\.wsdl',
+                $expectedWsdl,
                 2,
             ),
         );
@@ -205,13 +207,15 @@ class WsdlDownloaderTest extends AbstractWebserverTest
     {
         $remoteUrlAbsolute = sprintf('http://localhost:%d/build_include/xsdinctest_absolute.xml', WEBSERVER_PORT);
         $remoteUrlRelative = sprintf('http://localhost:%d/xsdinclude/xsdinctest_relative.xml', WEBSERVER_PORT);
+        $xsdIncludeMd5 = md5('http://' . sprintf('localhost:%d', WEBSERVER_PORT) . '/type_include.xsd');
+        $expectedXsd = 'wsdl_'.$xsdIncludeMd5.'.cache';
 
         return array(
             array(
                 __DIR__.DIRECTORY_SEPARATOR.'Fixtures/build_include/xsdinctest_absolute.xml',
                 '%s/cache_local_absolute.xml',
                 null,
-                'type_include\.xsd',
+                $expectedXsd,
                 2,
             ),
             array(
@@ -225,14 +229,14 @@ class WsdlDownloaderTest extends AbstractWebserverTest
                 $remoteUrlAbsolute,
                 '%s/cache_remote_absolute.xml',
                 $remoteUrlAbsolute,
-                'type_include\.xsd',
+                $expectedXsd,
                 2,
             ),
             array(
                 $remoteUrlRelative,
                 '%s/cache_remote_relative.xml',
                 $remoteUrlRelative,
-                'type_include\.xsd',
+                $expectedXsd,
                 2,
             ),
         );
@@ -325,7 +329,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertRegExp('/.*wsdl_[a-f0-9]{32}\.cache/', $result);
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -341,7 +345,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
 
