@@ -87,12 +87,11 @@ class AbstractSoapBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->mergeOptions(array('cache_wsdl' => Cache::TYPE_DISK_MEMORY)), $builder->getSoapOptions());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testWithWsdlCacheBadValue()
     {
         $builder = $this->getSoapBuilder();
+
+        $this->expectException('InvalidArgumentException');
 
         $builder->withWsdlCache('foo');
     }

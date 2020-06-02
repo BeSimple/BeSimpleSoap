@@ -229,7 +229,7 @@ class WsdlDownloader
         $urlParts = parse_url($base);
 
         // combine base path with relative path
-        if (isset($urlParts['path']) && '/' === $relative{0}) {
+        if (isset($urlParts['path']) && '/' === $relative[0]) {
             // $relative is absolute path from domain (starts with /)
             $path = $relative;
         } elseif (isset($urlParts['path']) && strrpos($urlParts['path'], '/') === (strlen($urlParts['path']) )) {

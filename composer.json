@@ -38,7 +38,6 @@
         "besimple/soap-wsdl":   "self.version"
     },
     "require-dev": {
-        "ext-mcrypt": "*",
         "mikey179/vfsstream": "~1.0",
         "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3",
