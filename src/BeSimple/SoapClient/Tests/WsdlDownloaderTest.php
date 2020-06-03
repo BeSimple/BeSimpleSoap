@@ -329,7 +329,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         $this->assertRegExp('/.*wsdl_[a-f0-9]{32}\.cache/', $result);
     }
 
-    public static function setUpBeforeClass(): void
+    public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
 
@@ -345,7 +345,7 @@ class WsdlDownloaderTest extends AbstractWebserverTest
         }
     }
 
-    public static function tearDownAfterClass(): void
+    public static function tearDownAfterClass()
     {
         parent::tearDownAfterClass();
 
