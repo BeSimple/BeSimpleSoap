@@ -28,27 +28,25 @@ class ClassmapTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array(), $classmap->all());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testAdd()
     {
         $classmap = new Classmap();
 
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
 
+        $this->expectException('InvalidArgumentException');
+
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testGet()
     {
         $classmap = new Classmap();
 
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
         $this->assertSame('BeSimple\SoapCommon\Classmap', $classmap->get('foobar'));
+
+        $this->expectException('InvalidArgumentException');
 
         $classmap->get('bar');
     }
@@ -69,9 +67,6 @@ class ClassmapTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($map, $classmap->all());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testAddClassmap()
     {
         $classmap1 = new Classmap();
@@ -81,6 +76,8 @@ class ClassmapTest extends \PHPUnit\Framework\TestCase
         $classmap1->addClassmap($classmap2);
 
         $this->assertEquals(array('foobar' => 'BeSimple\SoapCommon\Classmap'), $classmap1->all());
+
+        $this->expectException('InvalidArgumentException');
 
         $classmap1->addClassmap($classmap2);
     }

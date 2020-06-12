@@ -25,6 +25,7 @@ class CurlTest extends AbstractWebserverTest
             'proxy_host' => false,
         ));
 
+
         $this->assertTrue($curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT)));
         $this->assertTrue($curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT)));
     }
@@ -66,7 +67,10 @@ class CurlTest extends AbstractWebserverTest
 
         $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
         $this->assertSame('OK', $curl->getResponseStatusMessage());
-        $this->assertEquals(145 + self::$websererPortLength, strlen($curl->getResponse()));
+        // Adjust for PHP >= 7.2 sending a Date header
+        $response = $curl->getResponse();
+        $response = preg_replace('/^Date:.*?\r\n/m', '', $response);
+        $this->assertEquals(145 + self::$websererPortLength, strlen($response));
 
         $curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT));
         $this->assertSame('Not Found', $curl->getResponseStatusMessage());
@@ -102,10 +106,16 @@ class CurlTest extends AbstractWebserverTest
         ));
 
         $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
-        $this->assertEquals(117 + self::$websererPortLength, strlen($curl->getResponseHeaders()));
+        // Adjust for PHP >= 7.2 sending a Date header
+        $headers = $curl->getResponseHeaders();
+        $headers = preg_replace('/^Date:.*?\r\n/m', '', $headers);
+        $this->assertEquals(117 + self::$websererPortLength, strlen($headers));
 
         $curl->exec(sprintf('http://localhost:%d/404.txt', WEBSERVER_PORT));
-        $this->assertEquals(124 + self::$websererPortLength, strlen($curl->getResponseHeaders()));
+        // Adjust for PHP >= 7.2 sending a Date header
+        $headers = $curl->getResponseHeaders();
+        $headers = preg_replace('/^Date:.*?\r\n/m', '', $headers);
+        $this->assertEquals(124 + self::$websererPortLength, strlen($headers));
     }
 
     public function testGetResponseStatusCode()

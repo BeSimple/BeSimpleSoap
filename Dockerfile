@@ -6,6 +6,6 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 #Installing and enabling features and PHP extension needed
 RUN apt-get update -y \
-  && apt-get install -y libxml2-dev libmcrypt-dev git unzip \
+  && apt-get install -y libxml2-dev git unzip \
   && apt-get clean -y \
-  && docker-php-ext-install soap mcrypt
+  && docker-php-ext-install soap

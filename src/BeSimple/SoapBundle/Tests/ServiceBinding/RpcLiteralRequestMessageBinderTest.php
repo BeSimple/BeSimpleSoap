@@ -66,9 +66,6 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array('foos' => array($foo1, $foo2)), $result);
     }
 
-    /**
-     * @expectedException SoapFault
-     */
     public function testProcessMessageSoapFault()
     {
         $messageBinder = new RpcLiteralRequestMessageBinder();
@@ -78,6 +75,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit\Framework\TestCase
 
         $foo = new Fixtures\Foo('foo', null);
 
+        $this->expectException('SoapFault');
         $messageBinder->processMessage(
             $method,
             array($foo),

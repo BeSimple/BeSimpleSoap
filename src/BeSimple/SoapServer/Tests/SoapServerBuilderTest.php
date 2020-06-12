@@ -21,23 +21,21 @@ use BeSimple\SoapServer\SoapServerBuilder;
  */
 class SoapServerBuilderTest extends \PHPUnit\Framework\TestCase
 {
-   /**
-    * @expectedException InvalidArgumentException
-    */
     public function testUnconfiguredWsdl()
     {
         $builder = $this->getSoapServerBuilder();
 
+        $this->expectException('InvalidArgumentException');
+
         $builder->build();
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testUnconfiguredHandler()
     {
         $builder = $this->getSoapServerBuilder();
         $builder->withWsdl('my.wsdl');
+
+        $this->expectException('InvalidArgumentException');
 
         $builder->build();
     }

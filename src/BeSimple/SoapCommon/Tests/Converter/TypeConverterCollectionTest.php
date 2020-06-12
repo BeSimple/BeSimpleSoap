@@ -76,9 +76,6 @@ class TypeConverterCollectionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($converter, $converters->all());
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testAddCollection()
     {
         $converters1 = new TypeConverterCollection();
@@ -89,6 +86,8 @@ class TypeConverterCollectionTest extends \PHPUnit\Framework\TestCase
         $converters1->addCollection($converters2);
 
         $this->assertSame(array($dateTimeTypeConverter), $converters1->all());
+
+        $this->expectException('InvalidArgumentException');
 
         $converters1->addCollection($converters2);
     }

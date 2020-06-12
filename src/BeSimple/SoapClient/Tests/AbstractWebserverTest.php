@@ -20,13 +20,17 @@ use Symfony\Component\Process\ProcessBuilder;
  */
 abstract class AbstractWebServerTest extends \PHPUnit\Framework\TestCase
 {
+    // when using the SetUpTearDownTrait, methods like doSetup() can
+    // be defined with and without the 'void' return type, as you wish
+    use \Symfony\Bridge\PhpUnit\SetUpTearDownTrait;
+
     /**
      * @var ProcessBuilder
      */
     static protected $webserver;
     static protected $websererPortLength;
 
-    public static function setUpBeforeClass()
+    public static function doSetUpBeforeClass()
     {
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
             self::markTestSkipped('PHP Webserver is available from PHP 5.4');
@@ -43,12 +47,12 @@ abstract class AbstractWebServerTest extends \PHPUnit\Framework\TestCase
         ))->getProcess();
 
         self::$webserver->start();
-        usleep(100000);
+        usleep(200000);
 
         self::$websererPortLength = strlen(WEBSERVER_PORT);
     }
 
-    public static function tearDownAfterClass()
+    public static function doTearDownAfterClass()
     {
         self::$webserver->stop(0);
         usleep(100000);
