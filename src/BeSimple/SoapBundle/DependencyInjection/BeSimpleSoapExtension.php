@@ -168,6 +168,7 @@ class BeSimpleSoapExtension extends Extension
 
         $contextId = 'besimple.soap.context.' . $config['name'];
         $definition = new DefinitionDecorator('besimple.soap.context.' . $bindingSuffix);
+        $definition->setPublic(true);
         $container->setDefinition($contextId, $definition);
 
         if (isset($config['cache_type'])) {
