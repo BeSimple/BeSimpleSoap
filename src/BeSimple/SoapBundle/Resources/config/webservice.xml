@@ -19,7 +19,7 @@
     </parameters>
 
     <services>
-        <service id="besimple.soap.response" class="%besimple.soap.response.class%" />
+        <service id="besimple.soap.response" class="%besimple.soap.response.class%" public="true"/>
 
         <service id="besimple.soap.response.listener" class="%besimple.soap.response.listener.class%">
             <tag name="kernel.event_listener" event="kernel.view" method="onKernelView" />
