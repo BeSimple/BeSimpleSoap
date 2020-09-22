@@ -19,6 +19,14 @@
     </parameters>
 
     <services>
+    
+        <prototype namespace="BeSimple\SoapBundle\Controller\" resource="../../Controller">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"></argument>
+            </call>
+        </prototype>
+    
         <service id="besimple.soap.response" class="%besimple.soap.response.class%" />
 
         <service id="besimple.soap.response.listener" class="%besimple.soap.response.listener.class%">
