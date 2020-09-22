@@ -5,12 +5,12 @@
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="_webservice_call" path="/{webservice}" methods="POST">
-        <default key="_controller">BeSimpleSoapBundle:SoapWebService:Call</default>
+        <default key="_controller">BeSimple\SoapBundle\Controller\SoapWebServiceController::CallAction</default>
         <default key="_format">xml</default>
     </route>
 
     <route id="_webservice_definition" path="/{webservice}" methods="GET">
-        <default key="_controller">BeSimpleSoapBundle:SoapWebService:Definition</default>
+        <default key="_controller">BeSimple\SoapBundle\Controller\SoapWebServiceController::DefinitionAction</default>
         <default key="_format">xml</default>
     </route>
 </routes>
