@@ -122,7 +122,7 @@ class SoapWebServiceController extends AbstractController
             throw new \LogicException(sprintf('The parameter "%s" is required in Request::$query parameter bag to generate the SoapFault.', '_besimple_soap_webservice'), null, $e);
         }
 
-        $view = 'TwigBundle:Exception:'.($this->container->get('kernel')->isDebug() ? 'exception' : 'error').'.txt.twig';
+        $view = '@Twig/Exception/'.($this->container->get('kernel')->isDebug() ? 'exception' : 'error').'.txt.twig';
         $code = $exception->getStatusCode();
         $details = $this->container->get('twig')->render($view, array(
             'status_code' => $code,
