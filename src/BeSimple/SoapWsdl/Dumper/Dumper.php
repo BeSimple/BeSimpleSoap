@@ -236,7 +236,7 @@ class Dumper
         $complexType = $this->document->createElement(static::XSD_NS.':complexType');
         $complexType->setAttribute('name', $type->getXmlType());
 
-        $all = $this->document->createElement(static::XSD_NS.':'.($type instanceof ArrayOfType ? 'sequence' : 'all'));
+        $all = $this->document->createElement(static::XSD_NS.':sequence');
         $complexType->appendChild($all);
 
         foreach ($type->all() as $child) {
@@ -258,6 +258,13 @@ class Dumper
 
             if ($child->isNillable()) {
                 $element->setAttribute('nillable', 'true');
+            }
+
+            if (null !== $child->getMinOccurs() && 1 != $child->getMinOccurs()) {
+                $element->setAttribute('minOccurs', $child->getMinOccurs());
+            }
+            if (null !== $child->getMaxOccurs() && 1 != $child->getMaxOccurs()) {
+                $element->setAttribute('maxOccurs', $child->getMaxOccurs());
             }
 
             if ($type instanceof ArrayOfType) {

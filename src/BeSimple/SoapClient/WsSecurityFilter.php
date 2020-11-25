@@ -36,16 +36,6 @@ use BeSimple\SoapCommon\WsSecurityFilterClientServer;
 class WsSecurityFilter extends WsSecurityFilterClientServer implements SoapRequestFilter, SoapResponseFilter
 {
     /**
-     * (UT 3.1) Password type: plain text.
-     */
-    const PASSWORD_TYPE_TEXT = 0;
-
-    /**
-     * (UT 3.1) Password type: digest.
-     */
-    const PASSWORD_TYPE_DIGEST = 1;
-
-    /**
      * (UT 3.1) Password.
      *
      * @var string

@@ -12,6 +12,7 @@
 
 namespace BeSimple\SoapBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
@@ -21,20 +22,27 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
  * @author Christian Kerl <christian-kerl@web.de>
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class Configuration
+class Configuration implements ConfigurationInterface
 {
     private $cacheTypes = array('none', 'disk', 'memory', 'disk_memory');
     private $proxyAuth = array('basic', 'ntlm');
+    private $passwordTypes = array('PasswordText', 'PasswordDigest');
 
     /**
      * Generates the configuration tree.
      *
      * @return \Symfony\Component\Config\Definition\ArrayNode The config tree
      */
-    public function getConfigTree()
+    public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('be_simple_soap');
+        $treeBuilder = new TreeBuilder('be_simple_soap');
+
+        if (method_exists($treeBuilder, 'getRootNode')) {
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // BC layer for symfony/config 4.1 and older
+            $rootNode = $treeBuilder->root('be_simple_soap');
+        }
 
         $this->addCacheSection($rootNode);
         $this->addClientSection($rootNode);
@@ -43,11 +51,11 @@ class Configuration
 
         $rootNode
             ->children()
-                ->scalarNode('exception_controller')->defaultValue('BeSimpleSoapBundle:SoapWebService:exception')->end()
+                ->scalarNode('exception_controller')->defaultValue('BeSimple\SoapBundle\Controller\SoapWebServiceController::exceptionAction')->end()
             ->end()
         ;
 
-        return $treeBuilder->buildTree();
+        return $treeBuilder;
     }
 
     private function addCacheSection(ArrayNodeDefinition $rootNode)
@@ -143,6 +151,19 @@ class Configuration
                                 ->validate()
                                     ->ifNotInArray($this->cacheTypes)
                                     ->thenInvalid(sprintf('The cache type has to be either %s', implode(', ', $this->cacheTypes)))
+                                ->end()
+                            ->end()
+                            ->arrayNode('wsse')
+                                ->children()
+                                    ->scalarNode('password_type')
+                                        ->defaultValue($this->passwordTypes[0])
+                                        ->validate()
+                                            ->ifNotInArray($this->passwordTypes)
+                                            ->thenInvalid(sprintf('The password type has to be either: %s', implode(', ', $this->passwordTypes)))
+                                        ->end()
+                                    ->end()
+                                    ->scalarNode('username')->defaultNull()->end()
+                                    ->scalarNode('password')->defaultNull()->end()
                                 ->end()
                             ->end()
                         ->end()

@@ -13,15 +13,15 @@
 namespace BeSimple\SoapBundle\EventListener;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpKernel\EventListener\ExceptionListener;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\EventListener\ErrorListener;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class SoapExceptionListener extends ExceptionListener
+class SoapExceptionListener extends ErrorListener
 {
     /**
      * @var ContainerInterface
@@ -44,7 +44,7 @@ class SoapExceptionListener extends ExceptionListener
         $this->container = $container;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onSoapKernelException(ExceptionEvent $event)
     {
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
@@ -69,7 +69,7 @@ class SoapExceptionListener extends ExceptionListener
         // hack to retrieve the current WebService name in the controller
         $request->query->set('_besimple_soap_webservice', $webservice);
 
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         if ($exception instanceof \SoapFault) {
             $request->query->set('_besimple_soap_fault', $exception);
         }
@@ -77,11 +77,12 @@ class SoapExceptionListener extends ExceptionListener
         parent::onKernelException($event);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
-        return array(
-            // Must be called before ExceptionListener of HttpKernel component
-            KernelEvents::EXCEPTION => array('onKernelException', -64),
-        );
+        return [
+            KernelEvents::EXCEPTION => [
+                ['onSoapKernelException', -64],
+            ],
+        ];
     }
 }

@@ -10,7 +10,6 @@
 
 namespace BeSimple\SoapBundle\Converter;
 
-use BeSimple\SoapBundle\ServiceDefinition\ServiceDefinition;
 use BeSimple\SoapBundle\Util\Assert;
 
 /**
@@ -44,23 +43,5 @@ class TypeRepository
     public function getXmlTypeMapping($phpType)
     {
         return isset($this->defaultTypeMap[$phpType]) ? $this->defaultTypeMap[$phpType] : null;
-    }
-
-    public function fixTypeInformation(ServiceDefinition $definition)
-    {
-        foreach($definition->getAllTypes() as $type) {
-            $phpType = $type->getPhpType();
-            $xmlType = $type->getXmlType();
-
-            if (null === $phpType) {
-                throw new \InvalidArgumentException();
-            }
-
-            if (null === $xmlType) {
-                $xmlType = $this->getXmlTypeMapping($phpType);
-            }
-
-            $type->setXmlType($xmlType);
-        }
     }
 }

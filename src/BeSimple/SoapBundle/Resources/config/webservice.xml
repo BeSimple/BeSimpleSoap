@@ -19,7 +19,15 @@
     </parameters>
 
     <services>
-        <service id="besimple.soap.response" class="%besimple.soap.response.class%" />
+    
+        <prototype namespace="BeSimple\SoapBundle\Controller\" resource="../../Controller">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"></argument>
+            </call>
+        </prototype>
+    
+        <service id="besimple.soap.response" class="%besimple.soap.response.class%" public="true"/>
 
         <service id="besimple.soap.response.listener" class="%besimple.soap.response.listener.class%">
             <tag name="kernel.event_listener" event="kernel.view" method="onKernelView" />
@@ -95,6 +103,10 @@
             <call method="addType">
                 <argument>dateTime</argument>
                 <argument>xsd:dateTime</argument>
+            </call>
+            <call method="addType">
+                <argument>time</argument>
+                <argument>xsd:time</argument>
             </call>
         </service>
     </services>
