@@ -26,7 +26,7 @@
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": ">=2.3",
         "symfony/twig-bundle": ">=2.3",
-        "zendframework/zend-mime": "2.1.*"
+        "laminas/laminas-mime": "^2.7"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",
@@ -37,7 +37,7 @@
     },
     "require-dev": {
         "ext-mcrypt": "*",
-        "mikey179/vfsStream": "~1.0",
+        "mikey179/vfsstream": "~1.0",
         "symfony/filesystem": "~2.3",
         "symfony/process": "~2.3"
     },
