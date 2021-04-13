@@ -16,8 +16,9 @@ use BeSimple\SoapCommon\Mime\MultiPart;
 use BeSimple\SoapCommon\Mime\Parser;
 use BeSimple\SoapCommon\Mime\Part;
 use BeSimple\SoapCommon\Mime\PartHeader;
+use PHPUnit\Framework\TestCase;
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCase
 {
     public function testParserRequestWsi()
     {

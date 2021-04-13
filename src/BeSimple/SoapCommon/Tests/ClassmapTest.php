@@ -13,13 +13,14 @@
 namespace BeSimple\SoapCommon\Tests;
 
 use BeSimple\SoapCommon\Classmap;
+use PHPUnit\Framework\TestCase;
 
 /**
  * UnitTest for \BeSimple\SoapCommon\Classmap.
  *
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class ClassmapTest extends \PHPUnit_Framework_TestCase
+class ClassmapTest extends TestCase
 {
     public function testAll()
     {
@@ -34,7 +35,7 @@ class ClassmapTest extends \PHPUnit_Framework_TestCase
 
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
     }
 
@@ -45,7 +46,7 @@ class ClassmapTest extends \PHPUnit_Framework_TestCase
         $classmap->add('foobar', 'BeSimple\SoapCommon\Classmap');
         $this->assertSame('BeSimple\SoapCommon\Classmap', $classmap->get('foobar'));
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $classmap->get('bar');
     }
 
@@ -75,7 +76,7 @@ class ClassmapTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array('foobar' => 'BeSimple\SoapCommon\Classmap'), $classmap1->all());
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $classmap1->addClassmap($classmap2);
     }
 }

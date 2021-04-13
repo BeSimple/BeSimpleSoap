@@ -18,8 +18,9 @@ use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
 use BeSimple\SoapCommon\Converter\DateTypeConverter;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 use BeSimple\SoapCommon\Tests\Fixtures\SoapBuilder;
+use PHPUnit\Framework\TestCase;
 
-class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
+class AbstractSoapBuilderTest extends TestCase
 {
     private $defaultOptions = array(
         'features' => 0,
@@ -91,7 +92,7 @@ class AbstractSoapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $builder = $this->getSoapBuilder();
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $builder->withWsdlCache('foo');
     }
 

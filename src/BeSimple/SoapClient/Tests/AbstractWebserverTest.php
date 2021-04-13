@@ -12,13 +12,14 @@
 
 namespace BeSimple\SoapClient\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * @author francis.besset@gmail.com <francis.besset@gmail.com>
  */
-abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractWebserverTest extends TestCase
 {
     /**
      * @var ProcessBuilder
@@ -26,7 +27,7 @@ abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
     static protected $webserver;
     static protected $websererPortLength;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (version_compare(PHP_VERSION, '5.4.0', '<')) {
             self::markTestSkipped('PHP Webserver is available from PHP 5.4');
@@ -48,7 +49,7 @@ abstract class AbstractWebServerTest extends \PHPUnit_Framework_TestCase
         self::$websererPortLength = strlen(WEBSERVER_PORT);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$webserver->stop(0);
         usleep(100000);

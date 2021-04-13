@@ -14,8 +14,9 @@ namespace BeSimple\SoapCommon\Tests;
 
 use BeSimple\SoapCommon\Mime\PartHeader;
 use BeSimple\SoapCommon\Tests\Fixtures\MimePartHeader;
+use PHPUnit\Framework\TestCase;
 
-class PartHeaderTest extends \PHPUnit_Framework_TestCase
+class PartHeaderTest extends TestCase
 {
     public function testSetGetHeader()
     {
