@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "mikey179/vfsstream": "~1.0",
-        "symfony/filesystem": "~2.3",
+        "symfony/filesystem": "~3.4",
         "symfony/process": "~2.3",
         "phpunit/phpunit": "~8.5"
     },
