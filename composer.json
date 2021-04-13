@@ -38,7 +38,8 @@
     "require-dev": {
         "mikey179/vfsstream": "~1.0",
         "symfony/filesystem": "~2.3",
-        "symfony/process": "~2.3"
+        "symfony/process": "~2.3",
+        "phpunit/phpunit": "~8.5"
     },
     "autoload": {
         "psr-0": { "BeSimple\\": "src/" }
