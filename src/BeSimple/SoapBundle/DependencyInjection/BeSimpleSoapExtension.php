@@ -17,7 +17,7 @@ use BeSimple\SoapCommon\Cache;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\ChildDefinition as DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -168,6 +168,7 @@ class BeSimpleSoapExtension extends Extension
 
         $contextId = 'besimple.soap.context.' . $config['name'];
         $definition = new DefinitionDecorator('besimple.soap.context.' . $bindingSuffix);
+        $definition->setPublic(true);
         $container->setDefinition($contextId, $definition);
 
         if (isset($config['cache_type'])) {
