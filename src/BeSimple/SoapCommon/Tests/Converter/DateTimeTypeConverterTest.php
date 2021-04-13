@@ -13,13 +13,14 @@
 namespace BeSimple\SoapCommon\Tests\Converter;
 
 use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
+use PHPUnit\Framework\TestCase;
 
 /**
  * UnitTest for \BeSimple\SoapCommon\Converter\DateTimeTypeConverter.
  *
  * @author Christian Kerl <christian-kerl@web.de>
  */
-class DateTimeTypeConverterTest extends \PHPUnit_Framework_TestCase
+class DateTimeTypeConverterTest extends TestCase
 {
     public function testConvertXmlToPhp()
     {

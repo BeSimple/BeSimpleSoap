@@ -15,8 +15,9 @@ namespace BeSimple\SoapCommon\Tests;
 use BeSimple\SoapCommon\Cache;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
+use PHPUnit\Framework\TestCase;
 
-class SoapRequestTest extends \PHPUnit_Framework_TestCase
+class SoapRequestTest extends TestCase
 {
     public function testSetEnabled()
     {
@@ -29,7 +30,7 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
 
     public function testSetEnabledBadValue()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         Cache::setEnabled('foo');
     }
 
@@ -44,7 +45,7 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
 
     public function testSetTypeBadValue()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         Cache::setType('foo');
     }
 
@@ -83,7 +84,7 @@ class SoapRequestTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, Cache::getLimit());
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         ini_restore('soap.wsdl_cache_enabled');
         ini_restore('soap.wsdl_cache');

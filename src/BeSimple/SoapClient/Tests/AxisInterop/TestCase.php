@@ -2,9 +2,11 @@
 
 namespace BeSimple\SoapClient\Tests\AxisInterop;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+
+class TestCase extends PHPUnitTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $ch = curl_init('http://localhost:8080/');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);

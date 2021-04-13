@@ -18,8 +18,9 @@ use BeSimple\SoapBundle\Tests\fixtures\ServiceBinding as Fixtures;
 use BeSimple\SoapBundle\Util\Collection;
 use BeSimple\SoapCommon\Definition\Type\ComplexType;
 use BeSimple\SoapCommon\Definition\Type\TypeRepository;
+use PHPUnit\Framework\TestCase;
 
-class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
+class RpcLiteralRequestMessageBinderTest extends TestCase
 {
     /**
      * @dataProvider messageProvider
@@ -75,7 +76,7 @@ class RpcLiteralRequestMessageBinderTest extends \PHPUnit_Framework_TestCase
 
         $foo = new Fixtures\Foo('foo', null);
 
-        $this->setExpectedException('SoapFault');
+        $this->expectException('SoapFault');
         $messageBinder->processMessage(
             $method,
             array($foo),

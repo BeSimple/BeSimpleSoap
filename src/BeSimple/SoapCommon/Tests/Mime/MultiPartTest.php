@@ -15,8 +15,9 @@ namespace BeSimple\SoapCommon\Tests;
 use BeSimple\SoapCommon\Mime\MultiPart;
 use BeSimple\SoapCommon\Mime\Part;
 use BeSimple\SoapCommon\Mime\PartHeader;
+use PHPUnit\Framework\TestCase;
 
-class MultiPartTest extends \PHPUnit_Framework_TestCase
+class MultiPartTest extends TestCase
 {
     public function testConstructor()
     {

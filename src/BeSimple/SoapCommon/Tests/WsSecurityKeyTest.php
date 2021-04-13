@@ -14,8 +14,9 @@ namespace BeSimple\SoapCommon\Tests;
 
 use BeSimple\SoapCommon\WsSecurityKey;
 use ass\XmlSecurity\Key as XmlSecurityKey;
+use PHPUnit\Framework\TestCase;
 
-class WsSecurityKeyTest extends \PHPUnit_Framework_TestCase
+class WsSecurityKeyTest extends TestCase
 {
     public function testHasKeys()
     {

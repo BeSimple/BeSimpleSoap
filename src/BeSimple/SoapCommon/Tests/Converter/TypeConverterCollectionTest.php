@@ -15,13 +15,14 @@ namespace BeSimple\SoapCommon\Tests\Converter;
 use BeSimple\SoapCommon\Converter\TypeConverterCollection;
 use BeSimple\SoapCommon\Converter\DateTimeTypeConverter;
 use BeSimple\SoapCommon\Converter\DateTypeConverter;
+use PHPUnit\Framework\TestCase;
 
 /**
  * UnitTest for \BeSimple\SoapCommon\Converter\TypeConverterCollection.
  *
  * @author Francis Besset <francis.besset@gmail.com>
  */
-class TypeConverterCollectionTest extends \PHPUnit_Framework_TestCase
+class TypeConverterCollectionTest extends TestCase
 {
     public function testAdd()
     {
@@ -87,7 +88,7 @@ class TypeConverterCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(array($dateTimeTypeConverter), $converters1->all());
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
         $converters1->addCollection($converters2);
     }
 }
