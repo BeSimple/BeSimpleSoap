@@ -52,10 +52,10 @@ class CurlTest extends AbstractWebserverTest
         ));
 
         $curl->exec(sprintf('http://localhost:%d/curl.txt', WEBSERVER_PORT));
-        $this->assertEquals(132 + self::$websererPortLength, strlen($curl->getRequestHeaders()));
+        $this->assertEquals(142 + self::$websererPortLength, strlen($curl->getRequestHeaders()));
 
         $curl->exec(sprintf('http://localhost:%s/404.txt', WEBSERVER_PORT));
-        $this->assertEquals(131 + self::$websererPortLength, strlen($curl->getRequestHeaders()));
+        $this->assertEquals(141 + self::$websererPortLength, strlen($curl->getRequestHeaders()));
     }
 
     public function testGetResponse()

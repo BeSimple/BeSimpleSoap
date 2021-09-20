@@ -88,14 +88,15 @@ class SoapWebServiceController extends Controller
     /**
      * @return Symfony\Component\HttpFoundation\Response
      */
-    public function definitionAction($webservice)
+    public function definitionAction(Request $request, $webservice)
     {
+        $endpoint =  $this->container->get('router')->generate(
+            '_webservice_call',
+            array('webservice' => $webservice),
+            true
+        );
         $response = new Response($this->getWebServiceContext($webservice)->getWsdlFileContent(
-            $this->container->get('router')->generate(
-                '_webservice_call',
-                array('webservice' => $webservice),
-                true
-            )
+            $request->getSchemeAndHttpHost() . $endpoint
         ));
 
         $request = $this->container->get('request_stack')->getCurrentRequest();
