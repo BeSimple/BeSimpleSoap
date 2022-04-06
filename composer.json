@@ -20,15 +20,15 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.4.0 || ^8.1",
         "ext-soap": "*",
         "ext-curl": "*",
         "ass/xmlsecurity": "~1.0",
         "symfony/framework-bundle": "~2.6 || ~3.4",
         "symfony/twig-bundle": "~2.6 || ~3.4",
-        "zendframework/zend-mime": "2.*",
-        "zendframework/zend-serializer": "^2.9",
-        "zendframework/zend-servicemanager": "^3.3"
+        "laminas/laminas-servicemanager": "^3.11",
+        "laminas/laminas-serializer": "^2.12",
+        "laminas/laminas-mime": "^2.9"
     },
     "replace": {
         "besimple/soap-bundle": "self.version",

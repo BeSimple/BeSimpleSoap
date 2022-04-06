@@ -5,7 +5,7 @@ services:
     image: smartbox/besimplesoap
     container_name: sbx_besimplesoap
     environment:
-      SYMFONY_PHPUNIT_VERSION: '6.5'
+      SYMFONY_PHPUNIT_VERSION: '9.3'
       COMPOSER_ALLOW_SUPERUSER: 1
     working_dir: /var/www/html
     volumes:
